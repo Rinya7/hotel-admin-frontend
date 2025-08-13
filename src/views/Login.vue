@@ -1,21 +1,40 @@
 <!-- frontend/src/views/Login.vue -->
 <template>
-  <div>
-    <h1>Вхід</h1>
+  <div
+    style="
+      min-height: 70vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f8f8f8;
+    "
+  >
+    <div style="padding: 16px; max-width: 600px; margin: 0 auto">
+      <h1 style="text-align: center">Вхід</h1>
 
-    <form @submit.prevent="onSubmit" style="display: flex; gap: 8px">
-      <input v-model="form.username" placeholder="username" required />
-      <input
-        v-model="form.password"
-        type="password"
-        placeholder="password"
-        required
-      />
-      <button :disabled="loading">Увійти</button>
-    </form>
+      <form @submit.prevent="onSubmit" style="max-width: 300px; margin: 0 auto">
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <input
+            v-model="form.username"
+            placeholder="username"
+            required
+            style="text-align: center"
+          />
+          <input
+            v-model="form.password"
+            type="password"
+            placeholder="password"
+            required
+            style="text-align: center"
+          />
 
-    <!-- Помилку показуємо тільки коли вона є -->
-    <p v-if="error" style="color: crimson; margin-top: 8px">{{ error }}</p>
+          <button :disabled="loading" style="">Увійти</button>
+        </div>
+      </form>
+
+      <!-- Помилку показуємо тільки коли вона є -->
+      <p v-if="error" style="color: crimson; margin-top: 8px">{{ error }}</p>
+    </div>
   </div>
 </template>
 
