@@ -1,6 +1,6 @@
 <!-- views/sa/SaDashboard.vue -->
 <template>
-  <div>
+  <div style="text-align: center">
     <h1>Super Admin — Dashboard</h1>
     <p>Тут можуть бути загальні метрики по всіх готелях.</p>
   </div>
