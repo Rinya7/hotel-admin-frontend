@@ -6,18 +6,21 @@
     <header
       style="
         display: flex;
-        gap: 16px;
+        justify-content: space-between;
         align-items: center;
         padding: 12px;
         border-bottom: 1px solid #ddd;
       "
     >
       <strong>HOTEL FIELER</strong>
-      <RouterLink to="/">Dashboard</RouterLink>
-      <RouterLink to="/rooms">Rooms</RouterLink>
-
-      <span style="margin-left: auto" v-if="auth.isLogged">
-        <em>{{ auth.displayName }} ({{ auth.role ?? "?" }})</em>
+      <div>
+        <RouterLink to="/" style="margin-right: 10px">Dashboard</RouterLink>
+        <RouterLink to="/rooms">Rooms</RouterLink>
+      </div>
+      <span style="" v-if="auth.isLogged">
+        <em style="margin-right: 10px"
+          >{{ auth.displayName }} ({{ auth.role ?? "?" }})</em
+        >
         <button @click="onLogout">Logout</button>
       </span>
     </header>
