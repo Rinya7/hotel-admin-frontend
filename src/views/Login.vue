@@ -6,7 +6,7 @@
       flex-direction: column; /* в колонку */
       align-items: center; /* по центру горизонтали */
       justify-content: center; /* по центру вертикали */
-      min-height: 100vh; /* чтоб заняло весь экран */
+      height: 100vh; /* чтоб заняло весь экран */
       gap: 16px; /* расстояние между элементами */
     "
   >
@@ -131,6 +131,7 @@ async function onSubmit(): Promise<void> {
 .input {
   width: 100%;
   color: #383578;
+  background: #fff; /* білий фон */
   padding: 10px 12px;
   border: 1px solid #ccc;
   border-radius: 6px;
