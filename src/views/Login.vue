@@ -3,19 +3,20 @@
   <div
     style="
       display: flex;
-      flex-direction: column; /* в колонку */
-      align-items: center; /* по центру горизонтали */
-      justify-content: center; /* по центру вертикали */
-      height: 100vh; /* чтоб заняло весь экран */
-      gap: 16px; /* расстояние между элементами */
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      gap: 16px;
     "
   >
+    <LanguageSwitcher />
     <img
       :src="logo"
       alt="HoteLotse Logo"
       style="width: 100%; max-width: 320px; align-items: center; margin: 0 auto"
     />
-    <h1 style="text-align: center">Вхід</h1>
+    <h1 style="text-align: center">{{ $t("login.title") }}</h1>
 
     <!-- Форма -->
     <form
@@ -30,7 +31,7 @@
     >
       <input
         v-model="form.username"
-        placeholder="username"
+        :placeholder="$t('login.username')"
         required
         :disabled="loading"
         aria-label="Username"
@@ -39,7 +40,7 @@
       <input
         v-model="form.password"
         type="password"
-        placeholder="password"
+        :placeholder="$t('login.password')"
         required
         :disabled="loading"
         aria-label="Password"
@@ -47,10 +48,10 @@
       />
 
       <button :disabled="loading" :aria-busy="loading" class="login-btn">
-        <template v-if="!loading">Увійти</template>
+        <template v-if="!loading">{{ $t("login.submit") }}</template>
         <template v-else>
           <span class="spinner" aria-hidden="true"></span>
-          <span style="margin-left: 6px">Входимо…</span>
+          <span style="margin-left: 6px">{{ $t("common.loading") }}</span>
         </template>
       </button>
     </form>
@@ -62,7 +63,7 @@
 
 <script setup lang="ts">
 /**
- * Компонент логіну:
+ * Логін-форма з i18n:
  * - показує лоадер під час запиту
  * - блокує поля/кнопку щоб уникнути повторної відправки
  * - на успіх робить редірект за роллю
@@ -72,6 +73,11 @@ import { reactive, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../stores/auth";
 import logo from "../assets/logo.png";
+import LanguageSwitcher from "../components/LanguageSwitcher.vue";
+import { useI18n } from "vue-i18n";
+import type { MessageSchema, SupportedLocale } from "../i18n";
+
+const { t } = useI18n<{ message: MessageSchema }, SupportedLocale>();
 
 const auth = useAuthStore();
 const router = useRouter();
@@ -104,7 +110,7 @@ async function onSubmit(): Promise<void> {
     router.replace({ name: auth.isSuperadmin ? "sa-dashboard" : "dashboard" });
   } catch {
     // ❌ Невдача: показуємо помилку
-    error.value = "Невірний логін або пароль";
+    error.value = t("validation.invalidLogin");
   } finally {
     loading.value = false;
   }
