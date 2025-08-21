@@ -1,49 +1,24 @@
-<!--components/GlobalLoader.vue-->
-<!--Компонент оверлея-->
 <template>
-  <!-- Показуємо напівпрозорий фон + спінер поверх всього додатку,
-       коли у нас є хоча б один активний запит -->
+  <!-- Overlay with semi-transparent background and centered spinner -->
   <div
     v-if="ui.isLoading"
-    class="overlay"
+    class="fixed inset-0 z-[9999] flex items-center justify-center bg-white/50 backdrop-blur-sm"
     role="status"
     aria-live="polite"
     aria-label="Loading"
   >
-    <div class="spinner"></div>
+    <!-- Large brand-colored spinner -->
+    <Spinner size="lg" />
   </div>
 </template>
 
 <script setup lang="ts">
+/**
+ * Global overlay loader
+ * - Uses reusable <Spinner /> with brand color
+ */
 import { useUiStore } from "../stores/ui";
+import Spinner from "./Spinner.vue";
+
 const ui = useUiStore();
 </script>
-
-<style scoped>
-.overlay {
-  position: fixed;
-  inset: 0; /* top/right/bottom/left: 0 */
-  background: rgba(255, 255, 255, 0.5);
-  backdrop-filter: blur(1px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999; /* поверх усього */
-}
-
-/* трішки більший спінер */
-.spinner {
-  width: 42px;
-  height: 42px;
-  border: 4px solid #333;
-  border-right-color: transparent;
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-</style>

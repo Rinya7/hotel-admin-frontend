@@ -4,12 +4,10 @@
   <!-- Шапка для супер-адміна -->
   <header
     style="
-      max-width: 1200px;
       margin: 0 auto;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      /*padding: 12px;*/
       padding-top: 24px;
       padding-left: 12px;
       padding-right: 12px;
@@ -18,14 +16,10 @@
     "
   >
     <!-- Навігація -->
-    <nav style="display: flex; gap: 16px">
+    <nav style="display: flex; gap: 36px">
       <!--<strong>HoteLotse</strong>-->
-      <RouterLink to="/sa" style="color: #fff; margin-right: 20px"
-        >Dashboard</RouterLink
-      >
-      <RouterLink to="/sa/hotels" style="color: #fff; margin-right: 20px"
-        >Hotels</RouterLink
-      >
+      <RouterLink to="/sa" style="color: #fff">Dashboard</RouterLink>
+      <RouterLink to="/sa/hotels" style="color: #fff">Hotels</RouterLink>
       <RouterLink to="/sa/admins" style="color: #fff">Admins</RouterLink>
     </nav>
 
@@ -46,13 +40,7 @@
   </header>
 
   <main
-    style="
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 24px;
-      padding: 16px;
-      align-items: center;
-    "
+    style="margin: 0 auto; padding: 24px; padding: 16px; align-items: center"
   >
     <RouterView />
   </main>
