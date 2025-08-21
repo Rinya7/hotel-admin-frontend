@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global body styles with light/dark theme */
+body {
+  @apply m-0 min-h-screen flex bg-white text-[#213547]
+         dark:bg-gradient-to-br dark:from-[#1b5e20] dark:via-[#2e7d32] dark:to-[#43a047]
+         dark:text-white;
+}
+
+/* Optional link styles */
+a {
+  @apply font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 no-underline;
+}
+
+/* Headings */
+h1 {
+  @apply text-4xl leading-tight font-bold;
+}
+
+/* Card example (can be removed if unused) */
+.card {
+  @apply p-8 rounded-lg shadow-md bg-white dark:bg-brand/20;
+}
+
+/* App container */
+#app {
+  @apply max-w-[1280px] mx-auto p-4 text-center;
+}

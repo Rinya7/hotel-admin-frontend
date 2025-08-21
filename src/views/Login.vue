@@ -1,73 +1,61 @@
-<!-- frontend/src/views/Login.vue -->
 <template>
-  <div
-    style="
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      gap: 16px;
-    "
-  >
+  <div class="min-h-screen flex flex-col items-center justify-center gap-4 p-4">
     <LanguageSwitcher />
+
     <img
       :src="logo"
       alt="HoteLotse Logo"
-      style="width: 100%; max-width: 320px; align-items: center; margin: 0 auto"
+      class="w-full max-w-[320px] block mx-auto"
     />
-    <h1 style="text-align: center">{{ $t("login.title") }}</h1>
 
-    <!-- Форма -->
+    <h1 class="text-center text-xl font-semibold text-brand">
+      {{ $t("login.title") }}
+    </h1>
+
+    <!-- Form -->
     <form
       @submit.prevent="onSubmit"
-      style="
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        width: 100%;
-        max-width: 320px; /* ограничиваем ширину формы */
-      "
+      class="flex flex-col gap-3 w-full max-w-[320px]"
     >
       <input
         v-model="form.username"
         :placeholder="$t('login.username')"
-        required
         :disabled="loading"
         aria-label="Username"
-        class="input"
+        required
+        class="w-full text-brand placeholder:text-brand bg-white px-3 py-2 border border-gray-300 rounded-md text-base text-center disabled:opacity-70 disabled:cursor-not-allowed"
       />
+
       <input
         v-model="form.password"
         type="password"
         :placeholder="$t('login.password')"
-        required
         :disabled="loading"
         aria-label="Password"
-        class="input"
+        required
+        class="w-full text-brand placeholder:text-brand bg-white px-3 py-2 border border-gray-300 rounded-md text-base text-center disabled:opacity-70 disabled:cursor-not-allowed"
       />
 
-      <button :disabled="loading" :aria-busy="loading" class="login-btn">
-        <template v-if="!loading">{{ $t("login.submit") }}</template>
-        <template v-else>
-          <span class="spinner" aria-hidden="true"></span>
-          <span style="margin-left: 6px">{{ $t("common.loading") }}</span>
-        </template>
-      </button>
+      <Button
+        type="submit"
+        :loading="loading"
+        :disabled="loading"
+        class="mt-2"
+        fullWidth
+      >
+        {{ $t("login.submit") }}
+      </Button>
     </form>
 
-    <!-- Помилку показуємо тільки коли вона є -->
-    <p v-if="error" style="color: crimson; margin-top: 8px">{{ error }}</p>
+    <p v-if="error" class="text-red-600 mt-2">{{ error }}</p>
   </div>
 </template>
 
 <script setup lang="ts">
 /**
- * Логін-форма з i18n:
- * - показує лоадер під час запиту
- * - блокує поля/кнопку щоб уникнути повторної відправки
- * - на успіх робить редірект за роллю
- * - на помилку показує повідомлення
+ * Login form with i18n + Tailwind + brand tokens
+ * - Uses <Spinner /> for consistent loading visuals
+ * - Brand color comes from Tailwind theme (bg-brand, text-brand, border-brand)
  */
 import { reactive, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
@@ -76,102 +64,34 @@ import logo from "../assets/logo.png";
 import LanguageSwitcher from "../components/LanguageSwitcher.vue";
 import { useI18n } from "vue-i18n";
 import type { MessageSchema, SupportedLocale } from "../i18n";
+import Button from "../components/ui/Button.vue";
 
 const { t } = useI18n<{ message: MessageSchema }, SupportedLocale>();
-
 const auth = useAuthStore();
 const router = useRouter();
 
-// Локальний стан форми
 const form = reactive({ username: "", password: "" });
 const error = ref<string>("");
 const loading = ref<boolean>(false);
 
-// Якщо вже залогінений — одразу відправляємо на дашборд
+// Redirect immediately if already authenticated
 onMounted(() => {
-  if (!auth.isLogged) return; // ⬅️ важливо: не редіректимо незалогіненого
+  if (!auth.isLogged) return;
   router.replace({ name: auth.isSuperadmin ? "sa-dashboard" : "dashboard" });
 });
 
 async function onSubmit(): Promise<void> {
-  // Скидаємо попередню помилку
   error.value = "";
-
-  // ✅ Анти-дубль: если уже идёт запрос — просто выходим
-  if (loading.value) return;
-
-  // Тільки тепер ставимо loading = true
+  if (loading.value) return; // guard against double submit
   loading.value = true;
 
   try {
     await auth.login({ username: form.username, password: form.password });
-
-    // ⬇️ Успіх: редірект за роллю
     router.replace({ name: auth.isSuperadmin ? "sa-dashboard" : "dashboard" });
   } catch {
-    // ❌ Невдача: показуємо помилку
     error.value = t("validation.invalidLogin");
   } finally {
     loading.value = false;
   }
 }
 </script>
-<style scoped>
-/* Простий CSS-спінер без бібліотек */
-.spinner {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  border: 2px solid currentColor; /* колір успадковується від тексту кнопки */
-  border-right-color: transparent; /* робимо “дірку”, щоб був ефект обертання */
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite; /* безкінечне обертання */
-  vertical-align: -2px; /* легке вирівнювання по тексту */
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-.input {
-  width: 100%;
-  color: #383578;
-  background: #fff; /* білий фон */
-  padding: 10px 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  text-align: center;
-  font-size: 16px;
-  box-sizing: border-box;
-}
-input::placeholder {
-  color: #383578; /* нейтральный серый */
-  opacity: 1;
-}
-.login-btn {
-  display: block; /* 👈 добавляем */
-  width: 100%;
-  padding: 10px 12px;
-  background: #383578;
-  color: white;
-  /*border: 1px solid #ccc;*/
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 16px;
-  text-align: center;
-  box-sizing: border-box;
-  transition: all 0.3s ease;
-}
-
-.login-btn:hover:not(:disabled) {
-  background: white; /* белый фон */
-  color: #383578; /* зелёный текст */
-}
-
-.login-btn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-</style>
