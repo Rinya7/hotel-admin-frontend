@@ -1,28 +1,40 @@
 <!-- RoomStays.vue — список проживаний комнаты + создать/сменить статус -->
 <template>
   <section>
-    <header style="display:flex;align-items:center;gap:12px;">
-      <h2 style="margin-right:auto;">Room {{ roomNumber }} — Stays</h2>
+    <header style="display: flex; align-items: center; gap: 12px">
+      <h2 style="margin-right: auto">Room {{ roomNumber }} — Stays</h2>
       <RouterLink to="/rooms">← Back</RouterLink>
     </header>
 
     <details open>
       <summary>Create new stay</summary>
       <form @submit.prevent="createNew">
-        <input v-model.trim="form.mainGuestName" placeholder="Main guest name" required />
-        <input v-model.trim="extraGuestsLine" placeholder="Extra guests (comma separated)" />
+        <input
+          v-model.trim="form.mainGuestName"
+          placeholder="Main guest name"
+          required
+        />
+        <input
+          v-model.trim="extraGuestsLine"
+          placeholder="Extra guests (comma separated)"
+        />
         <input v-model="form.checkIn" type="date" required />
         <input v-model="form.checkOut" type="date" required />
         <select v-model="form.status">
           <option value="booked">booked</option>
           <option value="occupied">occupied</option>
         </select>
-        <input v-model.number="form.balance" type="number" step="0.01" placeholder="Balance" />
+        <input
+          v-model.number="form.balance"
+          type="number"
+          step="0.01"
+          placeholder="Balance"
+        />
         <button>Create</button>
       </form>
     </details>
 
-    <h3 style="margin-top:16px;">History / Current</h3>
+    <h3 style="margin-top: 16px">History / Current</h3>
     <table border="1" cellspacing="0" cellpadding="8">
       <thead>
         <tr>
@@ -58,8 +70,8 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from "vue";
 import { useRoute } from "vue-router";
-import type { Stay, CreateStayRequest } from "../types/stays";
-import { listStaysByRoom, createStay, updateStayStatus } from "../api/stays";
+import type { Stay, CreateStayRequest } from "@/types/stays";
+import { listStaysByRoom, createStay, updateStayStatus } from "@/api/stays";
 
 const route = useRoute();
 const roomNumber = String(route.params.roomNumber ?? "");

@@ -1,30 +1,34 @@
 // src/router/index.ts
-// Маршруты и защита. Без any, с ленивыми импортами и guard'ом.
+// Роутер з захистом маршрутів за ролями
 
 import { createRouter, createWebHistory } from "vue-router";
-// ВАЖНО: при включённом verbatimModuleSyntax типы импортируем через import type
-import type { RouteRecordRaw } from "vue-router";
-import { useAuthStore } from "../stores/auth";
+import type {
+  RouteRecordRaw,
+  //  NavigationGuardNext,
+  //  RouteLocationNormalized,
+} from "vue-router";
 
-// Лейаути
-const AdminLayout = () => import("../layouts/AdminLayout.vue");
-const SuperAdminLayout = () => import("../layouts/SuperAdminLayout.vue");
+import { useAuthStore } from "@/stores/auth";
 
-// Ледаче завантаження компонентів
-// (lazy loading) — для зменшення початкового розміру бандла
+// Ледаче завантаження компонентів (lazy loading)
+// для зменшення початкового розміру бандла
 // Компоненти завантажуються тільки при переході на відповідний маршрут
+
+const AdminLayout = () => import("@/layouts/AdminLayout.vue");
+const SuperAdminLayout = () => import("@/layouts/SuperAdminLayout.vue");
+
 // Публічні сторінки
-const Login = () => import("../views/Login.vue");
+const Login = () => import("@/views/Login.vue");
 
 // Admin / Editor сторінки
-const Dashboard = () => import("../views/Dashboard.vue");
-const RoomsList = () => import("../views/RoomsList.vue");
-const RoomStays = () => import("../views/RoomStays.vue");
+const Dashboard = () => import("@/views/Dashboard.vue");
+const RoomsList = () => import("@/views/RoomsList.vue");
+const RoomStays = () => import("@/views/RoomStays.vue");
 
 // Superadmin сторінки (простенькі плейсхолдери нижче)
-const SaDashboard = () => import("../views/sa/SaDashboard.vue");
-const SaHotels = () => import("../views/sa/SaHotels.vue");
-const SaAdmins = () => import("../views/sa/SaAdmins.vue");
+const SaDashboard = () => import("@/views/sa/SaDashboard.vue");
+const SaHotels = () => import("@/views/sa/SaHotelsList.vue");
+const SaHotelDetail = () => import("@/views/sa/SaHotelDetail.vue");
 
 // Опреділяємо маршрути
 // Публічний маршрут логіна — доступний без токена
@@ -57,7 +61,13 @@ const routes: RouteRecordRaw[] = [
     children: [
       { name: "sa-dashboard", path: "", component: SaDashboard },
       { name: "sa-hotels", path: "hotels", component: SaHotels },
-      { name: "sa-admins", path: "admins", component: SaAdmins },
+
+      {
+        name: "sa-hotel-detail",
+        path: "hotels/:id",
+        component: SaHotelDetail,
+        props: true,
+      },
     ],
   },
 
@@ -71,7 +81,12 @@ const router = createRouter({
   routes,
 });
 
-// Глобальний захист: якщо маршрут не public та нема  токена — відправляємо на /login
+/**
+ * Глобальний гард:
+ * - якщо маршрут public — пускаємо; якщо вже залогінений — редіректимо в «домашню» роль
+ * - якщо приватний і немає токена — на /login
+ * - якщо ролі не збігаються — редірект в «домашню» роль
+ */
 router.beforeEach((to) => {
   const auth = useAuthStore();
 

@@ -6,7 +6,7 @@ import {
   type SupportedLocale,
   type MessageSchema,
   setLocale,
-} from "../i18n";
+} from "@/i18n";
 
 export function useLocale() {
   const { t, d, n, locale } = useI18n<

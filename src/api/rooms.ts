@@ -8,7 +8,7 @@ import type {
   AvailabilityQuery,
   RoomAvailabilityItem,
   RoomsStats,
-} from "../types/rooms";
+} from "@/types/rooms";
 
 export async function getRooms(): Promise<Room[]> {
   const { data } = await http.get<Room[]>("/rooms");

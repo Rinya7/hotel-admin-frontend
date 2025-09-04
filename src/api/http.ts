@@ -1,45 +1,3 @@
-//// frontend/src/api/http.ts
-//import axios from "axios";
-//// ⬇️ тип імпортуємо type-only
-//import type { AxiosInstance } from "axios";
-//import { useUiStore } from "../stores/ui"; // ✅ можна безпечно імпортувати — Pinia вже ініціалізована в main.ts
-
-//const http: AxiosInstance = axios.create({
-//  baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:3000",
-//  timeout: 15_000,
-//});
-
-//// Додаємо токен у кожен запит, якщо є
-//http.interceptors.request.use((config) => {
-//  const token = localStorage.getItem("token");
-
-//  if (token && config.headers) {
-//    config.headers.Authorization = `Bearer ${token}`;
-//  }
-//  // UI: старт глобального лоадера
-//  const ui = useUiStore();
-//  ui.start();
-//  return config;
-//});
-
-//// Якщо 401 — чистимо локалку і на /login
-//http.interceptors.response.use(
-//  (response) => {
-//    const ui = useUiStore();
-//    ui.stop();
-//    return response;
-//  },
-//  (err) => {
-//    const ui = useUiStore();
-//    ui.stop();
-//    if (err?.response?.status === 401) {
-//      localStorage.clear();
-//      window.location.href = "/login";
-//    }
-//    return Promise.reject(err);
-//  }
-//);
-
 //export default http;
 // frontend/src/api/http.ts
 import axios, {
@@ -48,7 +6,7 @@ import axios, {
   type InternalAxiosRequestConfig,
   type AxiosError,
 } from "axios";
-import { useUiStore } from "../stores/ui";
+import { useUiStore } from "@/stores/ui";
 
 const http: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:3000",

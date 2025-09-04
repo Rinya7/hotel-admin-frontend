@@ -4,7 +4,7 @@ import type {
   Stay,
   CreateStayRequest,
   UpdateStayStatusRequest,
-} from "../types/stays";
+} from "@/types/stays";
 
 export async function listStaysByRoom(roomNumber: string): Promise<Stay[]> {
   const { data } = await http.get<Stay[]>(`/stays`, { params: { roomNumber } });
