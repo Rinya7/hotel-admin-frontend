@@ -109,18 +109,18 @@
 
 <script setup lang="ts">
 import { onMounted, reactive, ref, computed } from "vue";
-import { useAuthStore } from "../stores/auth";
+import { useAuthStore } from "@/stores/auth";
 import type {
   Room,
   UpdateRoomRequest,
   CreateRoomRequest,
-} from "../types/rooms";
+} from "@/types/rooms";
 import {
   getRooms,
   updateRoomStatus,
   updateRoomByNumber,
   createRoom,
-} from "../api/rooms";
+} from "@/api/rooms";
 
 const auth = useAuthStore();
 const rooms = ref<Room[]>([]);

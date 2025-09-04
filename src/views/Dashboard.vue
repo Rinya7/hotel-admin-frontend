@@ -51,10 +51,10 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import type { RoomsStats } from "../types/rooms";
-import type { Stay } from "../types/stays";
-import { getRoomsStats } from "../api/rooms";
-import http from "../api/http"; // используем для /rooms/stays/current
+import type { RoomsStats } from "@/types/rooms";
+import type { Stay } from "@/types/stays";
+import { getRoomsStats } from "@/api/rooms";
+import http from "@/api/http"; // используем для /rooms/stays/current
 
 const stats = ref<RoomsStats | null>(null);
 const current = ref<Stay[]>([]);

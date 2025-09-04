@@ -1,56 +1,48 @@
-<!-- SuperAdminLayout (для superadmin) -->
-<!-- src/layouts/SuperAdminLayout.vue -->
 <template>
-  <!-- Шапка для супер-адміна -->
   <header
-    style="
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-top: 24px;
-      padding-left: 12px;
-      padding-right: 12px;
-      border-bottom: 2px solid #2e7d32;
-      position: relative;
-    "
+    class="mx-auto flex items-center justify-between px-3 pt-6 border-b-2 border-emerald-700"
   >
     <!-- Навігація -->
-    <nav style="display: flex; gap: 36px">
-      <!--<strong>HoteLotse</strong>-->
-      <RouterLink to="/sa" style="color: #fff">Dashboard</RouterLink>
-      <RouterLink to="/sa/hotels" style="color: #fff">Hotels</RouterLink>
-      <RouterLink to="/sa/admins" style="color: #fff">Admins</RouterLink>
+    <nav class="flex gap-9">
+      <RouterLink
+        :to="{ name: 'sa-dashboard' }"
+        class="text-black"
+        active-class="font-semibold underline"
+        >Dashboard</RouterLink
+      >
+      <RouterLink
+        :to="{ name: 'sa-hotels' }"
+        class="text-black"
+        active-class="font-semibold underline"
+        >Hotels</RouterLink
+      >
     </nav>
 
     <!-- Лого -->
-    <div style="display: flex; justify-content: center">
-      <img
-        :src="logo"
-        alt="HoteLotse Logo"
-        style="height: 40px; align-items: center; position: relative; top: 0px"
-      />
+    <div class="flex items-center justify-center">
+      <img :src="logo" alt="Logo" class="h-10" />
     </div>
-    <span v-if="auth.isLogged">
-      <em style="margin-right: 10px; color: #fff"
+
+    <!-- Профіль -->
+    <div v-if="auth.isLogged" class="flex items-center gap-2">
+      <em class="mr-2 text-gray-600"
         >{{ auth.displayName }} ({{ auth.role ?? "?" }})</em
       >
-      <button @click="onLogout" style="">Logout</button>
-    </span>
+      <button @click="onLogout" class="btn btn-sm">Logout</button>
+    </div>
   </header>
 
-  <main
-    style="margin: 0 auto; padding: 24px; padding: 16px; align-items: center"
-  >
+  <main class="mx-auto p-4 md:p-6">
+    <LanguageSwitcher />
     <RouterView />
   </main>
 </template>
 
 <script setup lang="ts">
-import { useAuthStore } from "../stores/auth";
+import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "vue-router";
-import logo from "../assets/logo.png";
-//import image from "../assets/bg_picktures.jpg";
+import LanguageSwitcher from "@/components/LanguageSwitcher.vue";
+import logo from "@/assets/logo.png";
 
 const auth = useAuthStore();
 const router = useRouter();
@@ -62,11 +54,5 @@ function onLogout(): void {
 </script>
 
 <style scoped>
-.layout-bg {
-  height: full;
-  background-image: url("../assets/bg_image.jpg");
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-}
+/* за потреби: .layout-bg { background-image: url('@/assets/bg_image.jpg'); ... } */
 </style>

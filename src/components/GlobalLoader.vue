@@ -17,7 +17,7 @@
  * Global overlay loader
  * - Uses reusable <Spinner /> with brand color
  */
-import { useUiStore } from "../stores/ui";
+import { useUiStore } from "@/stores/ui";
 import Spinner from "./Spinner.vue";
 
 const ui = useUiStore();

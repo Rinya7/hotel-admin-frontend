@@ -1,6 +1,6 @@
 // frontend/src/stores/auth.ts
 import { defineStore } from "pinia";
-import http from "../api/http";
+import http from "@/api/http";
 import type {
   LoginRequest,
   LoginEnvelope,

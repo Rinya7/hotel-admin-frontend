@@ -27,8 +27,8 @@
  * - Active: solid brand button
  * - Inactive: outline brand button
  */
-import { useLocale } from "../composables/useLocale";
-import { useTheme } from "../composables/useTheme";
+import { useLocale } from "@/composables/useLocale";
+import { useTheme } from "@/composables/useTheme";
 import Button from "./ui/Button.vue";
 
 const { isDark, toggleTheme } = useTheme();

@@ -59,12 +59,12 @@
  */
 import { reactive, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { useAuthStore } from "../stores/auth";
-import logo from "../assets/logo.png";
-import LanguageSwitcher from "../components/LanguageSwitcher.vue";
+import { useAuthStore } from "@/stores/auth";
+import logo from "@/assets/logo.png";
+import LanguageSwitcher from "@/components/LanguageSwitcher.vue";
 import { useI18n } from "vue-i18n";
-import type { MessageSchema, SupportedLocale } from "../i18n";
-import Button from "../components/ui/Button.vue";
+import type { MessageSchema, SupportedLocale } from "@/i18n";
+import Button from "@/components/ui/Button.vue";
 
 const { t } = useI18n<{ message: MessageSchema }, SupportedLocale>();
 const auth = useAuthStore();
