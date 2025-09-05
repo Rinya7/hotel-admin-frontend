@@ -1,9 +1,9 @@
 <template>
-  <div class="p-6 space-y-6">
+  <div class="space-y-6">
     <section
       class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between"
     >
-      <h1 class="text-2xl font-semibold">Готелі (власники)</h1>
+      <h1 class="text-2xl font-semibold">Hotels</h1>
       <input
         v-model="query"
         type="text"
@@ -173,15 +173,15 @@ function setSort(key: Parameters<typeof store.setSort>[0]) {
 }
 
 async function onBlock(username: string): Promise<void> {
-  if (!confirm(`Заблокувати ${username}?`)) return;
+  if (!confirm(`Block ${username}?`)) return;
   await store.block(username);
 }
 async function onUnblock(username: string): Promise<void> {
-  if (!confirm(`Розблокувати ${username}?`)) return;
+  if (!confirm(`Unblock ${username}?`)) return;
   await store.unblock(username);
 }
 async function onDelete(username: string): Promise<void> {
-  if (!confirm(`Видалити ${username}? Дію не можна скасувати.`)) return;
+  if (!confirm(`Delete ${username}? Дію не можна скасувати.`)) return;
   await store.removeUser(username);
 }
 </script>

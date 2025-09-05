@@ -4,7 +4,7 @@
 
 /* Global body styles with light/dark theme */
 body {
-  @apply m-0 min-h-screen flex bg-white text-[#213547]
+  @apply m-0 min-h-screen  bg-white text-[#213547]
          dark:bg-gradient-to-br dark:from-[#1b5e20] dark:via-[#2e7d32] dark:to-[#43a047]
          dark:text-white;
 }
@@ -22,9 +22,4 @@ h1 {
 /* Card example (can be removed if unused) */
 .card {
   @apply p-8 rounded-lg shadow-md bg-white dark:bg-brand/20;
-}
-
-/* App container */
-#app {
-  @apply max-w-[1280px] mx-auto p-4 text-center;
 }
