@@ -56,6 +56,12 @@
               Статус
               <SortIcon :active="sortKey === 'isBlocked'" :dir="sortDir" />
             </th>
+            <th
+              class="px-4 py-3 text-center cursor-pointer"
+              @click="setSort('isBlocked')"
+            >
+              Дія
+            </th>
             <th class="px-4 py-3"></th>
           </tr>
         </thead>
@@ -108,11 +114,15 @@
                   {{ h.isBlocked ? "Заблоковано" : "Активний" }}
                 </span>
               </td>
-              <td class="px-4 py-3 text-right">
+              <td class="px-4 py-3 text-left">
                 <!-- якщо робитимеш картку готелю, розкоментуй ↓ і маршрут у router -->
-                <!-- <RouterLink :to="{ name: 'sa-hotel-detail', params: { id: h.id } }" class="btn btn-sm">Картка</RouterLink> -->
+                <div class="flex justify-between gap-2 underline">
+                  <RouterLink
+                    :to="{ name: 'sa-hotel-detail', params: { id: h.id } }"
+                    class="btn btn-sm"
+                    >Картка</RouterLink
+                  >
 
-                <div class="inline-flex gap-2">
                   <button
                     v-if="!h.isBlocked"
                     class="btn btn-sm btn-warning"
@@ -126,6 +136,9 @@
                     @click="onUnblock(h.username)"
                   >
                     Розблок
+                  </button>
+                  <button class="btn btn-sm" @click="openEdit(h.username)">
+                    Редагувати
                   </button>
                   <button
                     class="btn btn-sm btn-error"
@@ -147,13 +160,22 @@
       </table>
     </section>
   </div>
+  <!-- Модалка редагування: шукаємо поточний item за username -->
+  <EditHotelDialog
+    v-if="editOpen && hotels.find((x) => x.username === editingUsername)"
+    v-model="editOpen"
+    :initial="hotels.find(x => x.username === editingUsername)!"
+    @save="onSavePatch"
+  />
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useSuperHotelsStore } from "@/stores/superadmin.ts";
 import SortIcon from "@/components/common/SortIcon.vue";
+import EditHotelDialog from "@/components/superadmin/EditHotelDialog.vue";
+import type { UpdateHotelAdminRequest } from "@/types/dto";
 
 const store = useSuperHotelsStore();
 const { loading, error, sorted, sortKey, sortDir } = storeToRefs(store);
@@ -168,10 +190,12 @@ const query = computed({
 });
 
 const hotels = computed(() => sorted.value);
+
 function setSort(key: Parameters<typeof store.setSort>[0]) {
   store.setSort(key);
 }
 
+// Дії блок/розблок/видалити
 async function onBlock(username: string): Promise<void> {
   if (!confirm(`Block ${username}?`)) return;
   await store.block(username);
@@ -183,5 +207,23 @@ async function onUnblock(username: string): Promise<void> {
 async function onDelete(username: string): Promise<void> {
   if (!confirm(`Delete ${username}? Дію не можна скасувати.`)) return;
   await store.removeUser(username);
+}
+
+// === Редагування ===
+const editOpen = ref(false);
+const editingUsername = ref<string>("");
+
+function openEdit(username: string): void {
+  editingUsername.value = username;
+  editOpen.value = true;
+}
+
+async function onSavePatch(patch: UpdateHotelAdminRequest): Promise<void> {
+  if (!editingUsername.value) return;
+  try {
+    await store.updateHotel(editingUsername.value, patch);
+  } catch (e) {
+    alert(e instanceof Error ? e.message : "Помилка збереження");
+  }
 }
 </script>
