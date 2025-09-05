@@ -10,6 +10,12 @@ import type {
   HotelSortKey,
   SortDir,
 } from "@/types/hotel";
+import type {
+  CreateAdminRequest,
+  CreateAdminResponse,
+  UpdateHotelAdminRequest,
+  UpdateHotelAdminResponse,
+} from "@/types/dto";
 
 export interface HotelsState {
   loading: boolean;
@@ -99,6 +105,41 @@ export const useSuperHotelsStore = defineStore("super-hotels", {
         compareValues(getSortValue(a, key), getSortValue(b, key), dir)
       );
     },
+    /** Загальна кількість готелів (адмінів-власників) */
+    totalHotels(state): number {
+      return state.raw.length;
+    },
+
+    /** Сумарна кількість редакторів по всіх готелях */
+    totalEditors(state): number {
+      return state.raw.reduce((acc, h) => acc + (h.editorsCount ?? 0), 0);
+    },
+
+    /** Скільки заблоковано готелів */
+    blockedHotels(state): number {
+      return state.raw.filter((h) => h.isBlocked).length;
+    },
+
+    /** Скільки активних (не заблокованих) */
+    activeHotels(): number {
+      return this.totalHotels - this.blockedHotels;
+    },
+
+    /** Середнє число редакторів на готель (округлено до 1 знаку) */
+    avgEditorsPerHotel(): number {
+      if (this.totalHotels === 0) return 0;
+      const avg = this.totalEditors / this.totalHotels;
+      return Math.round(avg * 10) / 10;
+    },
+
+    /** Останні N готелів за датою створення */
+    latestHotels:
+      (state) =>
+      (limit = 5): PublicAdminUser[] => {
+        return [...state.raw]
+          .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
+          .slice(0, limit);
+      },
   },
   actions: {
     setQuery(q: string): void {
@@ -110,6 +151,67 @@ export const useSuperHotelsStore = defineStore("super-hotels", {
       } else {
         this.sortKey = key;
         this.sortDir = "asc";
+      }
+    },
+
+    /** Створити нового адміна (готель). Потрібно бути супер-адміном. */
+    async createHotelAdmin(payload: CreateAdminRequest): Promise<void> {
+      // Мінімальна перевірка на фронті — паролі збігаються
+      if (payload.password !== payload.confirmPassword) {
+        throw new Error("Паролі не збігаються");
+      }
+      // 👇 чітко кажемо: очікуємо CreateAdminResponse
+      await http.post<CreateAdminResponse>("/auth/create-admin", payload);
+
+      // Після створення — оновимо список, щоб статистика/таблиця відразу підхопилися
+      await this.fetchAll();
+    },
+
+    /** Оновити дані готелю (за username), тільки супер-адмін */
+    async updateHotel(
+      username: string,
+      patch: UpdateHotelAdminRequest
+    ): Promise<void> {
+      // Мінімальна фронт-валідація годин (якщо передані)
+      const isHourOrNull = (v: unknown): v is number | null =>
+        v === null ||
+        (Number.isInteger(v) && (v as number) >= 0 && (v as number) <= 23);
+
+      if (
+        typeof patch.checkInHour !== "undefined" &&
+        !isHourOrNull(patch.checkInHour)
+      ) {
+        throw new Error("checkInHour має бути 0..23 або null");
+      }
+      if (
+        typeof patch.checkOutHour !== "undefined" &&
+        !isHourOrNull(patch.checkOutHour)
+      ) {
+        throw new Error("checkOutHour має бути 0..23 або null");
+      }
+
+      const res = await http.put<UpdateHotelAdminResponse>(
+        `/auth/admin/${encodeURIComponent(username)}`,
+        patch
+      );
+
+      // Оптимістично оновимо локальний кеш
+      const updated = res.data.admin;
+      const idx = this.raw.findIndex((u) => u.username === username);
+      if (idx >= 0) {
+        const old = this.raw[idx];
+        this.raw[idx] = {
+          ...old,
+          hotel_name: updated.hotel_name,
+          address: updated.address,
+          full_name: updated.full_name,
+          phone: updated.phone,
+          email: updated.email,
+          logo_url: updated.logo_url,
+          checkInHour: updated.checkInHour,
+          checkOutHour: updated.checkOutHour,
+          updatedAt: updated.updatedAt,
+        };
       }
     },
 
