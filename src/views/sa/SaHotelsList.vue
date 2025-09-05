@@ -120,7 +120,7 @@
                   <RouterLink
                     :to="{ name: 'sa-hotel-detail', params: { id: h.id } }"
                     class="btn btn-sm"
-                    >Картка</RouterLink
+                    >info</RouterLink
                   >
 
                   <button
@@ -128,17 +128,17 @@
                     class="btn btn-sm btn-warning"
                     @click="onBlock(h.username)"
                   >
-                    Блок
+                    block
                   </button>
                   <button
                     v-else
                     class="btn btn-sm btn-success"
                     @click="onUnblock(h.username)"
                   >
-                    Розблок
+                    unblock
                   </button>
                   <button class="btn btn-sm" @click="openEdit(h.username)">
-                    Редагувати
+                    edit
                   </button>
                   <button
                     class="btn btn-sm btn-error"
@@ -181,7 +181,7 @@ const store = useSuperHotelsStore();
 const { loading, error, sorted, sortKey, sortDir } = storeToRefs(store);
 
 onMounted(() => {
-  void store.fetchAll(); // інтерсептор http сам поставить токен/лоадер
+  void store.fetchAll(); //   http сам поставить токен/loader
 });
 
 const query = computed({
@@ -195,7 +195,7 @@ function setSort(key: Parameters<typeof store.setSort>[0]) {
   store.setSort(key);
 }
 
-// Дії блок/розблок/видалити
+// action block/unblock/delete
 async function onBlock(username: string): Promise<void> {
   if (!confirm(`Block ${username}?`)) return;
   await store.block(username);
@@ -209,7 +209,7 @@ async function onDelete(username: string): Promise<void> {
   await store.removeUser(username);
 }
 
-// === Редагування ===
+// === Editing ===
 const editOpen = ref(false);
 const editingUsername = ref<string>("");
 
