@@ -5,18 +5,18 @@
     >
       <!-- Навігація -->
       <nav class="flex gap-9">
-        <RouterLink
-          :to="{ name: 'sa-dashboard' }"
-          class="text-black"
-          active-class="font-semibold underline"
-          >Dashboard</RouterLink
-        >
-        <RouterLink
-          :to="{ name: 'sa-hotels' }"
-          class="text-black"
-          active-class="font-semibold underline"
-          >Hotels</RouterLink
-        >
+        <RouterLink :to="{ name: 'sa-dashboard' }" v-slot="{ isExactActive }">
+          <span
+            :class="['text-brand', isExactActive && 'font-semibold underline']"
+          >
+            {{ t("superAdminLayout.nav.dashboard") }}
+          </span>
+        </RouterLink>
+        <RouterLink :to="{ name: 'sa-hotels' }" v-slot="{ isActive }">
+          <span :class="['text-brand', isActive && 'font-semibold underline']">
+            {{ t("superAdminLayout.nav.hotels") }}
+          </span>
+        </RouterLink>
       </nav>
 
       <!-- Лого -->
@@ -26,10 +26,12 @@
 
       <!-- Профіль -->
       <div v-if="auth.isLogged" class="flex items-center gap-2">
-        <em class="mr-2 text-gray-600"
+        <em class="mr-2 text-brand font-semibold"
           >{{ auth.displayName }} ({{ auth.role ?? "?" }})</em
         >
-        <button @click="onLogout" class="btn btn-sm">Logout</button>
+        <Button @click="onLogout" size="sm" variant="outline">
+          {{ t("superAdminLayout.profile.logout") }}
+        </Button>
       </div>
     </div>
   </header>
@@ -47,9 +49,12 @@ import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "vue-router";
 import LanguageSwitcher from "@/components/LanguageSwitcher.vue";
 import logo from "@/assets/logo.png";
+import Button from "@/components/ui/Button.vue";
+import { useLocale } from "@/composables/useLocale";
 
 const auth = useAuthStore();
 const router = useRouter();
+const { t } = useLocale();
 
 /**
  * Логаут:
@@ -62,6 +67,4 @@ function onLogout(): void {
 }
 </script>
 
-<style scoped>
-/* за потреби: .layout-bg { background-image: url('@/assets/bg_image.jpg'); ... } */
-</style>
+<style scoped></style>

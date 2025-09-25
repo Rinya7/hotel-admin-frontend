@@ -2,11 +2,7 @@
   <div class="min-h-screen flex flex-col items-center justify-center gap-4 p-4">
     <LanguageSwitcher />
 
-    <img
-      :src="logo"
-      alt="HoteLotse Logo"
-      class="w-full max-w-[320px] block mx-auto"
-    />
+    <img :src="logo" alt="logo" class="w-full max-w-[320px] block mx-auto" />
 
     <h1 class="text-center text-xl font-semibold text-brand">
       {{ $t("login.title") }}

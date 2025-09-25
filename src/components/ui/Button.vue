@@ -65,6 +65,7 @@ interface Props {
   disabled?: boolean;
   fullWidth?: boolean;
   type?: BtnType;
+  noHover?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -74,6 +75,7 @@ const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   fullWidth: false,
   type: "button",
+  noHover: false,
 });
 
 const sizeClass = computed(() => {
@@ -90,17 +92,33 @@ const sizeClass = computed(() => {
 const widthClass = computed(() => (props.fullWidth ? "w-full" : "w-auto"));
 
 const variantClass = computed(() => {
-  switch (props.variant) {
-    case "outline":
-      return "border border-brand text-brand bg-white hover:bg-brand hover:text-white dark:bg-transparent dark:text-white dark:border-white dark:hover:bg-brand dark:hover:text-white";
-    case "ghost":
-      return "bg-transparent text-brand hover:bg-brand hover:text-white dark:text-white dark:hover:bg-white dark:hover:text-brand";
-    case "danger":
-      return "bg-red-600 text-white border border-red-600 hover:bg-white hover:text-red-600 dark:bg-red-700 dark:hover:bg-white dark:hover:text-red-700";
-    case "secondary":
-      return "bg-gray-200 text-gray-800 border border-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-600";
-    default: // solid
-      return "bg-brand text-white border border-brand hover:bg-white hover:text-brand dark:bg-brand dark:text-white dark:border-white dark:hover:bg-white dark:hover:text-brand";
-  }
+  const baseClasses = {
+    outline:
+      "border border-brand text-brand bg-white dark:bg-transparent dark:text-white dark:border-white",
+    ghost: "bg-transparent text-brand dark:text-white",
+    danger: "bg-red-600 text-white border border-red-600 dark:bg-red-700",
+    secondary:
+      "bg-gray-200 text-gray-800 border border-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-700",
+    solid:
+      "bg-brand text-white border border-brand dark:bg-brand dark:text-white dark:border-white",
+  };
+
+  const hoverClasses = {
+    outline:
+      "hover:bg-brand hover:text-white dark:hover:bg-brand dark:hover:text-white",
+    ghost:
+      "hover:bg-brand hover:text-white dark:hover:bg-white dark:hover:text-brand",
+    danger:
+      "hover:bg-white hover:text-red-600 dark:hover:bg-white dark:hover:text-red-700",
+    secondary: "hover:bg-gray-300 dark:hover:bg-gray-600",
+    solid:
+      "hover:bg-white hover:text-brand dark:hover:bg-white dark:hover:text-brand",
+  };
+
+  const variant = props.variant || "solid";
+  const base = baseClasses[variant];
+  const hover = props.noHover ? "" : hoverClasses[variant];
+
+  return `${base} ${hover}`.trim();
 });
 </script>
