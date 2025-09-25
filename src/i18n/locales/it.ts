@@ -74,7 +74,7 @@ const it = {
   editHotelDialog: {
     title: "Modifica Hotel",
     fields: {
-      hotelName: "Nome hotel",
+      hotelName: "Nome albergo",
       address: "Indirizzo",
       fullName: "Nome proprietario",
       email: "Email",
@@ -138,7 +138,7 @@ const it = {
       placeholder: "Cerca: nome, indirizzo, login, email, telefono",
     },
     table: {
-      hotelName: "Nome Hotel",
+      hotelName: "Albergo",
       address: "Indirizzo",
       login: "Login",
       editors: "Editori",

@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-6">
     <section
-      class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between"
+      class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between md:py-[24px]"
     >
       <h1 class="text-2xl font-semibold text-brand dark:text-white">
         {{ t("saHotelsList.title") }}
@@ -17,72 +17,74 @@
     <section
       class="overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
     >
-      <table class="min-w-full text-sm">
+      <table class="w-full text-sm table-fixed">
         <thead
           class="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
         >
           <tr>
             <th
-              class="px-4 py-3 text-left cursor-pointer"
+              class="lg:w-1/7 xl:w-auto px-4 py-3 text-left cursor-pointer"
               @click="setSort('hotel_name')"
             >
               {{ t("saHotelsList.table.hotelName") }}
               <SortIcon :active="sortKey === 'hotel_name'" :dir="sortDir" />
             </th>
             <th
-              class="px-4 py-3 text-left cursor-pointer"
+              class="lg:w-1/6 xl:w-[10%] px-4 py-3 text-left cursor-pointer"
               @click="setSort('address')"
             >
               {{ t("saHotelsList.table.address") }}
               <SortIcon :active="sortKey === 'address'" :dir="sortDir" />
             </th>
             <th
-              class="px-4 py-3 text-left cursor-pointer"
+              class="hidden lg:table-cell lg:w-1/8 xl:w-1/7 px-4 py-3 text-center cursor-pointer"
               @click="setSort('username')"
             >
               {{ t("saHotelsList.table.login") }}
               <SortIcon :active="sortKey === 'username'" :dir="sortDir" />
             </th>
             <th
-              class="px-4 py-3 text-left cursor-pointer"
+              class="hidden xl:table-cell xl:w-auto px-4 py-3 text-center cursor-pointer"
               @click="setSort('editorsCount')"
             >
               {{ t("saHotelsList.table.editors") }}
               <SortIcon :active="sortKey === 'editorsCount'" :dir="sortDir" />
             </th>
             <th
-              class="px-4 py-3 text-left cursor-pointer"
+              class="hidden xl:table-cell xl:w-1/7 px-4 py-3 text-center cursor-pointer"
               @click="setSort('createdAt')"
             >
               {{ t("saHotelsList.table.created") }}
               <SortIcon :active="sortKey === 'createdAt'" :dir="sortDir" />
             </th>
             <th
-              class="px-4 py-3 text-left cursor-pointer"
+              class="xl:w-1/6 px-4 py-3 text-center cursor-pointer"
               @click="setSort('isBlocked')"
             >
               {{ t("saHotelsList.table.status") }}
               <SortIcon :active="sortKey === 'isBlocked'" :dir="sortDir" />
             </th>
-            <th
-              class="px-4 py-3 text-center cursor-pointer"
-              @click="setSort('isBlocked')"
-            >
+            <th class="xl:w-1/3 px-4 py-3 text-center">
               {{ t("saHotelsList.table.action") }}
             </th>
-            <th class="px-4 py-3"></th>
           </tr>
         </thead>
 
         <tbody>
           <tr v-if="loading">
-            <td colspan="7" class="px-4 py-6 text-center text-gray-500">
+            <td
+              colspan="7"
+              class="px-4 py-6 text-center text-gray-500 dark:text-gray-400"
+            >
               {{ t("saHotelsList.messages.loading") }}
             </td>
           </tr>
 
           <tr v-else-if="error">
-            <td colspan="7" class="px-4 py-6 text-center text-red-600">
+            <td
+              colspan="7"
+              class="px-4 py-6 text-center text-red-600 dark:text-red-400"
+            >
               {{ error }}
             </td>
           </tr>
@@ -91,7 +93,7 @@
             <tr
               v-for="h in hotels"
               :key="h.id"
-              class="border-t hover:bg-gray-50 dark:hover:bg-gray-700"
+              class="border-t border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               <td class="px-4 py-3">
                 <div class="flex items-center gap-3">
@@ -99,25 +101,47 @@
                     v-if="h.logo_url"
                     :src="h.logo_url"
                     alt="logo"
-                    class="h-8 w-8 rounded object-cover"
+                    class="h-8 w-8 rounded object-cover flex-shrink-0"
                   />
-                  <div>
-                    <div class="font-medium">{{ h.hotel_name ?? "—" }}</div>
-                    <div class="text-xs text-gray-500">
+                  <div class="min-w-0">
+                    <div class="font-medium text-gray-900 dark:text-white">
+                      {{ h.hotel_name ?? "—" }}
+                    </div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">
                       {{ h.full_name ?? "—" }}
                     </div>
                   </div>
                 </div>
               </td>
-              <td class="px-4 py-3">{{ h.address ?? "—" }}</td>
-              <td class="px-4 py-3">{{ h.username }}</td>
-              <td class="px-4 py-3">{{ h.editorsCount }}</td>
-              <td class="px-4 py-3">
+              <td class="px-4 py-3 lg:w-max text-gray-700 dark:text-gray-300">
+                <div class=" " :title="h.address ?? '—'">
+                  {{ h.address ?? "—" }}
+                </div>
+              </td>
+              <td
+                class="hidden lg:table-cell lg:w-max text-center px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
+                <div class="truncate">
+                  {{ h.username }}
+                </div>
+              </td>
+              <td
+                class="hidden xl:table-cell xl:w-max px-4 py-3 text-center text-gray-700 dark:text-gray-300"
+              >
+                {{ h.editorsCount }}
+              </td>
+              <td
+                class="hidden xl:table-cell xl:w-max text-center px-4 py-3 text-gray-700 dark:text-gray-300"
+              >
                 {{ new Date(h.createdAt).toLocaleDateString() }}
               </td>
-              <td class="px-4 py-3">
+              <td class="px-4 py-3 text-center truncate">
                 <span
-                  :class="h.isBlocked ? 'text-red-600' : 'text-emerald-700'"
+                  :class="
+                    h.isBlocked
+                      ? 'text-red-600 dark:text-red-400'
+                      : 'text-emerald-700 dark:text-emerald-400'
+                  "
                 >
                   {{
                     h.isBlocked
@@ -126,34 +150,39 @@
                   }}
                 </span>
               </td>
-              <td class="px-4 py-3 text-left">
+              <td class="px-4 py-3">
                 <!-- якщо робитимеш картку готелю, розкоментуй ↓ і маршрут у router -->
-                <div class="flex justify-between gap-2 underline">
+                <div
+                  class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-1 justify-items-center"
+                >
                   <RouterLink
                     :to="{ name: 'sa-hotel-detail', params: { id: h.id } }"
-                    class="btn btn-sm"
+                    class="w-full px-2 py-1 text-xs bg-blue-100 hover:bg-blue-200 dark:bg-blue-900 dark:hover:bg-blue-800 text-blue-800 dark:text-blue-200 rounded transition-colors whitespace-nowrap text-center"
                     >{{ t("saHotelsList.actions.info") }}</RouterLink
                   >
 
                   <button
                     v-if="!h.isBlocked"
-                    class="btn btn-sm btn-warning"
+                    class="w-full px-2 py-1 text-xs bg-yellow-100 hover:bg-yellow-200 dark:bg-yellow-900 dark:hover:bg-yellow-800 text-yellow-800 dark:text-yellow-200 rounded transition-colors whitespace-nowrap"
                     @click="onBlock(h.username)"
                   >
                     {{ t("saHotelsList.actions.block") }}
                   </button>
                   <button
                     v-else
-                    class="btn btn-sm btn-success"
+                    class="w-full px-2 py-1 text-xs bg-green-100 hover:bg-green-200 dark:bg-green-900 dark:hover:bg-green-800 text-green-800 dark:text-green-200 rounded transition-colors whitespace-nowrap"
                     @click="onUnblock(h.username)"
                   >
                     {{ t("saHotelsList.actions.unblock") }}
                   </button>
-                  <button class="btn btn-sm" @click="openEdit(h.username)">
+                  <button
+                    class="w-full px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 rounded transition-colors whitespace-nowrap"
+                    @click="openEdit(h.username)"
+                  >
                     {{ t("saHotelsList.actions.edit") }}
                   </button>
                   <button
-                    class="btn btn-sm btn-error"
+                    class="w-full px-2 py-1 text-xs bg-red-100 hover:bg-red-200 dark:bg-red-900 dark:hover:bg-red-800 text-red-800 dark:text-red-200 rounded transition-colors whitespace-nowrap"
                     @click="onDelete(h.username)"
                   >
                     {{ t("saHotelsList.actions.delete") }}
@@ -163,7 +192,10 @@
             </tr>
 
             <tr v-if="hotels.length === 0">
-              <td colspan="7" class="px-4 py-6 text-center text-gray-500">
+              <td
+                colspan="7"
+                class="px-4 py-6 text-center text-gray-500 dark:text-gray-400"
+              >
                 {{ t("saHotelsList.messages.nothingFound") }}
               </td>
             </tr>

@@ -1,34 +1,40 @@
 <template>
   <header class="border-b-2 border-emerald-700 pt-4">
     <div
-      class="container mx-auto flex items-center justify-between px-2 md:px-0 py-2"
+      class="container relative mx-auto flex items-center justify-between px-2 md:px-0 py-2"
     >
       <!-- Навігація -->
-      <nav class="flex gap-9">
+      <nav class="flex gap-[20px]">
         <RouterLink :to="{ name: 'sa-dashboard' }" v-slot="{ isExactActive }">
           <span
-            :class="['text-brand', isExactActive && 'font-semibold underline']"
+            :class="[
+              'text-brand dark:text-white',
+              isExactActive && 'font-semibold underline',
+            ]"
           >
             {{ t("superAdminLayout.nav.dashboard") }}
           </span>
         </RouterLink>
         <RouterLink :to="{ name: 'sa-hotels' }" v-slot="{ isActive }">
-          <span :class="['text-brand', isActive && 'font-semibold underline']">
+          <span
+            :class="[
+              'text-brand dark:text-white',
+              isActive && 'font-semibold underline',
+            ]"
+          >
             {{ t("superAdminLayout.nav.hotels") }}
           </span>
         </RouterLink>
       </nav>
 
       <!-- Лого -->
-      <div class="flex items-center justify-center">
-        <img :src="logo" alt="Logo" class="h-10" />
+      <div class="absolute left-1/2 -translate-x-1/2 md:-top-1/3 lg:-top-1/2">
+        <img :src="logo" alt="Logo" class="h-[40px] md:h-[80px] lg:h-[120px]" />
       </div>
 
       <!-- Профіль -->
-      <div v-if="auth.isLogged" class="flex items-center gap-2">
-        <em class="mr-2 text-brand font-semibold"
-          >{{ auth.displayName }} ({{ auth.role ?? "?" }})</em
-        >
+      <div v-if="auth.isLogged" class="flex items-center gap-[6px]">
+        <em class="mr-2 text-brand font-semibold">{{ auth.displayName }} </em>
         <Button @click="onLogout" size="sm" variant="outline">
           {{ t("superAdminLayout.profile.logout") }}
         </Button>
@@ -36,8 +42,8 @@
     </div>
   </header>
 
-  <main class="container mx-auto p-4 md:p-6">
-    <div class="flex justify-end mb-4">
+  <main class="container mx-auto py-[32px] px-0">
+    <div class="flex justify-end">
       <LanguageSwitcher />
     </div>
     <RouterView />
