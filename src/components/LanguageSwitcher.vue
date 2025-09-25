@@ -10,13 +10,14 @@
       :key="code"
       type="button"
       :variant="code === current ? 'solid' : 'outline'"
+      :no-hover="code === current"
       size="sm"
       @click="change(code)"
     >
       {{ code.toUpperCase() }}
     </Button>
     <Button variant="outline" size="sm" @click="toggleTheme">
-      {{ isDark ? "Light" : "Dark" }} Mode
+      {{ isDark ? "🌙" : "☀️" }}
     </Button>
   </div>
 </template>

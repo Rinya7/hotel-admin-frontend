@@ -110,11 +110,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref, computed } from "vue";
 import { useAuthStore } from "@/stores/auth";
-import type {
-  Room,
-  UpdateRoomRequest,
-  CreateRoomRequest,
-} from "@/types/rooms";
+import type { Room, UpdateRoomRequest, CreateRoomRequest } from "@/types/rooms";
 import {
   getRooms,
   updateRoomStatus,
@@ -178,7 +174,7 @@ async function saveStatus(r: Room) {
   r.status = statusDraft[r.id];
 }
 
-async function remove(r: Room) {
+async function remove(_r: Room) {
   // Здесь можно сделать confirm и реальный DELETE /rooms/number/:roomNumber,
   // но эндпоинт уже реализован на сервере — просто вызовите через axios по аналогии.
   alert("DELETE не реализован в примере. Добавьте при необходимости.");

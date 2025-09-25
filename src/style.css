@@ -2,9 +2,7 @@
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
   color-scheme: light dark;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -32,5 +30,47 @@ body {
   }
   button {
     background-color: #f9f9f9;
+  }
+
+  /* Общая кнопка */
+  .btn {
+    @apply inline-flex items-center justify-center rounded-lg font-medium transition-colors
+         px-4 py-2 text-sm cursor-pointer select-none;
+  }
+
+  /* Размеры */
+  .btn-sm {
+    @apply px-2.5 py-1.5 text-xs rounded-md;
+  }
+  .btn-lg {
+    @apply px-5 py-3 text-base rounded-xl;
+  }
+
+  /* Варианты */
+  .btn-primary {
+    @apply bg-brand text-white hover:bg-brand-light;
+  }
+  .btn-success {
+    @apply bg-emerald-600 text-white hover:bg-emerald-700;
+  }
+  .btn-warning {
+    @apply bg-yellow-500 text-white hover:bg-yellow-600;
+  }
+  .btn-error {
+    @apply bg-red-600 text-white hover:bg-red-700;
+  }
+  .btn-outline {
+    @apply border border-gray-300 text-gray-700 hover:bg-gray-100;
+  }
+  .btn-ghost {
+    @apply bg-transparent text-gray-700 hover:bg-gray-100;
+  }
+  .btn-link {
+    @apply bg-transparent text-blue-600 underline hover:text-blue-800;
+  }
+
+  /* Utility classes */
+  .flexCenter {
+    @apply flex items-center justify-center;
   }
 }

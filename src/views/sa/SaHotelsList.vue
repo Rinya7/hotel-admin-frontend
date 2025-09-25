@@ -3,11 +3,11 @@
     <section
       class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between"
     >
-      <h1 class="text-2xl font-semibold">Hotels</h1>
+      <h1 class="text-2xl font-semibold">{{ t("saHotelsList.title") }}</h1>
       <input
         v-model="query"
         type="text"
-        placeholder="Пошук: назва, адреса, логін, email, телефон"
+        :placeholder="t('saHotelsList.search.placeholder')"
         class="input input-bordered w-72"
       />
     </section>
@@ -20,47 +20,49 @@
               class="px-4 py-3 text-left cursor-pointer"
               @click="setSort('hotel_name')"
             >
-              Назва готелю
+              {{ t("saHotelsList.table.hotelName") }}
               <SortIcon :active="sortKey === 'hotel_name'" :dir="sortDir" />
             </th>
             <th
               class="px-4 py-3 text-left cursor-pointer"
               @click="setSort('address')"
             >
-              Адреса <SortIcon :active="sortKey === 'address'" :dir="sortDir" />
+              {{ t("saHotelsList.table.address") }}
+              <SortIcon :active="sortKey === 'address'" :dir="sortDir" />
             </th>
             <th
               class="px-4 py-3 text-left cursor-pointer"
               @click="setSort('username')"
             >
-              Логін <SortIcon :active="sortKey === 'username'" :dir="sortDir" />
+              {{ t("saHotelsList.table.login") }}
+              <SortIcon :active="sortKey === 'username'" :dir="sortDir" />
             </th>
             <th
               class="px-4 py-3 text-left cursor-pointer"
               @click="setSort('editorsCount')"
             >
-              Редакторів
+              {{ t("saHotelsList.table.editors") }}
               <SortIcon :active="sortKey === 'editorsCount'" :dir="sortDir" />
             </th>
             <th
               class="px-4 py-3 text-left cursor-pointer"
               @click="setSort('createdAt')"
             >
-              Створено
+              {{ t("saHotelsList.table.created") }}
               <SortIcon :active="sortKey === 'createdAt'" :dir="sortDir" />
             </th>
             <th
               class="px-4 py-3 text-left cursor-pointer"
               @click="setSort('isBlocked')"
             >
-              Статус
+              {{ t("saHotelsList.table.status") }}
               <SortIcon :active="sortKey === 'isBlocked'" :dir="sortDir" />
             </th>
             <th
               class="px-4 py-3 text-center cursor-pointer"
               @click="setSort('isBlocked')"
             >
-              Дія
+              {{ t("saHotelsList.table.action") }}
             </th>
             <th class="px-4 py-3"></th>
           </tr>
@@ -69,7 +71,7 @@
         <tbody>
           <tr v-if="loading">
             <td colspan="7" class="px-4 py-6 text-center text-gray-500">
-              Завантаження…
+              {{ t("saHotelsList.messages.loading") }}
             </td>
           </tr>
 
@@ -111,7 +113,11 @@
                 <span
                   :class="h.isBlocked ? 'text-red-600' : 'text-emerald-700'"
                 >
-                  {{ h.isBlocked ? "Заблоковано" : "Активний" }}
+                  {{
+                    h.isBlocked
+                      ? t("saHotelsList.status.blocked")
+                      : t("saHotelsList.status.active")
+                  }}
                 </span>
               </td>
               <td class="px-4 py-3 text-left">
@@ -120,7 +126,7 @@
                   <RouterLink
                     :to="{ name: 'sa-hotel-detail', params: { id: h.id } }"
                     class="btn btn-sm"
-                    >info</RouterLink
+                    >{{ t("saHotelsList.actions.info") }}</RouterLink
                   >
 
                   <button
@@ -128,23 +134,23 @@
                     class="btn btn-sm btn-warning"
                     @click="onBlock(h.username)"
                   >
-                    block
+                    {{ t("saHotelsList.actions.block") }}
                   </button>
                   <button
                     v-else
                     class="btn btn-sm btn-success"
                     @click="onUnblock(h.username)"
                   >
-                    unblock
+                    {{ t("saHotelsList.actions.unblock") }}
                   </button>
                   <button class="btn btn-sm" @click="openEdit(h.username)">
-                    edit
+                    {{ t("saHotelsList.actions.edit") }}
                   </button>
                   <button
                     class="btn btn-sm btn-error"
                     @click="onDelete(h.username)"
                   >
-                    Видалити
+                    {{ t("saHotelsList.actions.delete") }}
                   </button>
                 </div>
               </td>
@@ -152,7 +158,7 @@
 
             <tr v-if="hotels.length === 0">
               <td colspan="7" class="px-4 py-6 text-center text-gray-500">
-                Нічого не знайдено
+                {{ t("saHotelsList.messages.nothingFound") }}
               </td>
             </tr>
           </template>
@@ -176,8 +182,10 @@ import { useSuperHotelsStore } from "@/stores/superadmin.ts";
 import SortIcon from "@/components/common/SortIcon.vue";
 import EditHotelDialog from "@/components/superadmin/EditHotelDialog.vue";
 import type { UpdateHotelAdminRequest } from "@/types/dto";
+import { useLocale } from "@/composables/useLocale";
 
 const store = useSuperHotelsStore();
+const { t } = useLocale();
 const { loading, error, sorted, sortKey, sortDir } = storeToRefs(store);
 
 onMounted(() => {
@@ -197,15 +205,15 @@ function setSort(key: Parameters<typeof store.setSort>[0]) {
 
 // action block/unblock/delete
 async function onBlock(username: string): Promise<void> {
-  if (!confirm(`Block ${username}?`)) return;
+  if (!confirm(t("saHotelsList.messages.confirmBlock", { username }))) return;
   await store.block(username);
 }
 async function onUnblock(username: string): Promise<void> {
-  if (!confirm(`Unblock ${username}?`)) return;
+  if (!confirm(t("saHotelsList.messages.confirmUnblock", { username }))) return;
   await store.unblock(username);
 }
 async function onDelete(username: string): Promise<void> {
-  if (!confirm(`Delete ${username}? Дію не можна скасувати.`)) return;
+  if (!confirm(t("saHotelsList.messages.confirmDelete", { username }))) return;
   await store.removeUser(username);
 }
 
@@ -223,7 +231,9 @@ async function onSavePatch(patch: UpdateHotelAdminRequest): Promise<void> {
   try {
     await store.updateHotel(editingUsername.value, patch);
   } catch (e) {
-    alert(e instanceof Error ? e.message : "Помилка збереження");
+    alert(
+      e instanceof Error ? e.message : t("saHotelsList.messages.saveError")
+    );
   }
 }
 </script>
