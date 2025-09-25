@@ -1,31 +1,42 @@
 <!-- AdminLayout (для admin/editor) -->
 <!-- layouts/AdminLayout.vue -->
 <template>
-  <div>
+  <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
     <!-- Шапка для готельної адмінки -->
     <header
-      style="
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 12px;
-        border-bottom: 1px solid #ddd;
-      "
+      class="flex justify-between items-center px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
     >
-      <strong>HOTEL FIELER</strong>
-      <div>
-        <RouterLink to="/" style="margin-right: 10px">Dashboard</RouterLink>
-        <RouterLink to="/rooms">Rooms</RouterLink>
-      </div>
-      <span style="" v-if="auth.isLogged">
-        <em style="margin-right: 10px"
-          >{{ auth.displayName }} ({{ auth.role ?? "?" }})</em
+      <strong class="text-xl font-bold text-brand dark:text-white"
+        >HOTEL FIELER</strong
+      >
+      <div class="flex items-center gap-4">
+        <RouterLink
+          to="/"
+          class="text-gray-700 dark:text-gray-300 hover:text-brand dark:hover:text-white transition-colors"
         >
-        <button @click="onLogout">Logout</button>
+          Dashboard
+        </RouterLink>
+        <RouterLink
+          to="/rooms"
+          class="text-gray-700 dark:text-gray-300 hover:text-brand dark:hover:text-white transition-colors"
+        >
+          Rooms
+        </RouterLink>
+      </div>
+      <span v-if="auth.isLogged" class="flex items-center gap-3">
+        <em class="text-sm text-gray-600 dark:text-gray-400">
+          {{ auth.displayName }} ({{ auth.role ?? "?" }})
+        </em>
+        <button
+          @click="onLogout"
+          class="px-3 py-1 text-sm bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors"
+        >
+          Logout
+        </button>
       </span>
     </header>
 
-    <main style="padding: 16px">
+    <main class="p-4">
       <RouterView />
     </main>
   </div>

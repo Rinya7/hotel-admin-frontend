@@ -1,108 +1,236 @@
 <!-- RoomsList.vue — список комнат, кнопка Add (только для admin), edit/status/delete -->
 <template>
-  <section>
-    <header style="display: flex; align-items: center; gap: 12px">
-      <h2 style="margin-right: auto">Rooms</h2>
-      <button v-if="auth.isAdmin" @click="showCreate = true">Add room</button>
+  <section class="space-y-6">
+    <header class="flex items-center justify-between">
+      <h2 class="text-2xl font-semibold text-brand dark:text-white">Rooms</h2>
+      <button
+        v-if="auth.isAdmin"
+        @click="showCreate = true"
+        class="px-4 py-2 bg-brand hover:bg-brand-light text-white rounded-lg transition-colors"
+      >
+        Add room
+      </button>
     </header>
 
-    <div style="margin: 12px 0">
-      <label
-        >Filter by number: <input v-model="filter" placeholder="101"
-      /></label>
+    <div class="space-y-2">
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+        Filter by number:
+      </label>
+      <input
+        v-model="filter"
+        placeholder="101"
+        class="w-full max-w-xs text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+      />
     </div>
 
-    <table border="1" cellspacing="0" cellpadding="8">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Floor</th>
-          <th>Capacity</th>
-          <th>Status</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="r in filtered" :key="r.id">
-          <td>{{ r.roomNumber }}</td>
-          <td>{{ r.floor }}</td>
-          <td>{{ r.capacity }}</td>
-          <td>
-            <select
-              :disabled="!canChangeStatus"
-              v-model="statusDraft[r.id]"
-              @change="saveStatus(r)"
-            >
-              <option value="free">free</option>
-              <option value="booked">booked</option>
-              <option value="occupied">occupied</option>
-            </select>
-          </td>
-          <td style="white-space: nowrap">
-            <RouterLink
-              :to="{ name: 'room-stays', params: { roomNumber: r.roomNumber } }"
-              >Stays</RouterLink
-            >
-            <button v-if="auth.isAdmin" @click="openEdit(r)">Edit</button>
-            <button v-if="auth.isAdmin" @click="remove(r)">Delete</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div
+      class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
+    >
+      <table class="min-w-full text-sm">
+        <thead
+          class="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
+        >
+          <tr>
+            <th class="px-4 py-3 text-left">#</th>
+            <th class="px-4 py-3 text-left">Floor</th>
+            <th class="px-4 py-3 text-left">Capacity</th>
+            <th class="px-4 py-3 text-left">Status</th>
+            <th class="px-4 py-3 text-left">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="r in filtered"
+            :key="r.id"
+            class="border-t border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
+          >
+            <td class="px-4 py-3 text-gray-900 dark:text-white font-medium">
+              {{ r.roomNumber }}
+            </td>
+            <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
+              {{ r.floor }}
+            </td>
+            <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
+              {{ r.capacity }}
+            </td>
+            <td class="px-4 py-3">
+              <select
+                :disabled="!canChangeStatus"
+                v-model="statusDraft[r.id]"
+                @change="saveStatus(r)"
+                class="text-sm border border-gray-300 dark:border-gray-600 rounded px-2 py-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <option value="free">free</option>
+                <option value="booked">booked</option>
+                <option value="occupied">occupied</option>
+              </select>
+            </td>
+            <td class="px-4 py-3">
+              <div class="flex items-center gap-2">
+                <RouterLink
+                  :to="{
+                    name: 'room-stays',
+                    params: { roomNumber: r.roomNumber },
+                  }"
+                  class="text-sm text-brand hover:text-brand-light dark:text-emerald-400 dark:hover:text-emerald-300 transition-colors"
+                >
+                  Stays
+                </RouterLink>
+                <button
+                  v-if="auth.isAdmin"
+                  @click="openEdit(r)"
+                  class="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                >
+                  Edit
+                </button>
+                <button
+                  v-if="auth.isAdmin"
+                  @click="remove(r)"
+                  class="text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors"
+                >
+                  Delete
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-    <dialog v-if="showCreate">
-      <form @submit.prevent="create">
-        <h3>Create room</h3>
-        <input
-          v-model="createForm.roomNumber"
-          placeholder="Room number"
-          required
-        />
-        <input
-          v-model.number="createForm.floor"
-          placeholder="Floor"
-          type="number"
-          required
-        />
-        <input
-          v-model.number="createForm.capacity"
-          placeholder="Capacity"
-          type="number"
-          required
-        />
-        <input v-model="createForm.wifiName" placeholder="WiFi name" />
-        <input v-model="createForm.wifiPassword" placeholder="WiFi password" />
-        <input v-model="createForm.qrBarUrl" placeholder="QR Bar URL" />
-        <input v-model="createForm.mapPosition" placeholder="Map position" />
-        <div style="display: flex; gap: 8px; margin-top: 8px">
-          <button type="submit">Create</button>
-          <button type="button" @click="showCreate = false">Cancel</button>
-        </div>
-      </form>
+    <dialog
+      v-if="showCreate"
+      class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+    >
+      <div
+        class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4"
+      >
+        <form @submit.prevent="create" class="space-y-4">
+          <h3 class="text-lg font-semibold text-brand dark:text-white">
+            Create room
+          </h3>
+          <div class="space-y-3">
+            <input
+              v-model="createForm.roomNumber"
+              placeholder="Room number"
+              required
+              class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+            />
+            <input
+              v-model.number="createForm.floor"
+              placeholder="Floor"
+              type="number"
+              required
+              class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+            />
+            <input
+              v-model.number="createForm.capacity"
+              placeholder="Capacity"
+              type="number"
+              required
+              class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+            />
+            <input
+              v-model="createForm.wifiName"
+              placeholder="WiFi name"
+              class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+            />
+            <input
+              v-model="createForm.wifiPassword"
+              placeholder="WiFi password"
+              class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+            />
+            <input
+              v-model="createForm.qrBarUrl"
+              placeholder="QR Bar URL"
+              class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+            />
+            <input
+              v-model="createForm.mapPosition"
+              placeholder="Map position"
+              class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+            />
+          </div>
+          <div class="flex gap-3 pt-4">
+            <button
+              type="submit"
+              class="px-4 py-2 bg-brand hover:bg-brand-light text-white rounded-lg transition-colors"
+            >
+              Create
+            </button>
+            <button
+              type="button"
+              @click="showCreate = false"
+              class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
     </dialog>
 
-    <dialog v-if="editForm">
-      <form @submit.prevent="saveEdit">
-        <h3>Edit room {{ editRoom?.roomNumber }}</h3>
-        <input
-          v-model.number="editForm.floor"
-          placeholder="Floor"
-          type="number"
-        />
-        <input
-          v-model.number="editForm.capacity"
-          placeholder="Capacity"
-          type="number"
-        />
-        <input v-model="editForm.wifiName" placeholder="WiFi name" />
-        <input v-model="editForm.wifiPassword" placeholder="WiFi password" />
-        <input v-model="editForm.qrBarUrl" placeholder="QR Bar URL" />
-        <input v-model="editForm.mapPosition" placeholder="Map position" />
-        <div style="display: flex; gap: 8px; margin-top: 8px">
-          <button type="submit">Save</button>
-          <button type="button" @click="editForm = null">Cancel</button>
-        </div>
-      </form>
+    <dialog
+      v-if="editForm"
+      class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+    >
+      <div
+        class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4"
+      >
+        <form @submit.prevent="saveEdit" class="space-y-4">
+          <h3 class="text-lg font-semibold text-brand dark:text-white">
+            Edit room {{ editRoom?.roomNumber }}
+          </h3>
+          <div class="space-y-3">
+            <input
+              v-model.number="editForm.floor"
+              placeholder="Floor"
+              type="number"
+              class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+            />
+            <input
+              v-model.number="editForm.capacity"
+              placeholder="Capacity"
+              type="number"
+              class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+            />
+            <input
+              v-model="editForm.wifiName"
+              placeholder="WiFi name"
+              class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+            />
+            <input
+              v-model="editForm.wifiPassword"
+              placeholder="WiFi password"
+              class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+            />
+            <input
+              v-model="editForm.qrBarUrl"
+              placeholder="QR Bar URL"
+              class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+            />
+            <input
+              v-model="editForm.mapPosition"
+              placeholder="Map position"
+              class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+            />
+          </div>
+          <div class="flex gap-3 pt-4">
+            <button
+              type="submit"
+              class="px-4 py-2 bg-brand hover:bg-brand-light text-white rounded-lg transition-colors"
+            >
+              Save
+            </button>
+            <button
+              type="button"
+              @click="editForm = null"
+              class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
     </dialog>
   </section>
 </template>

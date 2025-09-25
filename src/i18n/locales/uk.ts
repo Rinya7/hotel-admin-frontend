@@ -141,7 +141,7 @@ const uk = {
       placeholder: "Пошук: назва, адреса, логін, email, телефон",
     },
     table: {
-      hotelName: "Назва готелю",
+      hotelName: "Готель",
       address: "Адреса",
       login: "Логін",
       editors: "Редакторів",

@@ -138,7 +138,7 @@ const en = {
       placeholder: "Search: name, address, login, email, phone",
     },
     table: {
-      hotelName: "Hotel Name",
+      hotelName: "Hotel",
       address: "Address",
       login: "Login",
       editors: "Editors",
