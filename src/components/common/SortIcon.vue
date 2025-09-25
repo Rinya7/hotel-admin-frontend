@@ -1,5 +1,9 @@
 <template>
-  <span v-if="active" class="inline-block align-middle" aria-hidden="true">
+  <span
+    v-if="active"
+    class="inline-block align-middle text-gray-600 dark:text-gray-300"
+    aria-hidden="true"
+  >
     <svg
       v-if="dir === 'asc'"
       xmlns="http://www.w3.org/2000/svg"

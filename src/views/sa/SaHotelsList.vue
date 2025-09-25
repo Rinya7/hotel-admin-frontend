@@ -3,18 +3,24 @@
     <section
       class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between"
     >
-      <h1 class="text-2xl font-semibold">{{ t("saHotelsList.title") }}</h1>
+      <h1 class="text-2xl font-semibold text-brand dark:text-white">
+        {{ t("saHotelsList.title") }}
+      </h1>
       <input
         v-model="query"
         type="text"
         :placeholder="t('saHotelsList.search.placeholder')"
-        class="input input-bordered w-72"
+        class="w-1/3 text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-2xl text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
       />
     </section>
 
-    <section class="overflow-hidden rounded-2xl border bg-white">
+    <section
+      class="overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
+    >
       <table class="min-w-full text-sm">
-        <thead class="bg-gray-50 text-gray-600">
+        <thead
+          class="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
+        >
           <tr>
             <th
               class="px-4 py-3 text-left cursor-pointer"
@@ -85,7 +91,7 @@
             <tr
               v-for="h in hotels"
               :key="h.id"
-              class="border-t hover:bg-gray-50"
+              class="border-t hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               <td class="px-4 py-3">
                 <div class="flex items-center gap-3">
