@@ -9,8 +9,12 @@
         alt="logo"
       />
       <div>
-        <h1 class="text-2xl font-semibold">{{ hotel.hotel_name ?? "—" }}</h1>
-        <div class="text-gray-500">{{ hotel.address ?? "—" }}</div>
+        <h1 class="text-2xl font-semibold text-brand dark:text-white">
+          {{ hotel.hotel_name ?? "—" }}
+        </h1>
+        <div class="text-gray-500 dark:text-gray-400">
+          {{ hotel.address ?? "—" }}
+        </div>
       </div>
 
       <div class="ml-auto flex items-center gap-2">
@@ -54,79 +58,108 @@
           {{ t("saHotelDetail.actions.delete") }}
         </button>
 
-        <button class="btn btn-sm" @click="goBack">
+        <button class="btn btn-sm underline" @click="goBack">
           {{ t("saHotelDetail.actions.back") }}
         </button>
       </div>
     </div>
 
     <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="rounded-2xl border bg-white p-4">
-        <h2 class="font-medium mb-3">
+      <div
+        class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4"
+      >
+        <h2 class="font-medium mb-3 text-brand dark:text-white">
           {{ t("saHotelDetail.sections.contacts") }}
         </h2>
-        <ul class="text-sm space-y-1">
+        <ul class="text-sm space-y-1 text-gray-700 dark:text-gray-300">
           <li>
-            <b>{{ t("saHotelDetail.fields.login") }}:</b> {{ hotel.username }}
+            <b class="text-brand dark:text-white"
+              >{{ t("saHotelDetail.fields.login") }}:</b
+            >
+            {{ hotel.username }}
           </li>
           <li>
-            <b>{{ t("saHotelDetail.fields.owner") }}:</b>
+            <b class="text-brand dark:text-white"
+              >{{ t("saHotelDetail.fields.owner") }}:</b
+            >
             {{ hotel.full_name ?? "—" }}
           </li>
           <li>
-            <b>{{ t("saHotelDetail.fields.email") }}:</b>
+            <b class="text-brand dark:text-white"
+              >{{ t("saHotelDetail.fields.email") }}:</b
+            >
             {{ hotel.email ?? "—" }}
           </li>
           <li>
-            <b>{{ t("saHotelDetail.fields.phone") }}:</b>
+            <b class="text-brand dark:text-white"
+              >{{ t("saHotelDetail.fields.phone") }}:</b
+            >
             {{ hotel.phone ?? "—" }}
           </li>
         </ul>
       </div>
 
-      <div class="rounded-2xl border bg-white p-4">
-        <h2 class="font-medium mb-3">
+      <div
+        class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4"
+      >
+        <h2 class="font-medium mb-3 text-brand dark:text-white">
           {{ t("saHotelDetail.sections.checkinPolicies") }}
         </h2>
-        <div class="text-sm">
+        <div class="text-sm text-gray-700 dark:text-gray-300">
           <div>
-            <b>{{ t("saHotelDetail.fields.checkInTime") }}:</b>
+            <b class="text-brand dark:text-white"
+              >{{ t("saHotelDetail.fields.checkInTime") }}:</b
+            >
             {{ hotel.checkInHour ?? t("saHotelDetail.fields.default") }}
           </div>
           <div>
-            <b>{{ t("saHotelDetail.fields.checkOutTime") }}:</b>
+            <b class="text-brand dark:text-white"
+              >{{ t("saHotelDetail.fields.checkOutTime") }}:</b
+            >
             {{ hotel.checkOutHour ?? t("saHotelDetail.fields.default") }}
           </div>
         </div>
       </div>
 
-      <div class="rounded-2xl border bg-white p-4">
-        <h2 class="font-medium mb-3">
+      <div
+        class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4"
+      >
+        <h2 class="font-medium mb-3 text-brand dark:text-white">
           {{ t("saHotelDetail.sections.userStats") }}
         </h2>
-        <div class="text-sm">
+        <div class="text-sm text-gray-700 dark:text-gray-300">
           <div>
-            <b>{{ t("saHotelDetail.fields.editors") }}:</b>
+            <b class="text-brand dark:text-white"
+              >{{ t("saHotelDetail.fields.editors") }}:</b
+            >
             {{ hotel.editorsCount }}
           </div>
           <div>
-            <b>{{ t("saHotelDetail.fields.created") }}:</b>
+            <b class="text-brand dark:text-white"
+              >{{ t("saHotelDetail.fields.created") }}:</b
+            >
             {{ new Date(hotel.createdAt).toLocaleString() }}
           </div>
           <div>
-            <b>{{ t("saHotelDetail.fields.updated") }}:</b>
+            <b class="text-brand dark:text-white"
+              >{{ t("saHotelDetail.fields.updated") }}:</b
+            >
             {{ new Date(hotel.updatedAt).toLocaleString() }}
           </div>
         </div>
       </div>
     </section>
 
-    <section class="rounded-2xl border bg-white p-4">
-      <h2 class="font-medium mb-3">
+    <section
+      class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4"
+    >
+      <h2 class="font-medium mb-3 text-brand dark:text-white">
         {{ t("saHotelDetail.sections.editors") }}
       </h2>
       <table class="min-w-full text-sm">
-        <thead class="bg-gray-50 text-gray-600">
+        <thead
+          class="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
+        >
           <tr>
             <th class="px-3 py-2 text-left">
               {{ t("saHotelDetail.table.login") }}
@@ -171,7 +204,9 @@
     </section>
   </div>
 
-  <div v-else class="p-6">{{ t("saHotelDetail.notFound") }}</div>
+  <div v-else class="p-6 text-brand dark:text-white">
+    {{ t("saHotelDetail.notFound") }}
+  </div>
 
   <!-- Модалка редагування -->
   <EditHotelDialog

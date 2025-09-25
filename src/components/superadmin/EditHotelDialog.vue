@@ -2,119 +2,171 @@
   <!-- Простий модальний діалог без бібліотек -->
   <div
     v-if="modelValue"
-    class="fixed inset-0 z-50 flex items-center justify-center"
+    class="fixed inset-0 z-50 flex items-center justify-center p-4"
   >
-    <div class="absolute inset-0 bg-black/40" @click="onClose"></div>
+    <div
+      class="absolute inset-0 bg-black/50 backdrop-blur-sm"
+      @click="onClose"
+    ></div>
 
-    <div class="relative w-full max-w-2xl rounded-2xl bg-white p-5 shadow-xl">
-      <h3 class="text-lg font-semibold mb-4">
-        {{ t("editHotelDialog.title") }}: {{ initial.username }}
-      </h3>
+    <div
+      class="relative w-full max-w-2xl rounded-2xl bg-white dark:bg-gray-800 shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden"
+    >
+      <!-- Header -->
+      <div
+        class="bg-gradient-to-r from-brand to-brand-light dark:from-brand dark:to-brand-light px-6 py-4"
+      >
+        <h3 class="text-xl font-bold text-white">
+          {{ t("editHotelDialog.title") }}: {{ initial.username }}
+        </h3>
+      </div>
 
-      <form class="space-y-3" @submit.prevent="onSubmit">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div>
-            <label class="block text-sm text-gray-600 mb-1">{{
-              t("editHotelDialog.fields.hotelName")
-            }}</label>
-            <input
-              v-model.trim="form.hotel_name"
-              class="input input-bordered w-full"
-            />
-          </div>
-          <div>
-            <label class="block text-sm text-gray-600 mb-1">{{
-              t("editHotelDialog.fields.address")
-            }}</label>
-            <input
-              v-model.trim="form.address"
-              class="input input-bordered w-full"
-            />
+      <!-- Form Content -->
+      <div class="p-6 dark:bg-gray-800">
+        <form class="space-y-6" @submit.prevent="onSubmit">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Hotel Name -->
+            <div class="space-y-2">
+              <label
+                class="block text-sm font-medium text-brand dark:text-white"
+                >{{ t("editHotelDialog.fields.hotelName") }}</label
+              >
+              <input
+                v-model.trim="form.hotel_name"
+                class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+                :placeholder="t('editHotelDialog.fields.hotelName')"
+              />
+            </div>
+
+            <!-- Address -->
+            <div class="space-y-2">
+              <label
+                class="block text-sm font-medium text-brand dark:text-white"
+                >{{ t("editHotelDialog.fields.address") }}</label
+              >
+              <input
+                v-model.trim="form.address"
+                class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+                :placeholder="t('editHotelDialog.fields.address')"
+              />
+            </div>
+
+            <!-- Owner Name -->
+            <div class="space-y-2">
+              <label
+                class="block text-sm font-medium text-brand dark:text-white"
+                >{{ t("editHotelDialog.fields.fullName") }}</label
+              >
+              <input
+                v-model.trim="form.full_name"
+                class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+                :placeholder="t('editHotelDialog.fields.fullName')"
+              />
+            </div>
+
+            <!-- Email -->
+            <div class="space-y-2">
+              <label
+                class="block text-sm font-medium text-brand dark:text-white"
+                >{{ t("editHotelDialog.fields.email") }}</label
+              >
+              <input
+                v-model.trim="form.email"
+                type="email"
+                class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+                :placeholder="t('editHotelDialog.fields.email')"
+              />
+            </div>
+
+            <!-- Phone -->
+            <div class="space-y-2">
+              <label
+                class="block text-sm font-medium text-brand dark:text-white"
+                >{{ t("editHotelDialog.fields.phone") }}</label
+              >
+              <input
+                v-model.trim="form.phone"
+                class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+                :placeholder="t('editHotelDialog.fields.phone')"
+              />
+            </div>
+
+            <!-- Logo URL -->
+            <div class="space-y-2">
+              <label
+                class="block text-sm font-medium text-brand dark:text-white"
+                >{{ t("editHotelDialog.fields.logoUrl") }}</label
+              >
+              <input
+                v-model.trim="form.logo_url"
+                class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+                :placeholder="t('editHotelDialog.fields.logoUrl')"
+              />
+            </div>
+
+            <!-- Check-in Hour -->
+            <div class="space-y-2">
+              <label
+                class="block text-sm font-medium text-brand dark:text-white"
+                >{{ t("editHotelDialog.fields.checkInHour") }}</label
+              >
+              <input
+                v-model.number="form.checkInHour"
+                type="number"
+                min="0"
+                max="23"
+                class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+                placeholder="0-23"
+              />
+              <small class="text-gray-500 dark:text-gray-400 text-xs">{{
+                t("editHotelDialog.messages.defaultNote")
+              }}</small>
+            </div>
+
+            <!-- Check-out Hour -->
+            <div class="space-y-2">
+              <label
+                class="block text-sm font-medium text-brand dark:text-white"
+                >{{ t("editHotelDialog.fields.checkOutHour") }}</label
+              >
+              <input
+                v-model.number="form.checkOutHour"
+                type="number"
+                min="0"
+                max="23"
+                class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+                placeholder="0-23"
+              />
+            </div>
           </div>
 
-          <div>
-            <label class="block text-sm text-gray-600 mb-1">{{
-              t("editHotelDialog.fields.fullName")
-            }}</label>
-            <input
-              v-model.trim="form.full_name"
-              class="input input-bordered w-full"
-            />
-          </div>
-          <div>
-            <label class="block text-sm text-gray-600 mb-1">{{
-              t("editHotelDialog.fields.email")
-            }}</label>
-            <input
-              v-model.trim="form.email"
-              type="email"
-              class="input input-bordered w-full"
-            />
-          </div>
-          <div>
-            <label class="block text-sm text-gray-600 mb-1">{{
-              t("editHotelDialog.fields.phone")
-            }}</label>
-            <input
-              v-model.trim="form.phone"
-              class="input input-bordered w-full"
-            />
-          </div>
-          <div>
-            <label class="block text-sm text-gray-600 mb-1">{{
-              t("editHotelDialog.fields.logoUrl")
-            }}</label>
-            <input
-              v-model.trim="form.logo_url"
-              class="input input-bordered w-full"
-            />
-          </div>
+          <!-- Error Message -->
+          <p v-if="error" class="text-red-600 dark:text-red-400 text-center">
+            {{ error }}
+          </p>
 
-          <div>
-            <label class="block text-sm text-gray-600 mb-1">{{
-              t("editHotelDialog.fields.checkInHour")
-            }}</label>
-            <input
-              v-model.number="form.checkInHour"
-              type="number"
-              min="0"
-              max="23"
-              class="input input-bordered w-full"
-            />
-            <small class="text-gray-400">{{
-              t("editHotelDialog.messages.defaultNote")
-            }}</small>
+          <!-- Action Buttons -->
+          <div
+            class="flex items-center justify-end gap-3 pt-6 border-t border-gray-200 dark:border-gray-700"
+          >
+            <Button type="button" variant="outline" @click="onClose">
+              {{ t("editHotelDialog.messages.cancel") }}
+            </Button>
+            <Button
+              type="submit"
+              variant="solid"
+              :loading="submitting"
+              :disabled="submitting"
+            >
+              {{
+                submitting
+                  ? t("editHotelDialog.messages.saving")
+                  : t("editHotelDialog.messages.save")
+              }}
+            </Button>
           </div>
-
-          <div>
-            <label class="block text-sm text-gray-600 mb-1">{{
-              t("editHotelDialog.fields.checkOutHour")
-            }}</label>
-            <input
-              v-model.number="form.checkOutHour"
-              type="number"
-              min="0"
-              max="23"
-              class="input input-bordered w-full"
-            />
-          </div>
-        </div>
-
-        <p v-if="error" class="text-sm text-red-600">{{ error }}</p>
-
-        <div class="mt-4 flex gap-2 justify-end">
-          <button type="button" class="btn" @click="onClose">
-            {{ t("editHotelDialog.messages.cancel") }}
-          </button>
-          <button class="btn btn-primary" :disabled="submitting">
-            {{
-              submitting
-                ? t("editHotelDialog.messages.saving")
-                : t("editHotelDialog.messages.save")
-            }}
-          </button>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   </div>
 </template>
@@ -124,6 +176,7 @@ import { reactive, ref, watch } from "vue";
 import type { PublicAdminUser } from "@/types/hotel";
 import type { UpdateHotelAdminRequest } from "@/types/dto";
 import { useLocale } from "@/composables/useLocale";
+import Button from "../ui/Button.vue";
 
 /**
  * Вхідні параметри:

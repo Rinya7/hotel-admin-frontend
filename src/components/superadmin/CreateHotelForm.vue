@@ -3,42 +3,50 @@
   <!-- Розбита на зрозумілі поля. Обов'язкові помічені *. -->
   <form class="space-y-6" @submit.prevent="onSubmit">
     <!-- Базові обов'язкові поля -->
-    <div class="border border-gray-200 rounded-lg p-4 bg-gray-100">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">
+    <div
+      class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-100 dark:bg-gray-800"
+    >
+      <h3 class="text-lg font-semibold text-brand dark:text-white mb-4">
         {{ t("hotelForm.sections.basicInfo") }}
       </h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div>
-          <label class="block text-sm text-gray-600 mb-1"
+          <label
+            class="block text-sm font-medium text-brand dark:text-white mb-1"
             >{{ t("hotelForm.fields.username") }}*</label
           >
           <input
             v-model.trim="form.username"
-            class="input input-bordered w-full rounded-lg pl-[4px]"
+            class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+            :placeholder="t('hotelForm.fields.username')"
             required
             autocomplete="off"
           />
         </div>
 
         <div>
-          <label class="block text-sm text-gray-600 mb-1"
+          <label
+            class="block text-sm font-medium text-brand dark:text-white mb-1"
             >{{ t("hotelForm.fields.hotelName") }}*</label
           >
           <input
             v-model.trim="form.hotel_name"
-            class="input input-bordered w-full rounded-lg pl-[4px]"
+            class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+            :placeholder="t('hotelForm.fields.hotelName')"
             required
             autocomplete="off"
           />
         </div>
 
         <div class="md:col-span-2">
-          <label class="block text-sm text-gray-600 mb-1"
+          <label
+            class="block text-sm font-medium text-brand dark:text-white mb-1"
             >{{ t("hotelForm.fields.address") }}*</label
           >
           <input
             v-model.trim="form.address"
-            class="input input-bordered w-full rounded-lg pl-[4px]"
+            class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+            :placeholder="t('hotelForm.fields.address')"
             required
             autocomplete="off"
           />
@@ -47,19 +55,23 @@
     </div>
 
     <!-- Паролі -->
-    <div class="border border-gray-200 rounded-lg p-4 bg-gray-100">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">
+    <div
+      class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-100 dark:bg-gray-800"
+    >
+      <h3 class="text-lg font-semibold text-brand dark:text-white mb-4">
         {{ t("hotelForm.sections.security") }}
       </h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div>
-          <label class="block text-sm text-gray-600 mb-1"
+          <label
+            class="block text-sm font-medium text-brand dark:text-white mb-1"
             >{{ t("hotelForm.fields.password") }}*</label
           >
           <input
             v-model="form.password"
             type="password"
-            class="input input-bordered w-full rounded-lg pl-[4px]"
+            class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+            :placeholder="t('hotelForm.fields.password')"
             required
             minlength="6"
             autocomplete="new-password"
@@ -67,13 +79,15 @@
         </div>
 
         <div>
-          <label class="block text-sm text-gray-600 mb-1"
+          <label
+            class="block text-sm font-medium text-brand dark:text-white mb-1"
             >{{ t("hotelForm.fields.confirmPassword") }}*</label
           >
           <input
             v-model="form.confirmPassword"
             type="password"
-            class="input input-bordered w-full rounded-lg pl-[4px]"
+            class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+            :placeholder="t('hotelForm.fields.confirmPassword')"
             required
             minlength="6"
             autocomplete="new-password"
@@ -83,74 +97,86 @@
     </div>
 
     <!-- Необов'язкові контактні поля -->
-    <div class="border border-gray-200 rounded-lg p-4 bg-gray-100">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">
+    <div
+      class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-100 dark:bg-gray-800"
+    >
+      <h3 class="text-lg font-semibold text-brand dark:text-white mb-4">
         {{ t("hotelForm.sections.contactInfo") }}
       </h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div>
-          <label class="block text-sm text-gray-600 mb-1">{{
-            t("hotelForm.fields.fullName")
-          }}</label>
+          <label
+            class="block text-sm font-medium text-brand dark:text-white mb-1"
+            >{{ t("hotelForm.fields.fullName") }}</label
+          >
           <input
             v-model.trim="form.full_name"
-            class="input input-bordered w-full rounded-lg pl-[4px]"
+            class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+            :placeholder="t('hotelForm.fields.fullName')"
           />
         </div>
 
         <div>
-          <label class="block text-sm text-gray-600 mb-1">{{
-            t("hotelForm.fields.email")
-          }}</label>
+          <label
+            class="block text-sm font-medium text-brand dark:text-white mb-1"
+            >{{ t("hotelForm.fields.email") }}</label
+          >
           <input
             v-model.trim="form.email"
             type="email"
-            class="input input-bordered w-full rounded-lg pl-[4px]"
+            class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+            :placeholder="t('hotelForm.fields.email')"
           />
         </div>
 
         <div>
-          <label class="block text-sm text-gray-600 mb-1">{{
-            t("hotelForm.fields.phone")
-          }}</label>
+          <label
+            class="block text-sm font-medium text-brand dark:text-white mb-1"
+            >{{ t("hotelForm.fields.phone") }}</label
+          >
           <input
             v-model.trim="form.phone"
-            class="input input-bordered w-full rounded-lg pl-[4px]"
+            class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+            :placeholder="t('hotelForm.fields.phone')"
           />
         </div>
       </div>
     </div>
 
     <!-- Опційні політики заселення/виїзду (якщо порожньо — бек застосує дефолт) -->
-    <div class="border border-gray-200 rounded-lg p-4 bg-gray-100">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">
+    <div
+      class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-100 dark:bg-gray-800"
+    >
+      <h3 class="text-lg font-semibold text-brand dark:text-white mb-4">
         {{ t("hotelForm.sections.checkinPolicies") }}
       </h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div>
-          <label class="block text-sm text-gray-600 mb-1">{{
-            t("hotelForm.fields.checkInHour")
-          }}</label>
+          <label
+            class="block text-sm font-medium text-brand dark:text-white mb-1"
+            >{{ t("hotelForm.fields.checkInHour") }}</label
+          >
           <input
             v-model.number="form.checkInHour"
             type="number"
             min="0"
             max="23"
-            class="input input-bordered w-full rounded-lg pl-[4px]"
+            class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
             :placeholder="t('hotelForm.placeholders.checkInDefault')"
           />
         </div>
 
         <div>
-          <label class="block text-sm text-gray-600 mb-1">{{
-            t("hotelForm.fields.checkOutHour")
-          }}</label>
+          <label
+            class="block text-sm font-medium text-brand dark:text-white mb-1"
+            >{{ t("hotelForm.fields.checkOutHour") }}</label
+          >
           <input
             v-model.number="form.checkOutHour"
             type="number"
             min="0"
             max="23"
-            class="input input-bordered w-full"
+            class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
             :placeholder="t('hotelForm.placeholders.checkOutDefault')"
           />
         </div>
@@ -158,8 +184,15 @@
     </div>
 
     <!-- Повідомлення про помилку (з фронт-валідації чи з бекенду) -->
-    <p v-if="error" class="text-sm text-red-600">{{ error }}</p>
-    <p v-if="success" class="text-sm text-emerald-700">{{ success }}</p>
+    <p v-if="error" class="text-sm text-red-600 dark:text-red-400 text-center">
+      {{ error }}
+    </p>
+    <p
+      v-if="success"
+      class="text-sm text-emerald-700 dark:text-emerald-400 text-center"
+    >
+      {{ success }}
+    </p>
 
     <!-- Кнопка сабміту з індикатором стану -->
     <div class="flex items-center justify-center">
