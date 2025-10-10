@@ -134,7 +134,14 @@
 import { onMounted, reactive, ref } from "vue";
 import { useRoute } from "vue-router";
 import type { Stay, CreateStayRequest } from "@/types/stays";
-import { listStaysByRoom, createStay, updateStayStatus } from "@/api/stays";
+import {
+  listStaysByRoom,
+  createStayForRoom,
+  checkInStay,
+  checkOutStay,
+  cancelStay,
+  closeStayByDates,
+} from "@/api/stays";
 
 const route = useRoute();
 const roomNumber = String(route.params.roomNumber ?? "");
@@ -142,9 +149,8 @@ const stays = ref<Stay[]>([]);
 const statusDraft = reactive<Record<number, Stay["status"]>>({});
 
 const form = reactive<CreateStayRequest>({
-  roomNumber,
   mainGuestName: "",
-  extraGuests: [],
+  extraGuestNames: [],
   checkIn: "",
   checkOut: "",
   status: "booked",
@@ -159,11 +165,11 @@ async function load() {
 }
 
 async function createNew() {
-  form.extraGuests = extraGuestsLine.value
+  form.extraGuestNames = extraGuestsLine.value
     .split(",")
     .map((x) => x.trim())
     .filter((x) => x.length > 0);
-  const created = await createStay(form);
+  const created = await createStayForRoom(roomNumber, form);
   stays.value.unshift(created);
   statusDraft[created.id] = created.status;
   // сброс формы
@@ -176,9 +182,38 @@ async function createNew() {
 }
 
 async function changeStatus(s: Stay) {
-  const updated = await updateStayStatus(s.id, { status: statusDraft[s.id] });
-  const idx = stays.value.findIndex((x) => x.id === s.id);
-  if (idx >= 0) stays.value[idx] = updated;
+  const newStatus = statusDraft[s.id];
+  let updated: Stay;
+
+  try {
+    switch (newStatus) {
+      case "occupied":
+        // booked -> occupied (check-in)
+        updated = await checkInStay(s.id);
+        break;
+      case "completed":
+        // occupied -> completed (check-out)
+        updated = await checkOutStay(s.id);
+        break;
+      case "cancelled":
+        // booked -> cancelled
+        updated = await cancelStay(s.id);
+        break;
+      default:
+        // Для других переходов используем closeStayByDates
+        updated = await closeStayByDates(roomNumber, s.checkIn, s.checkOut, {
+          status: newStatus as "completed" | "cancelled",
+        });
+    }
+
+    const idx = stays.value.findIndex((x) => x.id === s.id);
+    if (idx >= 0) stays.value[idx] = updated;
+  } catch (error) {
+    console.error("Error changing stay status:", error);
+    // Возвращаем статус обратно в случае ошибки
+    statusDraft[s.id] = s.status;
+    alert("Failed to change stay status");
+  }
 }
 
 onMounted(load);
