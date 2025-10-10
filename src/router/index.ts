@@ -106,6 +106,14 @@ router.beforeEach((to) => {
     return { name: "login", replace: true };
   }
 
+  // Дополнительная проверка: если токен есть в localStorage, но нет в store
+  // (может произойти при истечении токена)
+  if (auth.isLogged && !localStorage.getItem("token")) {
+    console.warn("Token mismatch: clearing auth state");
+    auth.forceLogout();
+    return { name: "login", replace: true };
+  }
+
   // 3) Перевірка ролей маршруту
   const allowed = to.meta?.roles as
     | ReadonlyArray<"superadmin" | "admin" | "editor">

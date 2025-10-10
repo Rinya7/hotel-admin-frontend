@@ -7,6 +7,7 @@ import axios, {
   type AxiosError,
 } from "axios";
 import { useUiStore } from "@/stores/ui";
+import { useAuthStore } from "@/stores/auth";
 
 const http: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:3000",
@@ -55,10 +56,11 @@ http.interceptors.response.use(
     // ❗ Не скидаємо сторінку, якщо це помилка логіну — інакше не побачиш повідомлення «Невірний логін…»
     const isLoginRequest = url.includes("/auth/login");
 
-    if (status === 401 && !isLoginRequest) {
-      localStorage.clear();
-      // тут краще router.replace, але щоб уникнути циклічних імпортів у http.ts — робимо м’який редірект:
-      window.location.assign("/login");
+    if ((status === 401 || status === 403) && !isLoginRequest) {
+      console.warn(`Authentication failed (${status}): redirecting to login`);
+      // Используем store для корректного сброса состояния
+      const authStore = useAuthStore();
+      authStore.forceLogout();
     }
 
     return Promise.reject(error);

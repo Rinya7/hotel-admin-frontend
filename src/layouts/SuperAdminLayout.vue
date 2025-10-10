@@ -8,8 +8,10 @@
         <RouterLink :to="{ name: 'sa-dashboard' }" v-slot="{ isExactActive }">
           <span
             :class="[
-              'text-brand dark:text-white',
-              isExactActive && 'font-semibold underline',
+              'font-semibold text-brand rounded-md px-3 py-1.5 dark:text-white  ',
+              isExactActive
+                ? 'border border-brand dark:border-white  cursor-default'
+                : 'dark:hover:border hover:bg-brand hover:text-white hover:border-brand dark:hover:border-white dark:hover:text-white',
             ]"
           >
             {{ t("superAdminLayout.nav.dashboard") }}
@@ -18,8 +20,10 @@
         <RouterLink :to="{ name: 'sa-hotels' }" v-slot="{ isActive }">
           <span
             :class="[
-              'text-brand dark:text-white',
-              isActive && 'font-semibold underline',
+              'font-semibold text-brand rounded-md px-3 py-1.5 dark:text-white   ',
+              isActive
+                ? 'border border-brand dark:border-white cursor-default'
+                : 'dark:hover:border hover:bg-brand  hover:text-white hover:border-brand dark:hover:border-white dark:hover:text-white',
             ]"
           >
             {{ t("superAdminLayout.nav.hotels") }}
@@ -34,7 +38,10 @@
 
       <!-- Профіль -->
       <div v-if="auth.isLogged" class="flex items-center gap-[6px]">
-        <em class="mr-2 text-brand font-semibold">{{ auth.displayName }} </em>
+        <em
+          class="mr-2 text-brand font-semibold bg-gray-100 rounded-md px-3 py-1.5"
+          >{{ auth.displayName }}
+        </em>
         <Button @click="onLogout" size="sm" variant="outline">
           {{ t("superAdminLayout.profile.logout") }}
         </Button>
