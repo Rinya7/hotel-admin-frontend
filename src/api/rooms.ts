@@ -8,6 +8,7 @@ import type {
   AvailabilityQuery,
   RoomAvailabilityItem,
   RoomsStats,
+  BulkPolicyHoursRequest,
 } from "@/types/rooms";
 
 export async function getRooms(): Promise<Room[]> {
@@ -55,5 +56,15 @@ export async function getRoomsAvailability(
 
 export async function getRoomsStats(): Promise<RoomsStats> {
   const { data } = await http.get<RoomsStats>("/rooms/stats");
+  return data;
+}
+
+export async function updateBulkPolicyHours(
+  payload: BulkPolicyHoursRequest
+): Promise<{ message: string }> {
+  const { data } = await http.put<{ message: string }>(
+    "/rooms/policy-hours/bulk",
+    payload
+  );
   return data;
 }

@@ -7,6 +7,8 @@ export interface Room {
   floor: number;
   capacity: number;
   status: RoomStatus;
+  checkInHour?: number;
+  checkOutHour?: number;
   wifiName?: string;
   wifiPassword?: string;
   qrBarUrl?: string;
@@ -17,10 +19,6 @@ export interface CreateRoomRequest {
   roomNumber: string;
   floor: number;
   capacity: number;
-  wifiName?: string;
-  wifiPassword?: string;
-  qrBarUrl?: string;
-  mapPosition?: string;
 }
 
 export interface UpdateRoomRequest {
@@ -66,4 +64,9 @@ export interface RoomsStats {
   free: number;
   booked: number;
   occupied: number;
+}
+
+export interface BulkPolicyHoursRequest {
+  checkInHour: number | null;
+  checkOutHour: number | null;
 }

@@ -11,6 +11,11 @@ export async function listStaysByRoom(roomNumber: string): Promise<Stay[]> {
   return data;
 }
 
+export async function getCurrentStays(): Promise<Stay[]> {
+  const { data } = await http.get<Stay[]>("/stays/current");
+  return data;
+}
+
 export async function createStay(payload: CreateStayRequest): Promise<Stay> {
   const { data } = await http.post<Stay>("/stays", payload);
   return data;

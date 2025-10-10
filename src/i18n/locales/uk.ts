@@ -40,6 +40,34 @@ const uk = {
     required: "Це поле обов'язкове",
     invalidLogin: "Невірний логін або пароль",
   },
+  roomForm: {
+    sections: {
+      basicInfo: "Основна інформація",
+      additional: "Додаткова інформація",
+    },
+    fields: {
+      roomNumber: "Номер кімнати",
+      floor: "Поверх",
+      capacity: "Місткість",
+      wifiName: "Назва WiFi",
+      wifiPassword: "Пароль WiFi",
+      qrBarUrl: "QR/Bar URL",
+      mapPosition: "Позиція на карті",
+    },
+    messages: {
+      creating: "Створення кімнати...",
+      createRoom: "Створити кімнату",
+      success: "Кімнату успішно створено!",
+      error: "Не вдалося створити кімнату",
+      roomNumberRequired: "Номер кімнати обов'язковий",
+      invalidFloor: "Поверх повинен бути від 1 до 50",
+      invalidCapacity: "Місткість повинна бути від 1 до 10",
+      roomExists: "Кімната з таким номером вже існує",
+      validationError: "Перевірте введені дані",
+      permissionDenied: "У вас немає дозволу на створення кімнат",
+      serverError: "Помилка сервера. Спробуйте пізніше",
+    },
+  },
   hotelForm: {
     title: "Створення готелю",
     sections: {

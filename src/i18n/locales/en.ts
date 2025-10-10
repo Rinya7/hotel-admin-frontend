@@ -39,6 +39,34 @@ const en = {
     required: "This field is required",
     invalidLogin: "Invalid username or password",
   },
+  roomForm: {
+    sections: {
+      basicInfo: "Basic Information",
+      additional: "Additional Information",
+    },
+    fields: {
+      roomNumber: "Room Number",
+      floor: "Floor",
+      capacity: "Capacity",
+      wifiName: "WiFi Name",
+      wifiPassword: "WiFi Password",
+      qrBarUrl: "QR/Bar URL",
+      mapPosition: "Map Position",
+    },
+    messages: {
+      creating: "Creating room...",
+      createRoom: "Create Room",
+      success: "Room created successfully!",
+      error: "Failed to create room",
+      roomNumberRequired: "Room number is required",
+      invalidFloor: "Floor must be between 1 and 50",
+      invalidCapacity: "Capacity must be between 1 and 10",
+      roomExists: "Room with this number already exists",
+      validationError: "Please check the entered data",
+      permissionDenied: "You don't have permission to create rooms",
+      serverError: "Server error. Please try again later",
+    },
+  },
   hotelForm: {
     title: "Create Hotel",
     sections: {
