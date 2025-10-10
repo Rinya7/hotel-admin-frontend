@@ -10,17 +10,29 @@
         >HOTEL FIELER</strong
       >
       <div class="flex items-center gap-4">
-        <RouterLink
-          to="/"
-          class="text-gray-700 dark:text-gray-300 hover:text-brand dark:hover:text-white transition-colors"
-        >
-          Dashboard
+        <RouterLink to="/" v-slot="{ isExactActive }">
+          <span
+            :class="[
+              'text-gray-700 dark:text-gray-300 transition-colors',
+              isExactActive
+                ? 'text-brand dark:text-white font-semibold'
+                : 'hover:text-brand dark:hover:text-white',
+            ]"
+          >
+            Dashboard
+          </span>
         </RouterLink>
-        <RouterLink
-          to="/rooms"
-          class="text-gray-700 dark:text-gray-300 hover:text-brand dark:hover:text-white transition-colors"
-        >
-          Rooms
+        <RouterLink to="/rooms" v-slot="{ isActive }">
+          <span
+            :class="[
+              'text-gray-700 dark:text-gray-300 transition-colors',
+              isActive
+                ? 'text-brand dark:text-white font-semibold'
+                : 'hover:text-brand dark:hover:text-white',
+            ]"
+          >
+            Rooms
+          </span>
         </RouterLink>
       </div>
       <span v-if="auth.isLogged" class="flex items-center gap-3">

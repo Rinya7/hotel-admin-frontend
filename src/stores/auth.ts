@@ -73,8 +73,16 @@ export const useAuthStore = defineStore("auth", {
       // 4) Дуже важливо: тепер UI та guards знають, що профіль «готовий»
       this.profileLoaded = true;
     },
-     
+
     logout(): void {
+      this.$reset();
+      localStorage.clear();
+      window.location.href = "/login";
+    },
+
+    // Принудительный выход при истечении токена
+    forceLogout(): void {
+      console.warn("Token expired: forcing logout");
       this.$reset();
       localStorage.clear();
       window.location.href = "/login";
