@@ -9,7 +9,7 @@
         :class="[
           'border p-4 rounded-lg transition-all duration-200 hover:scale-105 cursor-pointer',
           statusFilters.includes('free')
-            ? 'border-white bg-brand/10 dark:bg-brand/20'
+            ? 'bg-green-500/90 dark:bg-green-700/90'
             : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-brand/50',
         ]"
       >
@@ -40,7 +40,7 @@
         :class="[
           'border p-4 rounded-lg transition-all duration-200 hover:scale-105 cursor-pointer',
           statusFilters.includes('booked')
-            ? 'border-white bg-brand/10 dark:bg-brand/20'
+            ? 'bg-yellow-500/90 dark:bg-yellow-500/90'
             : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-brand/50',
         ]"
       >
@@ -71,7 +71,7 @@
         :class="[
           'border p-4 rounded-lg transition-all duration-200 hover:scale-105 cursor-pointer',
           statusFilters.includes('occupied')
-            ? 'border-white bg-brand/10 dark:bg-brand/20'
+            ? 'bg-red-500/90 dark:red-500/90'
             : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-brand/50',
         ]"
       >
@@ -98,6 +98,204 @@
       </button>
     </div>
 
+    <!-- Today's Summary -->
+    <div
+      v-if="todayArrivals.length > 0 || todayDepartures.length > 0"
+      class="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-6"
+    >
+      <button
+        @click="toggleStayTypeFilter('arrivals')"
+        :class="[
+          'border p-4 rounded-lg transition-all duration-200 hover:scale-105 cursor-pointer',
+          stayTypeFilters.includes('arrivals')
+            ? 'border-white bg-blue-500/90 dark:bg-blue-700/90'
+            : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-brand/50',
+        ]"
+      >
+        <div class="flex items-center justify-between">
+          <div>
+            <strong
+              :class="[
+                'text-sm block mb-1',
+                stayTypeFilters.includes('arrivals')
+                  ? 'text-white dark:text-blue-300'
+                  : 'text-blue-800 dark:text-blue-200',
+              ]"
+            >
+              Today's Arrivals
+            </strong>
+            <div
+              :class="[
+                'text-3xl font-bold',
+                stayTypeFilters.includes('arrivals')
+                  ? 'text-white dark:text-blue-300'
+                  : 'text-blue-900 dark:text-blue-100',
+              ]"
+            >
+              {{ todayArrivals.length }}
+            </div>
+            <p
+              :class="[
+                'text-xs',
+                stayTypeFilters.includes('arrivals')
+                  ? 'text-white/80 dark:text-blue-300/80'
+                  : 'text-blue-600 dark:text-blue-300',
+              ]"
+            >
+              Guests checking in
+            </p>
+            <!-- Список номеров -->
+            <div
+              v-if="todayArrivals.length > 0"
+              class="mt-2 flex flex-wrap gap-1"
+            >
+              <span
+                v-for="stay in todayArrivals.slice(0, 3)"
+                :key="stay.stayId"
+                :class="[
+                  'px-2 py-1 text-xs rounded-full',
+                  stayTypeFilters.includes('arrivals')
+                    ? 'bg-white/20 text-white'
+                    : 'bg-blue-200 text-blue-800 dark:bg-blue-800 dark:text-blue-200',
+                ]"
+              >
+                {{ stay.room.number }}
+              </span>
+              <span
+                v-if="todayArrivals.length > 3"
+                :class="[
+                  'px-2 py-1 text-xs rounded-full',
+                  stayTypeFilters.includes('arrivals')
+                    ? 'bg-white/20 text-white'
+                    : 'bg-blue-200 text-blue-800 dark:bg-blue-800 dark:text-blue-200',
+                ]"
+              >
+                +{{ todayArrivals.length - 3 }}
+              </span>
+            </div>
+          </div>
+          <div
+            :class="[
+              'w-12 h-12 rounded-full flex items-center justify-center',
+              stayTypeFilters.includes('arrivals')
+                ? 'bg-white/20'
+                : 'bg-blue-500',
+            ]"
+          >
+            <svg
+              class="w-6 h-6 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+      </button>
+
+      <button
+        @click="toggleStayTypeFilter('departures')"
+        :class="[
+          'border p-4 rounded-lg transition-all duration-200 hover:scale-105 cursor-pointer',
+          stayTypeFilters.includes('departures')
+            ? 'border-white bg-red-500/90 dark:red-500/90'
+            : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-brand/50',
+        ]"
+      >
+        <div class="flex items-center justify-between">
+          <div>
+            <strong
+              :class="[
+                'text-sm block mb-1',
+                stayTypeFilters.includes('departures')
+                  ? 'text-white dark:text-green-300'
+                  : 'text-green-800 dark:text-green-200',
+              ]"
+            >
+              Today's Departures
+            </strong>
+            <div
+              :class="[
+                'text-3xl font-bold',
+                stayTypeFilters.includes('departures')
+                  ? 'text-white dark:text-green-300'
+                  : 'text-green-900 dark:text-green-100',
+              ]"
+            >
+              {{ todayDepartures.length }}
+            </div>
+            <p
+              :class="[
+                'text-xs',
+                stayTypeFilters.includes('departures')
+                  ? 'text-white/80 dark:text-green-300/80'
+                  : 'text-green-600 dark:text-green-300',
+              ]"
+            >
+              Rooms becoming available
+            </p>
+            <!-- Список номеров -->
+            <div
+              v-if="todayDepartures.length > 0"
+              class="mt-2 flex flex-wrap gap-1"
+            >
+              <span
+                v-for="stay in todayDepartures.slice(0, 3)"
+                :key="stay.stayId"
+                :class="[
+                  'px-2 py-1 text-xs rounded-full',
+                  stayTypeFilters.includes('departures')
+                    ? 'bg-white/20 text-white'
+                    : 'bg-green-200 text-green-800 dark:bg-green-800 dark:text-green-200',
+                ]"
+              >
+                {{ stay.room.number }}
+              </span>
+              <span
+                v-if="todayDepartures.length > 3"
+                :class="[
+                  'px-2 py-1 text-xs rounded-full',
+                  stayTypeFilters.includes('departures')
+                    ? 'bg-white/20 text-white'
+                    : 'bg-green-200 text-green-800 dark:bg-green-800 dark:text-green-200',
+                ]"
+              >
+                +{{ todayDepartures.length - 3 }}
+              </span>
+            </div>
+          </div>
+          <div
+            :class="[
+              'w-12 h-12 rounded-full flex items-center justify-center',
+              stayTypeFilters.includes('departures')
+                ? 'bg-white/20'
+                : 'bg-green-500',
+            ]"
+          >
+            <svg
+              class="w-6 h-6 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              ></path>
+            </svg>
+          </div>
+        </div>
+      </button>
+    </div>
+
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <!-- Current stays -->
       <section
@@ -118,7 +316,7 @@
 
         <!-- Индикатор активных фильтров -->
         <div
-          v-if="statusFilters.length > 0"
+          v-if="statusFilters.length > 0 || stayTypeFilters.length > 0"
           class="flex items-center gap-2 mb-4"
         >
           <span class="text-sm text-gray-600 dark:text-gray-400"
@@ -131,6 +329,19 @@
               class="px-2 py-1 text-xs bg-brand/20 text-brand dark:text-brand-300 rounded-md"
             >
               {{ getStatusLabel(status) }}
+            </span>
+            <span
+              v-for="type in stayTypeFilters"
+              :key="type"
+              class="px-2 py-1 text-xs rounded-md"
+              :class="{
+                'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200':
+                  type === 'arrivals',
+                'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200':
+                  type === 'departures',
+              }"
+            >
+              {{ getStayTypeLabel(type) }}
             </span>
             <button
               @click="clearFilters"
@@ -152,15 +363,16 @@
                 <th class="px-4 py-3 text-left">Floor</th>
                 <th class="px-4 py-3 text-left">Capacity</th>
                 <th class="px-4 py-3 text-left">Status</th>
-                <th class="px-4 py-3 text-left">Check-in</th>
-                <th class="px-4 py-3 text-left">Check-out</th>
+                <th class="px-4 py-3 text-left">Arrival Date</th>
+                <th class="px-4 py-3 text-left">Departure Date</th>
+                <th class="px-4 py-3 text-left">Actions</th>
               </tr>
             </thead>
             <tbody>
               <!-- Состояние загрузки -->
               <tr v-if="loading">
                 <td
-                  colspan="6"
+                  colspan="7"
                   class="px-4 py-6 text-center text-gray-500 dark:text-gray-400"
                 >
                   Loading rooms...
@@ -170,7 +382,7 @@
               <!-- Ошибка загрузки -->
               <tr v-else-if="error">
                 <td
-                  colspan="6"
+                  colspan="7"
                   class="px-4 py-6 text-center text-red-600 dark:text-red-400"
                 >
                   {{ error }}
@@ -180,11 +392,11 @@
               <!-- Нет данных -->
               <tr v-else-if="filteredRooms.length === 0">
                 <td
-                  colspan="6"
+                  colspan="7"
                   class="px-4 py-6 text-center text-gray-500 dark:text-gray-400"
                 >
                   {{
-                    statusFilters.length > 0
+                    statusFilters.length > 0 || stayTypeFilters.length > 0
                       ? "No rooms match the selected filters"
                       : "No rooms found"
                   }}
@@ -223,14 +435,34 @@
                   </span>
                 </td>
                 <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
-                  {{
-                    room.checkInHour !== null ? `${room.checkInHour}:00` : "—"
-                  }}
+                  {{ getRoomArrivalDate(room) }}
                 </td>
                 <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
-                  {{
-                    room.checkOutHour !== null ? `${room.checkOutHour}:00` : "—"
-                  }}
+                  {{ getRoomDepartureDate(room) }}
+                </td>
+                <td class="px-4 py-3">
+                  <RouterLink
+                    :to="{
+                      name: 'room-stays',
+                      params: { roomNumber: room.roomNumber },
+                    }"
+                    class="inline-flex items-center px-3 py-1 text-xs font-medium text-brand bg-brand/10 hover:bg-brand/20 dark:text-emerald-400 dark:bg-emerald-400/10 dark:hover:bg-emerald-400/20 rounded-md transition-colors"
+                  >
+                    View Room
+                    <svg
+                      class="w-3 h-3 ml-1"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 5l7 7-7 7"
+                      ></path>
+                    </svg>
+                  </RouterLink>
                 </td>
               </tr>
             </tbody>
@@ -581,16 +813,27 @@
 
 <script setup lang="ts">
 import { onMounted, ref, computed, reactive } from "vue";
+import { RouterLink } from "vue-router";
 import type { RoomsStats, Room, BulkPolicyHoursRequest } from "@/types/rooms";
+import type { Stay, TodayStay } from "@/types/stays";
 import { getRoomsStats, getRooms, updateBulkPolicyHours } from "@/api/rooms";
+import {
+  getCurrentStays,
+  getTodayArrivals,
+  getTodayDepartures,
+} from "@/api/stays";
 import { useAuthStore } from "@/stores/auth";
 
 const auth = useAuthStore();
 const stats = ref<RoomsStats | null>(null);
 const rooms = ref<Room[]>([]);
+const currentStays = ref<Stay[]>([]);
+const todayArrivals = ref<TodayStay[]>([]);
+const todayDepartures = ref<TodayStay[]>([]);
 const loading = ref(false);
 const error = ref<string | null>(null);
 const statusFilters = ref<string[]>([]);
+const stayTypeFilters = ref<string[]>(["current"]); // По умолчанию показываем текущие проживания
 
 // Policy hours settings
 const showPolicyHours = ref(false);
@@ -607,6 +850,29 @@ async function load() {
 
     stats.value = await getRoomsStats();
     rooms.value = await getRooms();
+
+    // Загружаем текущие проживания, но не блокируем загрузку дашборда при ошибке
+    try {
+      currentStays.value = await getCurrentStays();
+    } catch (stayError) {
+      console.warn("Failed to load current stays:", stayError);
+      currentStays.value = [];
+    }
+
+    // Загружаем сегодняшние заезды и выезды
+    try {
+      todayArrivals.value = await getTodayArrivals();
+    } catch (arrivalError) {
+      console.warn("Failed to load today arrivals:", arrivalError);
+      todayArrivals.value = [];
+    }
+
+    try {
+      todayDepartures.value = await getTodayDepartures();
+    } catch (departureError) {
+      console.warn("Failed to load today departures:", departureError);
+      todayDepartures.value = [];
+    }
 
     // Заполняем форму текущими значениями из номера с установленным временем
     if (rooms.value.length > 0) {
@@ -684,12 +950,36 @@ async function savePolicyHours() {
 
 // Computed свойство для отфильтрованных комнат
 const filteredRooms = computed(() => {
-  if (statusFilters.value.length === 0) {
-    return rooms.value;
+  let filtered = rooms.value;
+
+  // Фильтр по статусу комнаты
+  if (statusFilters.value.length > 0) {
+    filtered = filtered.filter((room) =>
+      statusFilters.value.includes(room.status)
+    );
   }
-  return rooms.value.filter((room) =>
-    statusFilters.value.includes(room.status)
-  );
+
+  // Фильтр по заездам сегодня
+  if (stayTypeFilters.value.includes("arrivals")) {
+    const arrivalRoomNumbers = todayArrivals.value.map(
+      (stay) => stay.room.number
+    );
+    filtered = filtered.filter((room) =>
+      arrivalRoomNumbers.includes(room.roomNumber)
+    );
+  }
+
+  // Фильтр по выездам сегодня
+  if (stayTypeFilters.value.includes("departures")) {
+    const departureRoomNumbers = todayDepartures.value.map(
+      (stay) => stay.room.number
+    );
+    filtered = filtered.filter((room) =>
+      departureRoomNumbers.includes(room.roomNumber)
+    );
+  }
+
+  return filtered;
 });
 
 // Валидация формы Policy Hours
@@ -717,8 +1007,83 @@ function toggleStatusFilter(status: string) {
   }
 }
 
+function toggleStayTypeFilter(type: "current" | "arrivals" | "departures") {
+  const index = stayTypeFilters.value.indexOf(type);
+  if (index > -1) {
+    stayTypeFilters.value.splice(index, 1);
+  } else {
+    stayTypeFilters.value.push(type);
+  }
+}
+
 function clearFilters() {
   statusFilters.value = [];
+  stayTypeFilters.value = []; // Очищаем все фильтры
+}
+
+function getStayTypeLabel(type: string): string {
+  const labels: Record<string, string> = {
+    current: "Current",
+    arrival: "Arrival",
+    departure: "Departure",
+  };
+  return labels[type] || type;
+}
+
+function getRoomArrivalDate(room: Room): string {
+  // Приоритет 1: Ищем заезд сегодня для этой комнаты
+  const arrival = todayArrivals.value.find(
+    (stay) => stay.room.number === room.roomNumber
+  );
+  if (arrival) {
+    return arrival.checkIn;
+  }
+
+  // Приоритет 2: Ищем выезд сегодня для этой комнаты (может быть заезд в тот же день)
+  const departure = todayDepartures.value.find(
+    (stay) => stay.room.number === room.roomNumber
+  );
+  if (departure) {
+    return departure.checkIn;
+  }
+
+  // Приоритет 3: Ищем текущее проживание для этой комнаты
+  const currentStay = currentStays.value.find(
+    (stay) => stay.room.roomNumber === room.roomNumber
+  );
+  if (currentStay) {
+    return currentStay.checkIn;
+  }
+
+  return "—";
+}
+
+function getRoomDepartureDate(room: Room): string {
+  // Приоритет 1: Ищем выезд сегодня для этой комнаты
+  const departure = todayDepartures.value.find(
+    (stay) => stay.room.number === room.roomNumber
+  );
+  if (departure) {
+    return departure.checkOut;
+  }
+
+  // Приоритет 2: Ищем заезд сегодня для этой комнаты (может быть выезд в тот же день)
+  const arrival = todayArrivals.value.find(
+    (stay) => stay.room.number === room.roomNumber
+  );
+  if (arrival) {
+    return arrival.checkOut;
+  }
+
+  // Приоритет 3: Ищем текущее проживание для этой комнаты
+  const currentStay = currentStays.value.find(
+    (stay) => stay.room.roomNumber === room.roomNumber
+  );
+  if (currentStay) {
+    return currentStay.checkOut;
+  }
+
+  return "—";
 }
 
 function getStatusLabel(status: string): string {
