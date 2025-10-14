@@ -13,6 +13,8 @@ export interface CreateAdminRequest {
   email?: string | null;
   checkInHour?: number | null;
   checkOutHour?: number | null;
+  defaultWifiName?: string | null;
+  defaultWifiPassword?: string | null;
 }
 
 export interface CreateAdminResponse {
@@ -49,6 +51,8 @@ export interface UpdateHotelAdminRequest {
   logo_url?: string | null;
   checkInHour?: number | null;
   checkOutHour?: number | null;
+  defaultWifiName?: string | null;
+  defaultWifiPassword?: string | null;
 }
 
 export interface UpdateHotelAdminResponse {
@@ -64,6 +68,8 @@ export interface UpdateHotelAdminResponse {
     logo_url: string | null;
     checkInHour: number | null;
     checkOutHour: number | null;
+    wifiName: string | null;
+    wifiPassword: string | null;
     updatedAt: string;
   };
 }

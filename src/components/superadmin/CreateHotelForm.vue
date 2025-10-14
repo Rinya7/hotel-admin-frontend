@@ -69,13 +69,21 @@
           >
           <input
             v-model="form.password"
+            @input="validatePassword"
             type="password"
             class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+            :class="{ 'border-red-500': passwordError }"
             :placeholder="t('hotelForm.fields.password')"
             required
             minlength="6"
             autocomplete="new-password"
           />
+          <p
+            v-if="passwordError"
+            class="text-sm text-red-600 dark:text-red-400 mt-1"
+          >
+            {{ passwordError }}
+          </p>
         </div>
 
         <div>
@@ -85,13 +93,21 @@
           >
           <input
             v-model="form.confirmPassword"
+            @input="validateConfirmPassword"
             type="password"
             class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+            :class="{ 'border-red-500': confirmPasswordError }"
             :placeholder="t('hotelForm.fields.confirmPassword')"
             required
             minlength="6"
             autocomplete="new-password"
           />
+          <p
+            v-if="confirmPasswordError"
+            class="text-sm text-red-600 dark:text-red-400 mt-1"
+          >
+            {{ confirmPasswordError }}
+          </p>
         </div>
       </div>
     </div>
@@ -183,6 +199,43 @@
       </div>
     </div>
 
+    <!-- WiFi інформація -->
+    <div
+      class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-100 dark:bg-gray-800"
+    >
+      <h3 class="text-lg font-semibold text-brand dark:text-white mb-4">
+        {{ t("hotelForm.sections.wifiInfo") }}
+      </h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div>
+          <label
+            class="block text-sm font-medium text-brand dark:text-white mb-1"
+            >{{ t("hotelForm.fields.wifiName") }}</label
+          >
+          <input
+            v-model.trim="form.defaultWifiName"
+            class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+            :placeholder="t('hotelForm.placeholders.wifiName')"
+            autocomplete="off"
+          />
+        </div>
+
+        <div>
+          <label
+            class="block text-sm font-medium text-brand dark:text-white mb-1"
+            >{{ t("hotelForm.fields.wifiPassword") }}</label
+          >
+          <input
+            v-model="form.defaultWifiPassword"
+            type="password"
+            class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+            :placeholder="t('hotelForm.placeholders.wifiPassword')"
+            autocomplete="new-password"
+          />
+        </div>
+      </div>
+    </div>
+
     <!-- Повідомлення про помилку (з фронт-валідації чи з бекенду) -->
     <p v-if="error" class="text-sm text-red-600 dark:text-red-400 text-center">
       {{ error }}
@@ -244,9 +297,12 @@ const form = reactive<CreateAdminRequest>({
   full_name: "",
   phone: "",
   email: "",
-  // якщо залишити undefined — бек застосує дефолт (entity default 14/10)
-  checkInHour: undefined,
-  checkOutHour: undefined,
+  // Встановлюємо значення за замовчуванням (14/10)
+  checkInHour: 14,
+  checkOutHour: 10,
+  // WiFi поля
+  defaultWifiName: "",
+  defaultWifiPassword: "",
 });
 
 // Локальні прапорці стану
@@ -254,18 +310,49 @@ const submitting = ref(false);
 const error = ref<string | null>(null);
 const success = ref<string | null>(null);
 
+// Валідація паролів
+const passwordError = ref<string | null>(null);
+const confirmPasswordError = ref<string | null>(null);
+
 // Допоміжна перевірка для годин
 function isHour(v: unknown): v is number {
   return Number.isInteger(v) && (v as number) >= 0 && (v as number) <= 23;
+}
+
+// Валідація паролів
+function validatePassword(): void {
+  if (form.password.length < 6) {
+    passwordError.value = "Пароль повинен містити мінімум 6 символів";
+  } else {
+    passwordError.value = null;
+  }
+}
+
+function validateConfirmPassword(): void {
+  if (form.confirmPassword && form.password !== form.confirmPassword) {
+    confirmPasswordError.value = "Паролі не збігаються";
+  } else {
+    confirmPasswordError.value = null;
+  }
 }
 
 async function onSubmit(): Promise<void> {
   error.value = null;
   success.value = null;
 
+  // Валідуємо паролі перед відправкою
+  validatePassword();
+  validateConfirmPassword();
+
   // 1) Мінімальна фронт-валідація
   if (form.password !== form.confirmPassword) {
     error.value = t("hotelForm.messages.passwordsMismatch");
+    return;
+  }
+
+  // Перевіряємо чи є помилки валідації
+  if (passwordError.value || confirmPasswordError.value) {
+    error.value = "Виправте помилки в полях паролів";
     return;
   }
   if (
@@ -299,8 +386,14 @@ async function onSubmit(): Promise<void> {
     form.full_name = "";
     form.phone = "";
     form.email = "";
-    form.checkInHour = undefined;
-    form.checkOutHour = undefined;
+    form.checkInHour = 14;
+    form.checkOutHour = 10;
+    form.defaultWifiName = "";
+    form.defaultWifiPassword = "";
+
+    // Очищаємо помилки валідації
+    passwordError.value = null;
+    confirmPasswordError.value = null;
 
     success.value = t("hotelForm.messages.success");
   } catch (e) {

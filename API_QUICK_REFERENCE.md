@@ -242,3 +242,6 @@ async function changeStatus(stay, newStatus) {
 }
 </script>
 ```
+
+
+
