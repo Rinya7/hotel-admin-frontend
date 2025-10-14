@@ -75,6 +75,7 @@ const uk = {
       security: "Безпека",
       contactInfo: "Контактна інформація",
       checkinPolicies: "Політики заселення",
+      wifiInfo: "Дані Wi‑Fi",
     },
     fields: {
       username: "Логін (username)",
@@ -87,10 +88,14 @@ const uk = {
       phone: "Телефон",
       checkInHour: "Check-in (0..23)",
       checkOutHour: "Check-out (0..23)",
+      wifiName: "Назва WiFi",
+      wifiPassword: "Пароль WiFi",
     },
     placeholders: {
       checkInDefault: "14",
       checkOutDefault: "10",
+      wifiName: "Наприклад: Hotel_Free",
+      wifiPassword: "Пароль від мережі Wi‑Fi",
     },
     messages: {
       creating: "Створюємо...",

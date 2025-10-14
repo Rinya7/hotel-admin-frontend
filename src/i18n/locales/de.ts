@@ -45,6 +45,7 @@ const de = {
       security: "Sicherheit",
       contactInfo: "Kontaktinformationen",
       checkinPolicies: "Check-in-Richtlinien",
+      wifiInfo: "Wi‑Fi‑Daten",
     },
     fields: {
       username: "Benutzername",
@@ -57,10 +58,14 @@ const de = {
       phone: "Telefon",
       checkInHour: "Check-in (0..23)",
       checkOutHour: "Check-out (0..23)",
+      wifiName: "Wi‑Fi‑Name",
+      wifiPassword: "Wi‑Fi‑Passwort",
     },
     placeholders: {
       checkInDefault: "14",
       checkOutDefault: "10",
+      wifiName: "z. B.: Hotel_Free",
+      wifiPassword: "Passwort des Wi‑Fi‑Netzes",
     },
     messages: {
       creating: "Erstelle...",
