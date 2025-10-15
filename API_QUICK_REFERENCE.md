@@ -245,3 +245,8 @@ async function changeStatus(stay, newStatus) {
 
 
 
+
+
+
+
+

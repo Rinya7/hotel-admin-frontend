@@ -15,6 +15,9 @@ interface AuthState {
   adminId?: number;
   hotelName?: string | null;
   profileLoaded: boolean; // прапор: коли true — хедер/guard уже мають валідні дані для відображення
+  // Базовые policy hours отеля (дефолтные для всех комнат)
+  defaultCheckInHour: number | null;
+  defaultCheckOutHour: number | null;
 }
 
 export const useAuthStore = defineStore("auth", {
@@ -28,6 +31,13 @@ export const useAuthStore = defineStore("auth", {
     // важливо: якщо ключу немає — буде null; якщо лежав "null" рядком — приберемо в login()
     hotelName: localStorage.getItem("hotelName") ?? null,
     profileLoaded: Boolean(localStorage.getItem("token")), // якщо токен є — вважаємо, що профіль відомий
+    // Базовые policy hours отеля
+    defaultCheckInHour: localStorage.getItem("defaultCheckInHour")
+      ? Number(localStorage.getItem("defaultCheckInHour"))
+      : null,
+    defaultCheckOutHour: localStorage.getItem("defaultCheckOutHour")
+      ? Number(localStorage.getItem("defaultCheckOutHour"))
+      : null,
   }),
 
   // ⬇️ Додаємо акуратний getter — тепер router може читати auth.isLogged
@@ -56,6 +66,10 @@ export const useAuthStore = defineStore("auth", {
       this.adminId = p.adminId;
       this.hotelName = p.hotelName;
 
+      // Сохраняем базовые policy hours отеля
+      this.defaultCheckInHour = p.policy?.checkInHour ?? null;
+      this.defaultCheckOutHour = p.policy?.checkOutHour ?? null;
+
       // Дублюємо в localStorage, щоб пережити перезавантаження
       localStorage.setItem("token", p.token);
       localStorage.setItem("role", p.role);
@@ -70,6 +84,25 @@ export const useAuthStore = defineStore("auth", {
       } else {
         localStorage.removeItem("hotelName"); // не зберігаємо "null" як текст
       }
+
+      // Сохраняем policy hours в localStorage
+      if (this.defaultCheckInHour !== null) {
+        localStorage.setItem(
+          "defaultCheckInHour",
+          String(this.defaultCheckInHour)
+        );
+      } else {
+        localStorage.removeItem("defaultCheckInHour");
+      }
+      if (this.defaultCheckOutHour !== null) {
+        localStorage.setItem(
+          "defaultCheckOutHour",
+          String(this.defaultCheckOutHour)
+        );
+      } else {
+        localStorage.removeItem("defaultCheckOutHour");
+      }
+
       // 4) Дуже важливо: тепер UI та guards знають, що профіль «готовий»
       this.profileLoaded = true;
     },

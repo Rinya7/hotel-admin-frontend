@@ -14,6 +14,10 @@ export interface LoginPayload {
   role: UserRole;
   adminId?: number;
   hotelName?: string;
+  policy?: {
+    checkInHour: number;
+    checkOutHour: number;
+  } | null;
 }
 
 export interface LoginEnvelope {

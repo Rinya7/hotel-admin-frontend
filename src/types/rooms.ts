@@ -24,6 +24,9 @@ export interface CreateRoomRequest {
 export interface UpdateRoomRequest {
   floor?: number;
   capacity?: number;
+  status?: RoomStatus;
+  checkInHour?: number | null;
+  checkOutHour?: number | null;
   wifiName?: string;
   wifiPassword?: string;
   qrBarUrl?: string;
@@ -69,4 +72,10 @@ export interface RoomsStats {
 export interface BulkPolicyHoursRequest {
   checkInHour: number | null;
   checkOutHour: number | null;
+}
+
+// Тип для массового обновления Wi-Fi данных
+export interface BulkWiFiRequest {
+  wifiName: string;
+  wifiPassword: string;
 }

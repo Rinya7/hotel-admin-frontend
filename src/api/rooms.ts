@@ -9,6 +9,7 @@ import type {
   RoomAvailabilityItem,
   RoomsStats,
   BulkPolicyHoursRequest,
+  BulkWiFiRequest,
 } from "@/types/rooms";
 
 export async function getRooms(): Promise<Room[]> {
@@ -64,6 +65,17 @@ export async function updateBulkPolicyHours(
 ): Promise<{ message: string }> {
   const { data } = await http.put<{ message: string }>(
     "/rooms/policy-hours/bulk",
+    payload
+  );
+  return data;
+}
+
+// Массовое обновление Wi-Fi данных для всех комнат
+export async function updateBulkWiFi(
+  payload: BulkWiFiRequest
+): Promise<{ message: string }> {
+  const { data } = await http.put<{ message: string }>(
+    "/rooms/wifi/bulk",
     payload
   );
   return data;
