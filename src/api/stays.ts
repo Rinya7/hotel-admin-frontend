@@ -20,7 +20,7 @@ export async function listStaysByRoom(roomNumber: string): Promise<Stay[]> {
 
 // Все активные проживания (booked/occupied)
 export async function getCurrentStays(): Promise<Stay[]> {
-  const { data } = await http.get<Stay[]>("/stays/current");
+  const { data } = await http.get<Stay[]>("/rooms/stays/current");
   return data;
 }
 
