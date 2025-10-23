@@ -221,9 +221,11 @@ import SortIcon from "@/components/common/SortIcon.vue";
 import EditHotelDialog from "@/components/superadmin/EditHotelDialog.vue";
 import type { UpdateHotelAdminRequest } from "@/types/dto";
 import { useLocale } from "@/composables/useLocale";
+import { useNotifications } from "@/composables/useNotifications";
 
 const store = useSuperHotelsStore();
 const { t } = useLocale();
+const { showError, showSuccess } = useNotifications();
 const { loading, error, sorted, sortKey, sortDir } = storeToRefs(store);
 
 onMounted(() => {
@@ -268,9 +270,14 @@ async function onSavePatch(patch: UpdateHotelAdminRequest): Promise<void> {
   if (!editingUsername.value) return;
   try {
     await store.updateHotel(editingUsername.value, patch);
+    showSuccess(
+      "Hotel updated successfully",
+      "Hotel information has been saved and updated"
+    );
   } catch (e) {
-    alert(
-      e instanceof Error ? e.message : t("saHotelsList.messages.saveError")
+    showError(
+      t("saHotelsList.messages.saveError"),
+      e instanceof Error ? e.message : "Unknown error occurred"
     );
   }
 }

@@ -64,8 +64,8 @@ const it = {
     placeholders: {
       checkInDefault: "14",
       checkOutDefault: "10",
-      wifiName: "Es.: Hotel_Free",
-      wifiPassword: "Password della rete Wi‑Fi",
+      wifiName: "hotel_wifi",
+      wifiPassword: "password_wifi",
     },
     messages: {
       creating: "Creazione...",

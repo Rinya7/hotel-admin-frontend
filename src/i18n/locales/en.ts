@@ -93,8 +93,8 @@ const en = {
     placeholders: {
       checkInDefault: "14",
       checkOutDefault: "10",
-      wifiName: "e.g. Hotel_Free",
-      wifiPassword: "Wi‑Fi network password",
+      wifiName: "hotel_wifi",
+      wifiPassword: "password_wifi",
     },
     messages: {
       creating: "Creating...",
@@ -201,6 +201,8 @@ const en = {
   },
   saHotelDetail: {
     notFound: "Record not found",
+    loading: "Loading hotel details...",
+    notFoundMessage: "Hotel not found",
     status: {
       blocked: "Blocked",
       active: "Active",
@@ -303,6 +305,8 @@ const en = {
       save: "Save Policy Hours",
       saving: "Saving...",
       successMessage: "Policy hours updated successfully for all rooms!",
+      successDescription:
+        "All rooms now use the new check-in and check-out times",
       errorMessage: "Failed to save policy hours",
     },
     wifiModal: {
@@ -321,6 +325,7 @@ const en = {
       save: "Save Wi-Fi Credentials",
       saving: "Saving...",
       successMessage: "Wi-Fi credentials updated successfully for all rooms!",
+      successDescription: "All rooms now have the new Wi-Fi network settings",
       errorMessage: "Failed to save Wi-Fi credentials",
     },
   },

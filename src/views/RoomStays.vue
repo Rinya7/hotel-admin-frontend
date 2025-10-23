@@ -133,6 +133,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from "vue";
 import { useRoute } from "vue-router";
+import { useNotifications } from "@/composables/useNotifications";
 import type { Stay, CreateStayRequest } from "@/types/stays";
 import {
   listStaysByRoom,
@@ -144,6 +145,7 @@ import {
 } from "@/api/stays";
 
 const route = useRoute();
+const { showError } = useNotifications();
 const roomNumber = String(route.params.roomNumber ?? "");
 const stays = ref<Stay[]>([]);
 const statusDraft = reactive<Record<number, Stay["status"]>>({});
@@ -212,7 +214,10 @@ async function changeStatus(s: Stay) {
     console.error("Error changing stay status:", error);
     // Возвращаем статус обратно в случае ошибки
     statusDraft[s.id] = s.status;
-    alert("Failed to change stay status");
+    showError(
+      "Failed to change stay status",
+      error instanceof Error ? error.message : "Unknown error occurred"
+    );
   }
 }
 
