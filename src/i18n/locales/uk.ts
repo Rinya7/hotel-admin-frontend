@@ -88,14 +88,14 @@ const uk = {
       phone: "Телефон",
       checkInHour: "Check-in (0..23)",
       checkOutHour: "Check-out (0..23)",
-      wifiName: "Назва WiFi",
-      wifiPassword: "Пароль WiFi",
+      wifiName: "Назва Wi-Fi мережі",
+      wifiPassword: "Пароль Wi-Fi мережі",
     },
     placeholders: {
       checkInDefault: "14",
       checkOutDefault: "10",
-      wifiName: "Наприклад: Hotel_Free",
-      wifiPassword: "Пароль від мережі Wi‑Fi",
+      wifiName: "hotel_wifi",
+      wifiPassword: "password_wifi",
     },
     messages: {
       creating: "Створюємо...",
@@ -204,6 +204,8 @@ const uk = {
   },
   saHotelDetail: {
     notFound: "Запис не знайдено",
+    loading: "Завантаження деталей готелю...",
+    notFoundMessage: "Готель не знайдено",
     status: {
       blocked: "Заблоковано",
       active: "Активний",

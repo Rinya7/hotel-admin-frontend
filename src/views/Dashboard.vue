@@ -1132,9 +1132,11 @@ import {
   getTodayDepartures,
 } from "@/api/stays";
 import { useAuthStore } from "@/stores/auth";
+import { useNotifications } from "@/composables/useNotifications";
 
 const { t } = useI18n();
 const auth = useAuthStore();
+const { showSuccess, showError } = useNotifications();
 const stats = ref<RoomsStats | null>(null);
 const rooms = ref<Room[]>([]);
 const currentStays = ref<Stay[]>([]);
@@ -1318,13 +1320,19 @@ async function savePolicyHours() {
     }
 
     // Показываем сообщение об успехе
-    alert(t("dashboard.policyHoursModal.successMessage"));
+    showSuccess(
+      t("dashboard.policyHoursModal.successMessage"),
+      t("dashboard.policyHoursModal.successDescription")
+    );
 
     // Перезагружаем данные после успешного сохранения
     await load();
   } catch (e: any) {
     console.error("Error saving policy hours:", e);
-    alert(t("dashboard.policyHoursModal.errorMessage"));
+    showError(
+      t("dashboard.policyHoursModal.errorMessage"),
+      e.response?.data?.message || e.message
+    );
   } finally {
     savingPolicyHours.value = false;
   }
@@ -1348,16 +1356,18 @@ async function saveWiFi() {
     currentWiFi.value.wifiPassword = payload.wifiPassword;
 
     // Показываем сообщение об успехе
-    alert(t("dashboard.wifiModal.successMessage"));
+    showSuccess(
+      t("dashboard.wifiModal.successMessage"),
+      t("dashboard.wifiModal.successDescription")
+    );
 
     // Перезагружаем данные после успешного сохранения
     await load();
   } catch (e: any) {
     console.error("Error saving Wi-Fi credentials:", e);
-    alert(
-      `${t("dashboard.wifiModal.errorMessage")}: ${
-        e.response?.data?.message || e.message
-      }`
+    showError(
+      t("dashboard.wifiModal.errorMessage"),
+      e.response?.data?.message || e.message
     );
   } finally {
     savingWiFi.value = false;

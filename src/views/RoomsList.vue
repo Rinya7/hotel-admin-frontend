@@ -677,12 +677,14 @@
 import { onMounted, onUnmounted, reactive, ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useAuthStore } from "@/stores/auth";
+import { useNotifications } from "@/composables/useNotifications";
 import type { Room, UpdateRoomRequest } from "@/types/rooms";
 import { getRooms, updateRoomStatus, updateRoomByNumber } from "@/api/rooms";
 import CreateRoomForm from "@/components/common/CreateRoomForm.vue";
 
 const { t } = useI18n();
 const auth = useAuthStore();
+const { showError, showWarning } = useNotifications();
 const rooms = ref<Room[]>([]);
 const filter = ref("");
 const statusDraft = reactive<Record<number, Room["status"]>>({});
@@ -874,10 +876,9 @@ async function saveEdit() {
     await load();
   } catch (e: any) {
     console.error("Error updating room:", e);
-    alert(
-      `${t("roomsList.editModal.errorMessage")}: ${
-        e.response?.data?.message || e.message
-      }`
+    showError(
+      t("roomsList.editModal.errorMessage"),
+      e.response?.data?.message || e.message
     );
   }
 }
@@ -907,10 +908,9 @@ async function saveStatus(r: Room) {
     await load();
   } catch (e: any) {
     console.error("Error updating room status:", e);
-    alert(
-      `${t("roomsList.statusUpdate.errorMessage")}: ${
-        e.response?.data?.message || e.message
-      }`
+    showError(
+      t("roomsList.statusUpdate.errorMessage"),
+      e.response?.data?.message || e.message
     );
     // Откатываем статус обратно при ошибке
     statusDraft[r.id] = r.status;
@@ -920,7 +920,10 @@ async function saveStatus(r: Room) {
 async function remove(_r: Room) {
   // Здесь можно сделать confirm и реальный DELETE /rooms/number/:roomNumber,
   // но эндпоинт уже реализован на сервере — просто вызовите через axios по аналогии.
-  alert("DELETE не реализован в примере. Добавьте при необходимости.");
+  showWarning(
+    "Delete Room",
+    "DELETE functionality is not implemented in this example. Add it if necessary."
+  );
 }
 
 function onRoomCreated() {

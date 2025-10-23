@@ -7,9 +7,12 @@
     <RouterView />
     <!-- Глобальний loader — завжди змонтований, але видимий лише під час запитів -->
     <GlobalLoader />
+    <!-- Контейнер для уведомлений -->
+    <NotificationContainer />
   </div>
 </template>
 
 <script setup lang="ts">
 import GlobalLoader from "./components/GlobalLoader.vue";
+import NotificationContainer from "./components/NotificationContainer.vue";
 </script>
