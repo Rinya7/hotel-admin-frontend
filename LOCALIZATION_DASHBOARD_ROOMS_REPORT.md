@@ -241,3 +241,8 @@
 - TypeScript strict mode ✓
 - vue-i18n v9+ ✓
 - Dark mode ✓
+
+
+
+
+
