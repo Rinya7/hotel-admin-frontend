@@ -141,3 +141,8 @@ Response (200):
 - Dark mode поддержка ✓
 - Responsive design ✓
 
+
+
+
+
+
