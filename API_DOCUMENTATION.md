@@ -151,6 +151,23 @@ await updateRoomStatus("101", { status: "occupied" });
 }
 ```
 
+### GET /rooms/status/{status}
+
+**Описание:** Получить комнаты по статусу
+
+**Parameters:** `status` - "free" | "booked" | "occupied"
+
+**Response:** `Room[]`
+
+**Использование:**
+
+```typescript
+// Примечание: функция может быть добавлена в будущем
+// Пока можно использовать прямой запрос:
+import http from "@/api/http";
+const { data } = await http.get<Room[]>("/rooms/status/occupied");
+```
+
 ### PUT /rooms/policy-hours/bulk
 
 **Описание:** Массовое задание времени заселения/выезда для всех комнат отеля
@@ -174,6 +191,29 @@ await updateBulkPolicyHours({
 });
 ```
 
+### PUT /rooms/wifi/bulk
+
+**Описание:** Массовое задание WiFi данных для всех комнат отеля
+
+**Request Body:**
+
+```typescript
+{
+  wifiName: string | null;      // Название WiFi сети или null (оставить как есть)
+  wifiPassword: string | null;   // Пароль WiFi или null (оставить как есть)
+}
+```
+
+**Использование:**
+
+```typescript
+import { updateBulkWiFi } from "@/api/rooms";
+await updateBulkWiFi({
+  wifiName: "Hotel_Free_WiFi",
+  wifiPassword: "SecurePassword123",
+});
+```
+
 ### GET /rooms/availability
 
 **Описание:** Доступность всех комнат в диапазоне дат
@@ -193,6 +233,27 @@ const availability = await getRoomsAvailability({
   to: "2025-01-20",
   details: true,
 });
+```
+
+### GET /rooms/number/{roomNumber}/availability
+
+**Описание:** Доступность одной комнаты в диапазоне дат
+
+**Parameters:** `roomNumber` - номер комнаты
+
+**Query Parameters:**
+
+- `from` (required): дата начала (YYYY-MM-DD)
+- `to` (required): дата окончания (YYYY-MM-DD)
+
+**Использование:**
+
+```typescript
+// Примечание: функция может быть добавлена в будущем
+// Пока можно использовать прямой запрос:
+import http from "@/api/http";
+const params = new URLSearchParams({ from: "2025-01-15", to: "2025-01-20" });
+const { data } = await http.get(`/rooms/number/101/availability?${params}`);
 ```
 
 ---
@@ -248,7 +309,47 @@ const newStay = await createStayForRoom("101", {
 });
 ```
 
-### GET /stays/current
+### PUT /rooms/number/{roomNumber}/stays
+
+**Описание:** Редактирование проживания по датам заезда/выезда
+
+**Parameters:** `roomNumber` - номер комнаты
+
+**Query Parameters:**
+- `checkIn`: дата заезда (YYYY-MM-DD) - для идентификации проживания
+- `checkOut`: дата выезда (YYYY-MM-DD) - для идентификации проживания
+
+**Request Body:** `UpdateStayRequest` (все поля опциональны)
+
+```typescript
+{
+  mainGuestName?: string;
+  extraGuestNames?: string[];
+  checkIn?: string;              // YYYY-MM-DD (новая дата заезда)
+  checkOut?: string;             // YYYY-MM-DD (новая дата выезда)
+  balance?: string | number;
+  status?: "booked" | "occupied";
+}
+```
+
+**Использование:**
+
+```typescript
+import { updateStayByDates } from "@/api/stays";
+const updated = await updateStayByDates(
+  "101",                    // roomNumber
+  "2025-01-15",           // Исходная дата заезда (для поиска)
+  "2025-01-20",           // Исходная дата выезда (для поиска)
+  {                        // Новые данные
+    mainGuestName: "Jane Smith",
+    checkIn: "2025-01-16",  // Новая дата заезда
+    checkOut: "2025-01-21", // Новая дата выезда
+    balance: 600,
+  }
+);
+```
+
+### GET /rooms/stays/current
 
 **Описание:** Все активные проживания (booked/occupied)
 
@@ -402,8 +503,10 @@ const users = await http.get<PublicAdminUser[]>("/auth/users");
   full_name?: string;
   phone?: string;
   email?: string;
-  checkInHour?: number;
-  checkOutHour?: number;
+  checkInHour?: number;          // 0-23, опционально
+  checkOutHour?: number;         // 0-23, опционально
+  defaultWifiName?: string | null;      // Название WiFi сети по умолчанию
+  defaultWifiPassword?: string | null;  // Пароль WiFi по умолчанию
 }
 ```
 
@@ -411,7 +514,37 @@ const users = await http.get<PublicAdminUser[]>("/auth/users");
 
 **Описание:** Обновление данных отеля (только superadmin)
 
-**Request Body:** `UpdateHotelAdminRequest` (все поля опциональны)
+**Parameters:** `username` - имя пользователя админа
+
+**Request Body:** Все поля опциональны
+
+```typescript
+{
+  hotel_name?: string;
+  address?: string;
+  full_name?: string;
+  phone?: string;
+  email?: string;
+  logo_url?: string;
+  checkInHour?: number | null;          // 0-23 или null (сбросить на дефолт)
+  checkOutHour?: number | null;         // 0-23 или null (сбросить на дефолт)
+  defaultWifiName?: string | null;      // Название WiFi сети
+  defaultWifiPassword?: string | null;   // Пароль WiFi
+}
+```
+
+**Использование:**
+
+```typescript
+// В store/superadmin.ts
+await store.updateHotel("hotel-aurora", {
+  hotel_name: "Aurora Grand Hotel",
+  checkInHour: 15,
+  checkOutHour: 11,
+  defaultWifiName: "Aurora_Free_WiFi",
+  defaultWifiPassword: "SecurePassword123",
+});
+```
 
 ### POST /auth/create-editor
 

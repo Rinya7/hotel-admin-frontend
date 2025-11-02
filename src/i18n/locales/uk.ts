@@ -103,6 +103,8 @@ const uk = {
       success: "Готель успішно створено",
       error: "Не вдалося створити готель",
       passwordsMismatch: "Паролі не збігаються",
+      passwordMinLength: "Пароль повинен містити мінімум 6 символів",
+      fixPasswordErrors: "Виправте помилки в полях паролів",
       invalidHour:
         "Година має бути цілим числом у діапазоні 0..23 або порожнім",
     },
@@ -187,10 +189,10 @@ const uk = {
       active: "Активний",
     },
     actions: {
-      info: "info",
-      block: "block",
-      unblock: "unblock",
-      edit: "edit",
+      info: "Інформація",
+      block: "Заблокувати",
+      unblock: "Розблокувати",
+      edit: "Редагувати",
       delete: "Видалити",
     },
     messages: {
@@ -211,10 +213,10 @@ const uk = {
       active: "Активний",
     },
     actions: {
-      edit: "edit",
-      block: "block",
-      unblock: "unblock",
-      delete: "delete",
+      edit: "Редагувати",
+      block: "Заблокувати",
+      unblock: "Розблокувати",
+      delete: "Видалити",
       back: "Назад",
     },
     sections: {
