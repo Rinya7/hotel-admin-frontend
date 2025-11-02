@@ -73,6 +73,9 @@ const de = {
       success: "Hotel erfolgreich erstellt",
       error: "Hotel konnte nicht erstellt werden",
       passwordsMismatch: "Passwörter stimmen nicht überein",
+      passwordMinLength: "Das Passwort muss mindestens 6 Zeichen lang sein",
+      fixPasswordErrors:
+        "Bitte korrigieren Sie die Fehler in den Passwortfeldern",
       invalidHour: "Stunde muss eine ganze Zahl zwischen 0..23 oder leer sein",
     },
   },
@@ -156,10 +159,10 @@ const de = {
       active: "Aktiv",
     },
     actions: {
-      info: "info",
-      block: "block",
-      unblock: "unblock",
-      edit: "edit",
+      info: "Info",
+      block: "Sperren",
+      unblock: "Entsperren",
+      edit: "Bearbeiten",
       delete: "Löschen",
     },
     messages: {
@@ -174,15 +177,17 @@ const de = {
   },
   saHotelDetail: {
     notFound: "Datensatz nicht gefunden",
+    loading: "Hoteldetails werden geladen...",
+    notFoundMessage: "Hotel nicht gefunden",
     status: {
       blocked: "Gesperrt",
       active: "Aktiv",
     },
     actions: {
-      edit: "edit",
-      block: "block",
-      unblock: "unblock",
-      delete: "delete",
+      edit: "Bearbeiten",
+      block: "Sperren",
+      unblock: "Entsperren",
+      delete: "Löschen",
       back: "Zurück",
     },
     sections: {

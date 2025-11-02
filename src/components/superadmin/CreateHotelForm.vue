@@ -322,7 +322,7 @@ function isHour(v: unknown): v is number {
 // Валідація паролів
 function validatePassword(): void {
   if (form.password.length < 6) {
-    passwordError.value = "Пароль повинен містити мінімум 6 символів";
+    passwordError.value = t("hotelForm.messages.passwordMinLength");
   } else {
     passwordError.value = null;
   }
@@ -330,7 +330,7 @@ function validatePassword(): void {
 
 function validateConfirmPassword(): void {
   if (form.confirmPassword && form.password !== form.confirmPassword) {
-    confirmPasswordError.value = "Паролі не збігаються";
+    confirmPasswordError.value = t("hotelForm.messages.passwordsMismatch");
   } else {
     confirmPasswordError.value = null;
   }
@@ -352,7 +352,7 @@ async function onSubmit(): Promise<void> {
 
   // Перевіряємо чи є помилки валідації
   if (passwordError.value || confirmPasswordError.value) {
-    error.value = "Виправте помилки в полях паролів";
+    error.value = t("hotelForm.messages.fixPasswordErrors");
     return;
   }
   if (

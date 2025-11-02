@@ -102,6 +102,8 @@ const en = {
       success: "Hotel created successfully",
       error: "Failed to create hotel",
       passwordsMismatch: "Passwords do not match",
+      passwordMinLength: "Password must be at least 6 characters",
+      fixPasswordErrors: "Please fix password field errors",
       invalidHour: "Hour must be an integer between 0..23 or empty",
     },
   },
@@ -184,10 +186,10 @@ const en = {
       active: "Active",
     },
     actions: {
-      info: "info",
-      block: "block",
-      unblock: "unblock",
-      edit: "edit",
+      info: "Info",
+      block: "Block",
+      unblock: "Unblock",
+      edit: "Edit",
       delete: "Delete",
     },
     messages: {
@@ -208,10 +210,10 @@ const en = {
       active: "Active",
     },
     actions: {
-      edit: "edit",
-      block: "block",
-      unblock: "unblock",
-      delete: "delete",
+      edit: "Edit",
+      block: "Block",
+      unblock: "Unblock",
+      delete: "Delete",
       back: "Back",
     },
     sections: {
