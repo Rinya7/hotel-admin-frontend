@@ -30,6 +30,18 @@
             Rooms
           </span>
         </RouterLink>
+        <RouterLink to="/audit" v-slot="{ isActive }">
+          <span
+            :class="[
+              'font-semibold text-brand rounded-md px-3 py-1.5 dark:text-white',
+              isActive
+                ? 'border border-brand dark:border-white cursor-default'
+                : 'dark:hover:border hover:bg-brand hover:text-white hover:border-brand dark:hover:border-white dark:hover:text-white',
+            ]"
+          >
+            🕓 Audit Center
+          </span>
+        </RouterLink>
       </nav>
 
       <!-- Лого -->

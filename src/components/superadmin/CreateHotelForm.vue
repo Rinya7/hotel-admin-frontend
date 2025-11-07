@@ -38,19 +38,121 @@
           />
         </div>
 
+        <!-- Детальная структура адреса -->
         <div class="md:col-span-2">
           <label
             class="block text-sm font-medium text-brand dark:text-white mb-1"
-            >{{ t("hotelForm.fields.address") }}*</label
+            >{{ t("hotelForm.fields.street") }}*</label
           >
           <input
-            v-model.trim="form.address"
+            v-model.trim="form.street"
             class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
-            :placeholder="t('hotelForm.fields.address')"
+            :placeholder="t('hotelForm.placeholders.street')"
             required
             autocomplete="off"
           />
         </div>
+        <div>
+          <label
+            class="block text-sm font-medium text-brand dark:text-white mb-1"
+            >{{ t("hotelForm.fields.buildingNumber") }}</label
+          >
+          <input
+            v-model.trim="form.buildingNumber"
+            class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+            :placeholder="t('hotelForm.placeholders.buildingNumber')"
+            autocomplete="off"
+          />
+        </div>
+        <!-- 
+          Номер помещения (apartmentNumber) - скрыто для будущего использования
+          Назначение: для аренды апартаментов, когда один отель/здание содержит несколько отдельных апартаментов
+          Если нужно будет использовать - раскомментировать блок ниже
+        -->
+        <!-- <div>
+          <label
+            class="block text-sm font-medium text-brand dark:text-white mb-1"
+            >{{ t("hotelForm.fields.apartmentNumber") }}</label
+          >
+          <input
+            v-model.trim="form.apartmentNumber"
+            class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+            :placeholder="t('hotelForm.placeholders.apartmentNumber')"
+            autocomplete="off"
+          />
+        </div> -->
+        <div>
+          <label
+            class="block text-sm font-medium text-brand dark:text-white mb-1"
+            >{{ t("hotelForm.fields.country") }}</label
+          >
+          <select
+            v-model="form.country"
+            class="w-full text-brand bg-white dark:bg-gray-700 dark:text-white px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base focus:ring-2 focus:ring-brand focus:border-brand"
+          >
+            <option value="">{{ t("hotelForm.placeholders.country") }}</option>
+            <option
+              v-for="country in countries"
+              :key="country.code"
+              :value="country.code"
+            >
+              {{ country.name }}
+            </option>
+          </select>
+        </div>
+        <div>
+          <label
+            class="block text-sm font-medium text-brand dark:text-white mb-1"
+            >{{ t("hotelForm.fields.province") }}</label
+          >
+          <select
+            v-model="form.province"
+            class="w-full text-brand bg-white dark:bg-gray-700 dark:text-white px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base focus:ring-2 focus:ring-brand focus:border-brand"
+            :disabled="!form.country || form.country !== 'IT'"
+          >
+            <option value="">{{ t("hotelForm.placeholders.province") }}</option>
+            <option
+              v-for="province in italianProvinces"
+              :key="province.code"
+              :value="province.code"
+            >
+              {{ province.name }}
+            </option>
+          </select>
+          <input
+            v-if="form.country && form.country !== 'IT'"
+            v-model.trim="form.province"
+            class="w-full mt-2 text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base focus:ring-2 focus:ring-brand focus:border-brand"
+            :placeholder="t('hotelForm.placeholders.province')"
+            autocomplete="off"
+          />
+        </div>
+        <div>
+          <label
+            class="block text-sm font-medium text-brand dark:text-white mb-1"
+            >{{ t("hotelForm.fields.postalCode") }}</label
+          >
+          <input
+            v-model.trim="form.postalCode"
+            class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+            :placeholder="t('hotelForm.placeholders.postalCode')"
+            autocomplete="off"
+          />
+        </div>
+        <!-- Logo URL -->
+        <div class="md:col-span-2">
+          <label
+            class="block text-sm font-medium text-brand dark:text-white mb-1"
+            >{{ t("hotelForm.fields.logoUrl") }}</label
+          >
+          <input
+            v-model.trim="form.logo_url"
+            type="url"
+            class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+            :placeholder="t('hotelForm.placeholders.logoUrl')"
+          />
+        </div>
+        <!-- Координаты заполняются автоматически, не показываем поля -->
       </div>
     </div>
 
@@ -145,15 +247,39 @@
           />
         </div>
 
+        <!-- Телефон разделен на код страны и номер -->
         <div>
           <label
             class="block text-sm font-medium text-brand dark:text-white mb-1"
-            >{{ t("hotelForm.fields.phone") }}</label
+            >{{ t("hotelForm.fields.phoneCountryCode") }}</label
+          >
+          <select
+            v-model="form.phoneCountryCode"
+            class="w-full text-brand bg-white dark:bg-gray-700 dark:text-white px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base focus:ring-2 focus:ring-brand focus:border-brand"
+          >
+            <option value="">
+              {{ t("hotelForm.placeholders.phoneCountryCode") }}
+            </option>
+            <option
+              v-for="country in countries"
+              :key="country.code"
+              :value="country.phoneCode"
+            >
+              {{ country.phoneCode }} - {{ country.name }}
+            </option>
+          </select>
+        </div>
+        <div>
+          <label
+            class="block text-sm font-medium text-brand dark:text-white mb-1"
+            >{{ t("hotelForm.fields.phoneNumber") }}</label
           >
           <input
-            v-model.trim="form.phone"
+            v-model="formattedPhoneNumber"
+            @input="handlePhoneInput"
             class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
-            :placeholder="t('hotelForm.fields.phone')"
+            :placeholder="t('hotelForm.placeholders.phoneNumber')"
+            maxlength="13"
           />
         </div>
       </div>
@@ -274,17 +400,29 @@
  *  - викликаємо store.createHotelAdmin(payload);
  *  - після успіху: очищаємо форму, показуємо повідомлення, рефреш уже зробить стор.
  */
-import { reactive, ref } from "vue";
+import { reactive, ref, computed } from "vue";
 import { useSuperHotelsStore } from "@/stores/superadmin";
 import type { CreateAdminRequest } from "@/types/dto";
 import Button from "../ui/Button.vue";
 import { useLocale } from "@/composables/useLocale";
+import { getCountries } from "@/constants/countries";
+import { ITALIAN_PROVINCES } from "@/constants/italianProvinces";
+import { formatPhoneNumber, normalizePhoneNumber } from "@/utils/formatPhone";
+import {
+  DEFAULT_PHONE_COUNTRY_CODE,
+  DEFAULT_CHECK_IN_HOUR,
+  DEFAULT_CHECK_OUT_HOUR,
+} from "@/constants/defaults";
 
 // Підключаємо стора супер-адміна
 const store = useSuperHotelsStore();
 
 // Підключаємо i18n
-const { t } = useLocale();
+const { t, current } = useLocale();
+
+// Константы для списков (локализованные названия стран)
+const countries = getCountries(current.value as "uk" | "en" | "de" | "it");
+const italianProvinces = ITALIAN_PROVINCES;
 
 // Стан форми: суворий тип DTO, без any
 const form = reactive<CreateAdminRequest>({
@@ -292,14 +430,23 @@ const form = reactive<CreateAdminRequest>({
   password: "",
   confirmPassword: "",
   hotel_name: "",
-  address: "",
+  // Детальная структура адреса
+  street: "", // Обязательное поле
+  buildingNumber: "",
+  apartmentNumber: "",
+  country: "",
+  province: "",
+  postalCode: "",
+  // Координаты заполняются автоматически, не нужно передавать
   // нижче — опційні поля (можуть бути пусті)
   full_name: "",
-  phone: "",
+  phoneCountryCode: "",
+  phoneNumber: "",
   email: "",
-  // Встановлюємо значення за замовчуванням (14/10)
-  checkInHour: 14,
-  checkOutHour: 10,
+  logo_url: "",
+  // Встановлюємо значення за замовчуванням (из constants/defaults.ts)
+  checkInHour: DEFAULT_CHECK_IN_HOUR,
+  checkOutHour: DEFAULT_CHECK_OUT_HOUR,
   // WiFi поля
   defaultWifiName: "",
   defaultWifiPassword: "",
@@ -313,6 +460,25 @@ const success = ref<string | null>(null);
 // Валідація паролів
 const passwordError = ref<string | null>(null);
 const confirmPasswordError = ref<string | null>(null);
+
+// Форматирование телефона при отображении (111-111-11-11)
+const formattedPhoneNumber = computed({
+  get: () => formatPhoneNumber(form.phoneNumber),
+  set: (value: string) => {
+    // При изменении форматируем и сохраняем только цифры
+    form.phoneNumber = normalizePhoneNumber(value);
+  },
+});
+
+// Обработчик ввода телефона
+function handlePhoneInput(event: Event): void {
+  const target = event.target as HTMLInputElement;
+  const value = target.value;
+  // Сохраняем только цифры в форме
+  form.phoneNumber = normalizePhoneNumber(value);
+  // Обновляем отображаемое значение с форматированием
+  target.value = formatPhoneNumber(form.phoneNumber);
+}
 
 // Допоміжна перевірка для годин
 function isHour(v: unknown): v is number {
@@ -372,22 +538,38 @@ async function onSubmit(): Promise<void> {
     return;
   }
 
-  // 2) Сабмітимо у стору
+  // 2) Нормализуем номер телефона (убираем форматирование) перед отправкой
+  // Если код страны не выбран, используем значение по умолчанию
+  const payload: CreateAdminRequest = {
+    ...form,
+    phoneCountryCode: form.phoneCountryCode || DEFAULT_PHONE_COUNTRY_CODE,
+    phoneNumber: normalizePhoneNumber(form.phoneNumber), // Сохраняем только цифры
+  };
+
+  // 3) Сабмітимо у стору
   try {
     submitting.value = true;
-    await store.createHotelAdmin(form);
+    await store.createHotelAdmin(payload);
 
     // 3) Очищаємо форму після успішного створення
     form.username = "";
     form.password = "";
     form.confirmPassword = "";
     form.hotel_name = "";
-    form.address = "";
+    // Очищаем детальную структуру адреса
+    form.street = "";
+    form.buildingNumber = "";
+    form.apartmentNumber = "";
+    form.country = "";
+    form.province = "";
+    form.postalCode = "";
     form.full_name = "";
-    form.phone = "";
+    form.phoneCountryCode = "";
+    form.phoneNumber = "";
     form.email = "";
-    form.checkInHour = 14;
-    form.checkOutHour = 10;
+    form.logo_url = "";
+    form.checkInHour = DEFAULT_CHECK_IN_HOUR;
+    form.checkOutHour = DEFAULT_CHECK_OUT_HOUR;
     form.defaultWifiName = "";
     form.defaultWifiPassword = "";
 

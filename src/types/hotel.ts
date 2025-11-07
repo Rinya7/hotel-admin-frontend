@@ -9,7 +9,18 @@ export interface PublicAdminUser {
   username: string;
   role: Role; // "admin"
   hotel_name: string | null;
-  address: string | null;
+  // Детальная структура адреса
+  street: string | null;
+  buildingNumber: string | null;
+  apartmentNumber: string | null;
+  country: string | null;
+  province: string | null;
+  postalCode: string | null;
+  latitude: string | null;
+  longitude: string | null;
+  // Телефон разделен на код и номер
+  phoneCountryCode: string | null;
+  phoneNumber: string | null;
   full_name: string | null;
   logo_url: string | null;
   phone: string | null;
@@ -39,7 +50,7 @@ export type SuperAdminUsersResponse = PublicAdminUser[];
 // Ключі для сортування (лише те, що показуємо у таблиці/картці)
 export type HotelSortKey =
   | "hotel_name"
-  | "address"
+  | "street" // Сортируем по улице вместо старого address
   | "username"
   | "createdAt"
   | "editorsCount"

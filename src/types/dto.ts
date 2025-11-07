@@ -7,10 +7,22 @@ export interface CreateAdminRequest {
   password: string;
   confirmPassword: string;
   hotel_name: string;
-  address: string;
+  // Детальная структура адреса
+  street: string; // Обязательное поле
+  buildingNumber?: string | null;
+  apartmentNumber?: string | null;
+  country?: string | null; // Код страны (ISO 3166-1 alpha-2)
+  province?: string | null;
+  postalCode?: string | null;
+  latitude?: string | number | null; // Координаты могут быть строкой или числом (автоматически из Google)
+  longitude?: string | number | null;
   full_name?: string | null;
-  phone?: string | null;
+  // Телефон разделен на код страны и номер
+  phoneCountryCode?: string | null; // Например, +39
+  phoneNumber?: string | null;
+  phone?: string | null; // Для обратной совместимости
   email?: string | null;
+  logo_url?: string | null;
   checkInHour?: number | null;
   checkOutHour?: number | null;
   defaultWifiName?: string | null;
@@ -44,9 +56,19 @@ export interface CreateEditorResponse {
 // Усі поля опційні — редагуємо тільки те, що передали
 export interface UpdateHotelAdminRequest {
   hotel_name?: string;
-  address?: string;
+  // Детальная структура адреса
+  street?: string | null;
+  buildingNumber?: string | null;
+  apartmentNumber?: string | null;
+  country?: string | null;
+  province?: string | null;
+  postalCode?: string | null;
+  latitude?: string | number | null;
+  longitude?: string | number | null;
   full_name?: string | null;
-  phone?: string | null;
+  phoneCountryCode?: string | null;
+  phoneNumber?: string | null;
+  phone?: string | null; // Для обратной совместимости
   email?: string | null;
   logo_url?: string | null;
   checkInHour?: number | null;
@@ -61,9 +83,19 @@ export interface UpdateHotelAdminResponse {
     id: number;
     username: string;
     hotel_name: string | null;
-    address: string | null;
+    // Детальная структура адреса
+    street: string | null;
+    buildingNumber: string | null;
+    apartmentNumber: string | null;
+    country: string | null;
+    province: string | null;
+    postalCode: string | null;
+    latitude: string | null;
+    longitude: string | null;
     full_name: string | null;
-    phone: string | null;
+    phoneCountryCode: string | null;
+    phoneNumber: string | null;
+    phone: string | null; // Для обратной совместимости
     email: string | null;
     logo_url: string | null;
     checkInHour: number | null;

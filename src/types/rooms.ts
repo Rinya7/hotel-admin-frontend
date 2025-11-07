@@ -1,5 +1,5 @@
 // Статус комнаты
-export type RoomStatus = "free" | "booked" | "occupied";
+export type RoomStatus = "free" | "booked" | "occupied" | "cleaning";
 
 export interface Room {
   id: number;
@@ -13,6 +13,8 @@ export interface Room {
   wifiPassword?: string;
   qrBarUrl?: string;
   mapPosition?: string;
+  lastCleanedAt?: string | null;
+  lastCleanedBy?: string | null;
 }
 
 export interface CreateRoomRequest {
@@ -67,6 +69,7 @@ export interface RoomsStats {
   free: number;
   booked: number;
   occupied: number;
+  cleaning: number;
 }
 
 export interface BulkPolicyHoursRequest {
@@ -78,4 +81,30 @@ export interface BulkPolicyHoursRequest {
 export interface BulkWiFiRequest {
   wifiName: string;
   wifiPassword: string;
+}
+
+// Історія змін статусів Room
+export interface RoomStatusLog {
+  id: number;
+  oldStatus: RoomStatus;
+  newStatus: RoomStatus;
+  changedAt: string;
+  changedBy?: string | null;
+  changedByRole?: "system" | "admin" | "editor" | null;
+  stay?: {
+    id: number;
+    mainGuestName: string;
+  } | null;
+  comment?: string | null;
+  roomId?: number;
+  // Додаткові поля для універсального AuditLogViewer
+  entityLabel?: string;
+  entityLink?: string;
+}
+
+// Відповідь API для історії кімнати
+export interface RoomHistoryResponse {
+  roomId: number;
+  roomNumber: string;
+  logs: RoomStatusLog[];
 }

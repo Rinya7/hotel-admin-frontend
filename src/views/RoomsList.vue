@@ -40,7 +40,7 @@
     <section
       class="overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
     >
-      <table class="w-full text-sm table-fixed">
+      <table class="w-full text-sm">
         <thead
           class="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
         >
@@ -48,54 +48,97 @@
             <th class="px-4 py-3 text-left font-medium">
               {{ t("roomsList.table.room") }}
             </th>
-            <th class="px-4 py-3 text-left font-medium">
+            <th class="px-4 py-3 text-center font-medium">
               {{ t("roomsList.table.floor") }}
             </th>
-            <th class="px-4 py-3 text-left font-medium">
+            <th class="px-4 py-3 text-center font-medium">
               {{ t("roomsList.table.capacity") }}
             </th>
-            <th class="px-4 py-3 text-left font-medium">
-              {{ t("roomsList.table.status") }}
-            </th>
-            <th class="px-4 py-3 text-left font-medium">
+            <th class="px-4 py-3 text-center font-medium">
               {{ t("roomsList.table.checkIn") }}
             </th>
-            <th class="px-4 py-3 text-left font-medium">
+            <th class="px-4 py-3 text-center font-medium">
               {{ t("roomsList.table.checkOut") }}
             </th>
-            <th v-if="canChangeStatus" class="px-4 py-3 text-left font-medium">
+            <th class="px-4 py-3 text-center font-medium">
               {{ t("roomsList.table.actions") }}
             </th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+          <!-- Пустое состояние внутри таблицы -->
+          <tr v-if="filtered.length === 0">
+            <td :colspan="6" class="px-4 py-16 text-center">
+              <div class="flex flex-col items-center justify-center">
+                <div class="text-gray-400 dark:text-gray-500 mb-4">
+                  <svg
+                    class="w-16 h-16 mx-auto"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="1.5"
+                      d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                    ></path>
+                  </svg>
+                </div>
+                <h3
+                  class="text-lg font-semibold text-gray-900 dark:text-white mb-2"
+                >
+                  {{ t("roomsList.empty.title") }}
+                </h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400 max-w-md">
+                  {{
+                    filter
+                      ? t("roomsList.empty.withFilter")
+                      : t("roomsList.empty.noRooms")
+                  }}
+                </p>
+                <button
+                  v-if="auth.isAdmin && !filter"
+                  @click="openCreateModal"
+                  class="mt-4 inline-flex items-center px-4 py-2 bg-brand hover:bg-brand-light text-white rounded-lg transition-colors text-sm font-medium"
+                >
+                  <svg
+                    class="w-4 h-4 mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 4v16m8-8H4"
+                    ></path>
+                  </svg>
+                  {{ t("roomsList.addRoom") }}
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Данные комнат -->
           <tr
             v-for="r in filtered"
             :key="r.id"
             class="hover:bg-gray-50 dark:hover:bg-gray-700/50"
           >
-            <td class="px-4 py-4 text-gray-900 dark:text-white font-medium">
+            <td
+              class="px-2 py-4 text-gray-900 dark:text-white font-semibold text-center"
+            >
               {{ r.roomNumber }}
             </td>
-            <td class="px-4 py-4 text-gray-600 dark:text-gray-300">
+            <td class="px-2 py-4 text-gray-700 dark:text-gray-300 text-center">
               {{ r.floor }}
             </td>
-            <td class="px-4 py-4 text-gray-600 dark:text-gray-300">
+            <td class="px-2 py-4 text-gray-700 dark:text-gray-300 text-center">
               {{ r.capacity }}
             </td>
-            <td class="px-4 py-4">
-              <select
-                :disabled="!canChangeStatus"
-                v-model="statusDraft[r.id]"
-                @change="saveStatus(r)"
-                class="text-sm border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1.5 bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
-              >
-                <option value="free">Free</option>
-                <option value="booked">Booked</option>
-                <option value="occupied">Occupied</option>
-              </select>
-            </td>
-            <td class="px-4 py-4">
+            <td class="px-2 py-4 text-center">
               <span
                 :class="[
                   r.checkInHour !== null && r.checkInHour !== undefined
@@ -106,7 +149,7 @@
                 {{ getCheckInTime(r) }}
               </span>
             </td>
-            <td class="px-4 py-4">
+            <td class="px-2 py-4 text-center">
               <span
                 :class="[
                   r.checkOutHour !== null && r.checkOutHour !== undefined
@@ -117,28 +160,28 @@
                 {{ getCheckOutTime(r) }}
               </span>
             </td>
-            <td class="px-4 py-4">
-              <div class="flex items-center gap-3">
+            <td class="px-2 py-4">
+              <div class="flex items-center flex-wrap md:justify-evenly gap-2">
                 <RouterLink
                   :to="{
                     name: 'room-stays',
                     params: { roomNumber: r.roomNumber },
                   }"
-                  class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-brand bg-brand/10 hover:bg-brand/20 dark:text-emerald-400 dark:bg-emerald-400/10 dark:hover:bg-emerald-400/20 rounded-lg transition-colors"
+                  class="inline-flex items-center justify-center px-3 py-1.5 text-xs font-semibold text-brand bg-brand/15 hover:bg-brand/25 dark:text-emerald-300 dark:bg-emerald-500/20 dark:hover:bg-emerald-500/30 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md border border-brand/20 dark:border-emerald-500/30 whitespace-nowrap"
                 >
                   {{ t("roomsList.actions.stays") }}
                 </RouterLink>
                 <button
                   v-if="auth.isAdmin"
                   @click="openEdit(r)"
-                  class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 dark:text-blue-400 dark:bg-blue-400/10 dark:hover:bg-blue-400/20 rounded-lg transition-colors"
+                  class="inline-flex items-center justify-center px-3 py-1.5 text-xs font-semibold text-blue-700 bg-blue-100 hover:bg-blue-200 dark:text-blue-300 dark:bg-blue-500/20 dark:hover:bg-blue-500/30 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md border border-blue-200 dark:border-blue-500/30 whitespace-nowrap"
                 >
                   {{ t("roomsList.actions.edit") }}
                 </button>
                 <button
                   v-if="auth.isAdmin"
                   @click="remove(r)"
-                  class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 dark:text-red-400 dark:bg-red-400/10 dark:hover:bg-red-400/20 rounded-lg transition-colors"
+                  class="inline-flex items-center justify-center px-3 py-1.5 text-xs font-semibold text-red-700 bg-red-100 hover:bg-red-200 dark:text-red-300 dark:bg-red-500/20 dark:hover:bg-red-500/30 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md border border-red-200 dark:border-red-500/30 whitespace-nowrap"
                 >
                   {{ t("roomsList.actions.delete") }}
                 </button>
@@ -147,35 +190,6 @@
           </tr>
         </tbody>
       </table>
-
-      <!-- Пустое состояние -->
-      <div v-if="filtered.length === 0" class="text-center py-12">
-        <div class="text-gray-400 dark:text-gray-500 mb-4">
-          <svg
-            class="w-12 h-12 mx-auto"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="1"
-              d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-            ></path>
-          </svg>
-        </div>
-        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">
-          {{ t("roomsList.empty.title") }}
-        </h3>
-        <p class="text-gray-500 dark:text-gray-400">
-          {{
-            filter
-              ? t("roomsList.empty.withFilter")
-              : t("roomsList.empty.noRooms")
-          }}
-        </p>
-      </div>
     </section>
 
     <!-- Модальное окно создания номера -->
@@ -346,6 +360,7 @@
                 <option value="occupied">
                   {{ t("dashboard.stats.occupied") }}
                 </option>
+                <option value="cleaning">Cleaning</option>
               </select>
             </div>
           </div>
@@ -674,7 +689,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, reactive, ref, computed } from "vue";
+import { onMounted, onUnmounted, ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useAuthStore } from "@/stores/auth";
 import { useNotifications } from "@/composables/useNotifications";
@@ -687,13 +702,10 @@ const auth = useAuthStore();
 const { showError, showWarning } = useNotifications();
 const rooms = ref<Room[]>([]);
 const filter = ref("");
-const statusDraft = reactive<Record<number, Room["status"]>>({});
 const showCreate = ref(false);
 
 const editForm = ref<UpdateRoomRequest | null>(null);
 const editRoom = ref<Room | null>(null);
-
-const canChangeStatus = computed(() => auth.isAdmin || auth.isEditor);
 
 const filtered = computed(() =>
   rooms.value.filter((r) =>
@@ -732,7 +744,6 @@ function handleEscKey(event: KeyboardEvent) {
 
 async function load() {
   rooms.value = await getRooms();
-  rooms.value.forEach((r) => (statusDraft[r.id] = r.status));
 
   // Если дефолтные часы не загружены в authStore - берем из первой комнаты
   if (auth.defaultCheckInHour === null && rooms.value.length > 0) {
@@ -880,40 +891,6 @@ async function saveEdit() {
       t("roomsList.editModal.errorMessage"),
       e.response?.data?.message || e.message
     );
-  }
-}
-
-async function saveStatus(r: Room) {
-  const newStatus = statusDraft[r.id];
-
-  try {
-    // Обновляем статус
-    await updateRoomStatus(r.roomNumber, { status: newStatus });
-
-    // Если статус изменился на "free" - устанавливаем базовое время отеля
-    // (текущее время из дашборда, то что установлено для всего отеля)
-    if (
-      newStatus === "free" &&
-      (r.checkInHour !== null || r.checkOutHour !== null)
-    ) {
-      const hotelDefaultTime = {
-        checkInHour: auth.defaultCheckInHour,
-        checkOutHour: auth.defaultCheckOutHour,
-      };
-
-      await updateRoomByNumber(r.roomNumber, hotelDefaultTime);
-    }
-
-    // Перезагружаем данные для гарантированного обновления
-    await load();
-  } catch (e: any) {
-    console.error("Error updating room status:", e);
-    showError(
-      t("roomsList.statusUpdate.errorMessage"),
-      e.response?.data?.message || e.message
-    );
-    // Откатываем статус обратно при ошибке
-    statusDraft[r.id] = r.status;
   }
 }
 
