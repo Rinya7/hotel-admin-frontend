@@ -38,8 +38,9 @@ function getSortValue(
   switch (key) {
     case "hotel_name":
       return (h.hotel_name ?? "").toLowerCase();
-    case "address":
-      return (h.address ?? "").toLowerCase();
+    case "street":
+      // Сортируем по улице как основному полю адреса
+      return (h.street ?? "").toLowerCase();
     case "username":
       return h.username.toLowerCase();
     case "createdAt":
@@ -86,9 +87,19 @@ export const useSuperHotelsStore = defineStore("super-hotels", {
       if (!state.query.trim()) return state.raw;
       const q = normalize(state.query);
       return state.raw.filter((r) => {
+        // Собираем все поля адреса для поиска
+        const addressParts = [
+          r.street ?? "",
+          r.buildingNumber ?? "",
+          r.apartmentNumber ?? "",
+          r.country ?? "",
+          r.province ?? "",
+          r.postalCode ?? "",
+        ].filter(Boolean).join(" ");
+
         const fields: Array<string> = [
           r.hotel_name ?? "",
-          r.address ?? "",
+          addressParts, // Поиск по всем полям адреса
           r.username,
           r.full_name ?? "",
           r.email ?? "",
@@ -160,7 +171,7 @@ export const useSuperHotelsStore = defineStore("super-hotels", {
       if (payload.password !== payload.confirmPassword) {
         throw new Error("Паролі не збігаються");
       }
-      // 👇 чітко кажемо: очікуємо CreateAdminResponse
+      
       await http.post<CreateAdminResponse>("/auth/create-admin", payload);
 
       // Після створення — оновимо список, щоб статистика/таблиця відразу підхопилися
@@ -203,9 +214,19 @@ export const useSuperHotelsStore = defineStore("super-hotels", {
         this.raw[idx] = {
           ...old,
           hotel_name: updated.hotel_name,
-          address: updated.address,
+          // Обновляем детальную структуру адреса
+          street: updated.street,
+          buildingNumber: updated.buildingNumber,
+          apartmentNumber: updated.apartmentNumber,
+          country: updated.country,
+          province: updated.province,
+          postalCode: updated.postalCode,
+          latitude: updated.latitude,
+          longitude: updated.longitude,
           full_name: updated.full_name,
-          phone: updated.phone,
+          phoneCountryCode: updated.phoneCountryCode,
+          phoneNumber: updated.phoneNumber,
+          phone: updated.phone, // Для обратной совместимости
           email: updated.email,
           logo_url: updated.logo_url,
           checkInHour: updated.checkInHour,

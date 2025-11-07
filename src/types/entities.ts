@@ -1,7 +1,7 @@
 // frontend/src/types/entities.ts
 
 // Статуси кімнати — рівно як у бекенді
-export type RoomStatus = "free" | "booked" | "occupied";
+export type RoomStatus = "free" | "booked" | "occupied" | "cleaning";
 
 // Статуси проживання (Stay) — як у документації
 export type StayStatus = "booked" | "occupied" | "completed" | "cancelled";
@@ -11,7 +11,7 @@ export interface Room {
   roomNumber: string; // "101"
   floor: number;
   capacity: number;
-  status: RoomStatus; // тільки 'free' | 'booked' | 'occupied'
+  status: RoomStatus; // 'free' | 'booked' | 'occupied' | 'cleaning'
   wifiName?: string;
   qrBarUrl?: string;
   mapPosition?: string;

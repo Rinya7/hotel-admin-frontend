@@ -14,7 +14,6 @@
       <!-- Заголовок + кнопки действий -->
       <div class="flex items-center gap-4">
         <img
-          v-if="hotel.logo_url"
           :src="hotel.logo_url"
           class="h-16 w-16 rounded object-cover"
           alt="logo"
@@ -24,7 +23,7 @@
             {{ hotel.hotel_name ?? "—" }}
           </h1>
           <div class="text-gray-500 dark:text-gray-400">
-            {{ hotel.address ?? "—" }}
+            {{ formatHotelAddress(hotel) }}
           </div>
         </div>
 
@@ -240,6 +239,7 @@ import type { UpdateHotelAdminRequest } from "@/types/dto";
 import EditHotelDialog from "@/components/superadmin/EditHotelDialog.vue";
 import { useLocale } from "@/composables/useLocale";
 import { useNotifications } from "@/composables/useNotifications";
+import { formatHotelAddress } from "@/utils/formatAddress";
 
 const route = useRoute();
 const router = useRouter();

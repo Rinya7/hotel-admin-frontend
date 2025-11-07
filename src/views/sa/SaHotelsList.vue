@@ -31,10 +31,10 @@
             </th>
             <th
               class="lg:w-1/6 xl:w-[10%] px-4 py-3 text-left cursor-pointer"
-              @click="setSort('address')"
+              @click="setSort('street')"
             >
               {{ t("saHotelsList.table.address") }}
-              <SortIcon :active="sortKey === 'address'" :dir="sortDir" />
+              <SortIcon :active="sortKey === 'street'" :dir="sortDir" />
             </th>
             <th
               class="hidden lg:table-cell lg:w-1/8 xl:w-1/7 px-4 py-3 text-center cursor-pointer"
@@ -98,7 +98,6 @@
               <td class="px-4 py-3">
                 <div class="flex items-center gap-3">
                   <img
-                    v-if="h.logo_url"
                     :src="h.logo_url"
                     alt="logo"
                     class="h-8 w-8 rounded object-cover flex-shrink-0"
@@ -114,8 +113,52 @@
                 </div>
               </td>
               <td class="px-4 py-3 lg:w-max text-gray-700 dark:text-gray-300">
-                <div class=" " :title="h.address ?? '—'">
-                  {{ h.address ?? "—" }}
+                <!-- Если есть координаты - показываем кликабельный текст "на карте" -->
+                <div v-if="h.latitude && h.longitude" class="truncate">
+                  <a
+                    :href="`https://www.google.com/maps?q=${h.latitude},${h.longitude}`"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
+                    :title="`${t('saHotelsList.openMap')}: ${formatHotelAddress(h)}`"
+                  >
+                    <svg
+                      class="w-4 h-4 inline"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                      />
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                    </svg>
+                    {{ t("saHotelsList.onMap") }}
+                  </a>
+                </div>
+                <!-- Если нет координат - показываем адрес как кликабельную ссылку на Google Maps по адресу -->
+                <div v-else-if="formatHotelAddress(h) !== '—'" class="truncate">
+                  <a
+                    :href="`https://www.google.com/maps?q=${encodeURIComponent(formatHotelAddress(h))}`"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-blue-600 dark:text-blue-400 hover:underline"
+                    :title="t('saHotelsList.openMap')"
+                  >
+                    {{ formatHotelAddress(h) }}
+                  </a>
+                </div>
+                <!-- Если адреса вообще нет -->
+                <div v-else class="truncate">
+                  {{ formatHotelAddress(h) }}
                 </div>
               </td>
               <td
@@ -222,6 +265,7 @@ import EditHotelDialog from "@/components/superadmin/EditHotelDialog.vue";
 import type { UpdateHotelAdminRequest } from "@/types/dto";
 import { useLocale } from "@/composables/useLocale";
 import { useNotifications } from "@/composables/useNotifications";
+import { formatHotelAddress } from "@/utils/formatAddress";
 
 const store = useSuperHotelsStore();
 const { t } = useLocale();

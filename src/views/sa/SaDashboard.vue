@@ -89,7 +89,7 @@
                   </div>
                 </td>
                 <td class="px-3 py-2 text-gray-700 dark:text-gray-300">
-                  {{ h.address ?? "—" }}
+                  {{ formatHotelAddress(h) }}
                 </td>
                 <td class="px-3 py-2 text-gray-700 dark:text-gray-300">
                   {{ h.username }}
@@ -146,6 +146,7 @@ import { useSuperHotelsStore } from "@/stores/superadmin";
 import StatCard from "@/components/dashboard/StatCard.vue";
 import CreateHotelForm from "@/components/superadmin/CreateHotelForm.vue";
 import { useLocale } from "@/composables/useLocale";
+import { formatHotelAddress } from "@/utils/formatAddress";
 
 const store = useSuperHotelsStore();
 const { t } = useLocale();

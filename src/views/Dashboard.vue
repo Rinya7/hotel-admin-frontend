@@ -5,7 +5,7 @@
       {{ t("dashboard.title") }}
     </h2>
 
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
       <button
         @click="toggleStatusFilter('free')"
         :class="[
@@ -23,7 +23,7 @@
               : 'text-gray-600 dark:text-gray-400',
           ]"
         >
-          {{ t("dashboard.stats.free") }}
+          {{ t('dashboard.stats.free') }}
         </strong>
         <div
           :class="[
@@ -33,7 +33,7 @@
               : 'text-gray-900 dark:text-white',
           ]"
         >
-          {{ stats?.free ?? "—" }}
+          {{ stats?.free ?? '—' }}
         </div>
       </button>
 
@@ -54,7 +54,7 @@
               : 'text-gray-600 dark:text-gray-400',
           ]"
         >
-          {{ t("dashboard.stats.booked") }}
+          {{ t('dashboard.stats.booked') }}
         </strong>
         <div
           :class="[
@@ -64,7 +64,7 @@
               : 'text-gray-900 dark:text-white',
           ]"
         >
-          {{ stats?.booked ?? "—" }}
+          {{ stats?.booked ?? '—' }}
         </div>
       </button>
 
@@ -85,7 +85,7 @@
               : 'text-gray-600 dark:text-gray-400',
           ]"
         >
-          {{ t("dashboard.stats.occupied") }}
+          {{ t('dashboard.stats.occupied') }}
         </strong>
         <div
           :class="[
@@ -95,7 +95,38 @@
               : 'text-gray-900 dark:text-white',
           ]"
         >
-          {{ stats?.occupied ?? "—" }}
+          {{ stats?.occupied ?? '—' }}
+        </div>
+      </button>
+
+      <button
+        @click="toggleStatusFilter('cleaning')"
+        :class="[
+          'border p-4 rounded-lg transition-all duration-200 hover:scale-105 cursor-pointer',
+          statusFilters.includes('cleaning')
+            ? 'bg-blue-100  dark:bg-blue-900   border-brand dark:border-white'
+            : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-brand/50',
+        ]"
+      >
+        <strong
+          :class="[
+            'text-sm block mb-1',
+            statusFilters.includes('cleaning')
+              ? 'text-blue-800 dark:text-blue-200'
+              : 'text-gray-600 dark:text-gray-400',
+          ]"
+        >
+          {{ t('dashboard.stats.cleaning') }}
+        </strong>
+        <div
+          :class="[
+            'text-3xl font-bold',
+            statusFilters.includes('cleaning')
+              ? 'text-blue-800 dark:text-blue-200'
+              : 'text-gray-900 dark:text-white',
+          ]"
+        >
+          {{ stats?.cleaning ?? '—' }}
         </div>
       </button>
     </div>
@@ -445,6 +476,8 @@
                         room.status === 'booked',
                       'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200':
                         room.status === 'occupied',
+                      'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200':
+                        room.status === 'cleaning',
                     }"
                   >
                     {{ room.status }}
@@ -1522,9 +1555,10 @@ function getRoomDepartureDate(room: Room): string {
 
 function getStatusLabel(status: string): string {
   const labels: Record<string, string> = {
-    free: "Free",
-    booked: "Booked",
-    occupied: "Occupied",
+    free: t("dashboard.stats.free"),
+    booked: t("dashboard.stats.booked"),
+    occupied: t("dashboard.stats.occupied"),
+    cleaning: t("dashboard.stats.cleaning"),
   };
   return labels[status] || status;
 }

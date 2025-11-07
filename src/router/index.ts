@@ -24,6 +24,8 @@ const Login = () => import("@/views/Login.vue");
 const Dashboard = () => import("@/views/Dashboard.vue");
 const RoomsList = () => import("@/views/RoomsList.vue");
 const RoomStays = () => import("@/views/RoomStays.vue");
+const StayDetails = () => import("@/views/StayDetails.vue");
+const AuditCenter = () => import("@/views/audit/AuditCenter.vue");
 
 // Superadmin сторінки (простенькі плейсхолдери нижче)
 const SaDashboard = () => import("@/views/sa/SaDashboard.vue");
@@ -49,6 +51,17 @@ const routes: RouteRecordRaw[] = [
         path: "rooms/:roomNumber/stays",
         component: RoomStays,
         props: true,
+      },
+      {
+        name: "stay-details",
+        path: "stays/:id",
+        component: StayDetails,
+        props: true,
+      },
+      {
+        name: "audit-center",
+        path: "audit",
+        component: AuditCenter,
       },
     ],
   },

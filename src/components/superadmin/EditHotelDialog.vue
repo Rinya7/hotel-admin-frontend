@@ -38,16 +38,115 @@
               />
             </div>
 
-            <!-- Address -->
+            <!-- Детальная структура адреса -->
             <div class="space-y-2">
               <label
                 class="block text-sm font-medium text-brand dark:text-white"
-                >{{ t("editHotelDialog.fields.address") }}</label
+                >{{ t("editHotelDialog.fields.street") }}</label
               >
               <input
-                v-model.trim="form.address"
+                v-model.trim="form.street"
                 class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
-                :placeholder="t('editHotelDialog.fields.address')"
+                :placeholder="t('hotelForm.placeholders.street')"
+              />
+            </div>
+            <div class="space-y-2">
+              <label
+                class="block text-sm font-medium text-brand dark:text-white"
+                >{{ t("editHotelDialog.fields.buildingNumber") }}</label
+              >
+              <input
+                v-model.trim="form.buildingNumber"
+                class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+                :placeholder="t('hotelForm.placeholders.buildingNumber')"
+              />
+            </div>
+            <!-- 
+              Номер помещения (apartmentNumber) - скрыто для будущего использования
+              Назначение: для аренды апартаментов, когда один отель/здание содержит несколько отдельных апартаментов
+              Если нужно будет использовать - раскомментировать блок ниже
+            -->
+            <!-- <div class="space-y-2">
+              <label
+                class="block text-sm font-medium text-brand dark:text-white"
+                >{{ t("editHotelDialog.fields.apartmentNumber") }}</label
+              >
+              <input
+                v-model.trim="form.apartmentNumber"
+                class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+                :placeholder="t('hotelForm.placeholders.apartmentNumber')"
+              />
+            </div> -->
+            <div class="space-y-2">
+              <label
+                class="block text-sm font-medium text-brand dark:text-white"
+                >{{ t("editHotelDialog.fields.country") }}</label
+              >
+              <select
+                v-model="form.country"
+                class="w-full text-brand bg-white dark:bg-gray-700 dark:text-white px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base focus:ring-2 focus:ring-brand focus:border-brand"
+              >
+                <option value="">{{ t("hotelForm.placeholders.country") }}</option>
+                <option
+                  v-for="country in countries"
+                  :key="country.code"
+                  :value="country.code"
+                >
+                  {{ country.name }}
+                </option>
+              </select>
+            </div>
+            <div class="space-y-2">
+              <label
+                class="block text-sm font-medium text-brand dark:text-white"
+                >{{ t("editHotelDialog.fields.province") }}</label
+              >
+              <select
+                v-model="form.province"
+                class="w-full text-brand bg-white dark:bg-gray-700 dark:text-white px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base focus:ring-2 focus:ring-brand focus:border-brand"
+                :disabled="!form.country || form.country !== 'IT'"
+              >
+                <option value="">{{ t("hotelForm.placeholders.province") }}</option>
+                <option
+                  v-for="province in italianProvinces"
+                  :key="province.code"
+                  :value="province.code"
+                >
+                  {{ province.name }}
+                </option>
+              </select>
+              <input
+                v-if="form.country && form.country !== 'IT'"
+                v-model.trim="form.province"
+                class="w-full mt-2 text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base focus:ring-2 focus:ring-brand focus:border-brand"
+                :placeholder="t('hotelForm.placeholders.province')"
+                autocomplete="off"
+              />
+            </div>
+            <div class="space-y-2">
+              <label
+                class="block text-sm font-medium text-brand dark:text-white"
+                >{{ t("editHotelDialog.fields.postalCode") }}</label
+              >
+              <input
+                v-model.trim="form.postalCode"
+                class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+                :placeholder="t('hotelForm.placeholders.postalCode')"
+              />
+            </div>
+            <!-- Координаты заполняются автоматически, не показываем -->
+
+            <!-- Logo URL -->
+            <div class="space-y-2 md:col-span-2">
+              <label
+                class="block text-sm font-medium text-brand dark:text-white"
+                >{{ t("editHotelDialog.fields.logoUrl") }}</label
+              >
+              <input
+                v-model.trim="form.logo_url"
+                type="url"
+                class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+                :placeholder="t('hotelForm.placeholders.logoUrl')"
               />
             </div>
 
@@ -78,29 +177,37 @@
               />
             </div>
 
-            <!-- Phone -->
+            <!-- Телефон разделен на код страны и номер -->
             <div class="space-y-2">
               <label
                 class="block text-sm font-medium text-brand dark:text-white"
-                >{{ t("editHotelDialog.fields.phone") }}</label
+                >{{ t("editHotelDialog.fields.phoneCountryCode") }}</label
               >
-              <input
-                v-model.trim="form.phone"
-                class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
-                :placeholder="t('editHotelDialog.fields.phone')"
-              />
+              <select
+                v-model="form.phoneCountryCode"
+                class="w-full text-brand bg-white dark:bg-gray-700 dark:text-white px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base focus:ring-2 focus:ring-brand focus:border-brand"
+              >
+                <option value="">{{ t("hotelForm.placeholders.phoneCountryCode") }}</option>
+                <option
+                  v-for="country in countries"
+                  :key="country.code"
+                  :value="country.phoneCode"
+                >
+                  {{ country.phoneCode }} - {{ country.name }}
+                </option>
+              </select>
             </div>
-
-            <!-- Logo URL -->
             <div class="space-y-2">
               <label
                 class="block text-sm font-medium text-brand dark:text-white"
-                >{{ t("editHotelDialog.fields.logoUrl") }}</label
+                >{{ t("editHotelDialog.fields.phoneNumber") }}</label
               >
               <input
-                v-model.trim="form.logo_url"
+                v-model="formattedPhoneNumber"
+                @input="handlePhoneInput"
                 class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
-                :placeholder="t('editHotelDialog.fields.logoUrl')"
+                :placeholder="t('hotelForm.placeholders.phoneNumber')"
+                maxlength="13"
               />
             </div>
 
@@ -172,11 +279,15 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, watch } from "vue";
+import { reactive, ref, watch, computed } from "vue";
 import type { PublicAdminUser } from "@/types/hotel";
 import type { UpdateHotelAdminRequest } from "@/types/dto";
 import { useLocale } from "@/composables/useLocale";
 import Button from "../ui/Button.vue";
+import { getCountries } from "@/constants/countries";
+import { ITALIAN_PROVINCES } from "@/constants/italianProvinces";
+import { formatPhoneNumber, normalizePhoneNumber } from "@/utils/formatPhone";
+import { DEFAULT_PHONE_COUNTRY_CODE } from "@/constants/defaults";
 
 /**
  * Вхідні параметри:
@@ -193,14 +304,26 @@ const emit = defineEmits<{
 }>();
 
 // Підключаємо i18n
-const { t } = useLocale();
+const { t, current } = useLocale();
+
+// Константы для списков (локализованные названия стран)
+const countries = getCountries(current.value as "uk" | "en" | "de" | "it");
+const italianProvinces = ITALIAN_PROVINCES;
 
 // Локальна копія редагованих полів: тільки те, що можна змінювати
 const form = reactive<UpdateHotelAdminRequest>({
   hotel_name: "",
-  address: "",
+  // Детальная структура адреса
+  street: "",
+  buildingNumber: "",
+  apartmentNumber: "",
+  country: "",
+  province: "",
+  postalCode: "",
+  // Координаты заполняются автоматически
   full_name: "",
-  phone: "",
+  phoneCountryCode: "",
+  phoneNumber: "",
   email: "",
   logo_url: "",
   checkInHour: undefined,
@@ -216,9 +339,16 @@ watch(
   (open) => {
     if (open) {
       form.hotel_name = props.initial.hotel_name ?? "";
-      form.address = props.initial.address ?? "";
+      // Заполняем детальную структуру адреса
+      form.street = props.initial.street ?? "";
+      form.buildingNumber = props.initial.buildingNumber ?? "";
+      form.apartmentNumber = props.initial.apartmentNumber ?? "";
+      form.country = props.initial.country ?? "";
+      form.province = props.initial.province ?? "";
+      form.postalCode = props.initial.postalCode ?? "";
       form.full_name = props.initial.full_name ?? "";
-      form.phone = props.initial.phone ?? "";
+      form.phoneCountryCode = props.initial.phoneCountryCode ?? "";
+      form.phoneNumber = props.initial.phoneNumber ?? "";
       form.email = props.initial.email ?? "";
       form.logo_url = props.initial.logo_url ?? "";
       form.checkInHour = props.initial.checkInHour ?? undefined;
@@ -238,6 +368,22 @@ function isHourOrNull(v: unknown): v is number | null {
     v === null ||
     (Number.isInteger(v) && (v as number) >= 0 && (v as number) <= 23)
   );
+}
+
+// Форматирование телефона при отображении (111-111-11-11)
+const formattedPhoneNumber = computed({
+  get: () => formatPhoneNumber(form.phoneNumber ?? ""),
+  set: (value: string) => {
+    form.phoneNumber = normalizePhoneNumber(value) || undefined;
+  },
+});
+
+// Обработчик ввода телефона
+function handlePhoneInput(event: Event): void {
+  const target = event.target as HTMLInputElement;
+  const value = target.value;
+  form.phoneNumber = normalizePhoneNumber(value) || undefined;
+  target.value = formatPhoneNumber(form.phoneNumber ?? "");
 }
 
 async function onSubmit(): Promise<void> {
@@ -262,8 +408,17 @@ async function onSubmit(): Promise<void> {
     return;
   }
 
+  // Нормализуем номер телефона перед отправкой (убираем форматирование)
+  // Если код страны не выбран и есть номер телефона, используем значение по умолчанию
+  const payload: UpdateHotelAdminRequest = {
+    ...form,
+    phoneCountryCode:
+      form.phoneCountryCode || (form.phoneNumber ? DEFAULT_PHONE_COUNTRY_CODE : undefined),
+    phoneNumber: form.phoneNumber ? normalizePhoneNumber(form.phoneNumber) : undefined,
+  };
+
   // Віддаємо «патч» нагору
-  emit("save", { ...form });
+  emit("save", payload);
   // Закриємо модалку (батько вирішує, що робити після запиту)
   onClose();
   submitting.value = false;
