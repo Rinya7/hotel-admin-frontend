@@ -1,5 +1,5 @@
 // Статус комнаты
-export type RoomStatus = "free" | "booked" | "occupied" | "cleaning";
+export type RoomStatus = "free" | "occupied" | "cleaning";
 
 export interface Room {
   id: number;
@@ -67,7 +67,6 @@ export interface RoomAvailabilityItem {
 
 export interface RoomsStats {
   free: number;
-  booked: number;
   occupied: number;
   cleaning: number;
 }
@@ -86,8 +85,8 @@ export interface BulkWiFiRequest {
 // Історія змін статусів Room
 export interface RoomStatusLog {
   id: number;
-  oldStatus: RoomStatus;
-  newStatus: RoomStatus;
+  oldStatus: RoomStatus | "booked";
+  newStatus: RoomStatus | "booked";
   changedAt: string;
   changedBy?: string | null;
   changedByRole?: "system" | "admin" | "editor" | null;

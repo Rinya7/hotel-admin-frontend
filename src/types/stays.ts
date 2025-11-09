@@ -2,20 +2,37 @@ import type { Room } from "./rooms";
 
 export type StayStatus = "booked" | "occupied" | "completed" | "cancelled";
 
+export interface StayGuest {
+  id?: number;
+  fullName: string;
+  documentType?: string | null;
+  documentNumber?: string | null;
+  birthDate?: string | null;
+  notes?: string | null;
+}
+
+export interface StayGuestPayload {
+  fullName: string;
+  documentType?: string | null;
+  documentNumber?: string | null;
+  birthDate?: string | null;
+  notes?: string | null;
+}
+
 export interface Stay {
   id: number;
   room: {
     id: number;
     roomNumber: string;
-    status: "free" | "booked" | "occupied" | "cleaning";
+    status: Room["status"];
   };
   mainGuestName: string;
-  extraGuests?: string[];
+  extraGuestNames?: string[];
+  guests?: StayGuest[];
   checkIn: string; // YYYY-MM-DD
   checkOut: string; // YYYY-MM-DD
   balance: string | number;
   status: StayStatus;
-  // Аудит: хто створив і хто змінював
   createdBy?: string;
   updatedBy?: string;
   updatedByRole?: "guest" | "admin" | "editor";
@@ -23,21 +40,21 @@ export interface Stay {
 
 export interface CreateStayRequest {
   mainGuestName: string;
-  extraGuestNames?: string[]; // исправлено: extraGuests -> extraGuestNames
+  extraGuestNames?: string[];
   checkIn: string; // YYYY-MM-DD
   checkOut: string; // YYYY-MM-DD
-  status?: StayStatus; // по умолчанию можно отправлять "booked"
-  balance?: string | number; // может быть строкой или числом
+  status?: StayStatus;
+  balance?: string | number;
 }
 
 export interface UpdateStayStatusRequest {
-  status: StayStatus; // например booked -> occupied -> completed/cancelled
+  status: StayStatus;
   comment?: string | null;
 }
 
-// Операции с проживаниями
 export interface CheckInRequest {
   comment?: string;
+  guests: StayGuestPayload[];
 }
 
 export interface CheckOutRequest {
@@ -52,7 +69,6 @@ export interface CloseStayRequest {
   status: "completed" | "cancelled";
 }
 
-// Обновление проживания по датам
 export interface UpdateStayByDatesRequest {
   mainGuestName?: string;
   extraGuestNames?: string[];
@@ -61,13 +77,12 @@ export interface UpdateStayByDatesRequest {
   balance?: string | number;
 }
 
-// Типы для today arrivals/departures (отличаются от обычного Stay)
 export interface TodayStay {
   stayId: number;
   status: StayStatus;
   room: {
     id: number;
-    number: string; // не roomNumber!
+    number: string;
     floor: number;
   };
   mainGuestName: string;
@@ -75,7 +90,6 @@ export interface TodayStay {
   checkOut: string;
 }
 
-// Історія змін статусів Stay
 export interface StayStatusLog {
   id?: number;
   oldStatus: StayStatus;
@@ -84,7 +98,6 @@ export interface StayStatusLog {
   changedBy?: string | null;
   changedByRole?: "guest" | "admin" | "editor" | null;
   comment?: string | null;
-  // Додаткові поля для універсального AuditLogViewer
   entityLabel?: string;
   entityLink?: string;
 }
@@ -94,3 +107,4 @@ export interface StayRoomSyncResponse {
   stay: Stay;
   room: Room;
 }
+

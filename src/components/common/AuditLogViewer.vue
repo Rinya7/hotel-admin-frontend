@@ -30,6 +30,9 @@
             <th v-if="showComment" class="py-2 px-2 text-gray-700 dark:text-gray-300">
               {{ t("auditLogViewer.table.comment") }}
             </th>
+            <th v-if="showStayPeriod" class="py-2 px-2 text-gray-700 dark:text-gray-300">
+              {{ t("auditLogViewer.table.stayPeriod") }}
+            </th>
             <th v-if="showEntity" class="py-2 px-2 text-gray-700 dark:text-gray-300">
               {{ t("auditLogViewer.table.entity") }}
             </th>
@@ -80,6 +83,9 @@
             <td v-if="showComment" class="py-2 px-2 text-gray-700 dark:text-gray-300 whitespace-pre-line">
               {{ log.comment && log.comment.length > 0 ? log.comment : "—" }}
             </td>
+            <td v-if="showStayPeriod" class="py-2 px-2 text-gray-700 dark:text-gray-300">
+              {{ formatStayPeriod(log) }}
+            </td>
             <td v-if="showEntity" class="py-2 px-2">
               <RouterLink
                 v-if="log.entityLink"
@@ -88,7 +94,9 @@
               >
                 {{ log.entityLabel || t("auditLogViewer.table.details") }}
               </RouterLink>
-              <span v-else class="text-gray-400">—</span>
+              <span v-else class="text-gray-700 dark:text-gray-300">
+                {{ log.entityLabel || "—" }}
+              </span>
             </td>
           </tr>
         </tbody>
@@ -125,6 +133,9 @@ const { t, locale } = useI18n();
 
 const resolvedTitle = computed(() => props.title ?? t("auditLogViewer.defaultTitle"));
 const resolvedLocale = computed(() => locale.value ?? "uk-UA");
+const showStayPeriod = computed(() =>
+  props.logs.some((log) => Boolean(log.stayCheckIn) || Boolean(log.stayCheckOut))
+);
 
 function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleString(resolvedLocale.value, {
@@ -134,6 +145,32 @@ function formatDate(dateStr: string): string {
     hour: "2-digit",
     minute: "2-digit",
   });
+}
+
+function formatDateOnly(dateStr?: string | null): string {
+  if (!dateStr) {
+    return "—";
+  }
+  return new Date(dateStr).toLocaleDateString(resolvedLocale.value, {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+}
+
+function formatStayPeriod(log: AuditLog): string {
+  const from = formatDateOnly(log.stayCheckIn ?? null);
+  const to = formatDateOnly(log.stayCheckOut ?? null);
+  if (from === "—" && to === "—") {
+    return "—";
+  }
+  if (from === "—") {
+    return `→ ${to}`;
+  }
+  if (to === "—") {
+    return `${from} →`;
+  }
+  return `${from} → ${to}`;
 }
 
 function getStatusClass(status?: string): string {

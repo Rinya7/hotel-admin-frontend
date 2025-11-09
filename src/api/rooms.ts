@@ -60,7 +60,6 @@ export async function getRoomsStats(): Promise<RoomsStats> {
   const { data } = await http.get<RoomsStats>("/rooms/stats");
   return {
     free: data?.free ?? 0,
-    booked: data?.booked ?? 0,
     occupied: data?.occupied ?? 0,
     cleaning: data?.cleaning ?? 0,
   };

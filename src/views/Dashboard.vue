@@ -5,7 +5,7 @@
       {{ t("dashboard.title") }}
     </h2>
 
-    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
       <button
         @click="toggleStatusFilter('free')"
         :class="[
@@ -34,37 +34,6 @@
           ]"
         >
           {{ stats?.free ?? '—' }}
-        </div>
-      </button>
-
-      <button
-        @click="toggleStatusFilter('booked')"
-        :class="[
-          'border p-4 rounded-lg transition-all duration-200 hover:scale-105 cursor-pointer',
-          statusFilters.includes('booked')
-            ? 'bg-yellow-100  dark:bg-yellow-900  border-brand dark:border-white'
-            : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-brand/50',
-        ]"
-      >
-        <strong
-          :class="[
-            'text-sm block mb-1',
-            statusFilters.includes('booked')
-              ? 'text-yellow-800 dark:text-yellow-200'
-              : 'text-gray-600 dark:text-gray-400',
-          ]"
-        >
-          {{ t('dashboard.stats.booked') }}
-        </strong>
-        <div
-          :class="[
-            'text-3xl font-bold',
-            statusFilters.includes('booked')
-              ? 'text-yellow-800 dark:text-yellow-200'
-              : 'text-gray-900 dark:text-white',
-          ]"
-        >
-          {{ stats?.booked ?? '—' }}
         </div>
       </button>
 
@@ -472,8 +441,6 @@
                     :class="{
                       'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200':
                         room.status === 'free',
-                      'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200':
-                        room.status === 'booked',
                       'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200':
                         room.status === 'occupied',
                       'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200':
@@ -1149,6 +1116,7 @@ import { useI18n } from "vue-i18n";
 import type {
   RoomsStats,
   Room,
+  RoomStatus,
   BulkPolicyHoursRequest,
   BulkWiFiRequest,
 } from "@/types/rooms";
@@ -1177,7 +1145,7 @@ const todayArrivals = ref<TodayStay[]>([]);
 const todayDepartures = ref<TodayStay[]>([]);
 const loading = ref(false);
 const error = ref<string | null>(null);
-const statusFilters = ref<string[]>([]);
+const statusFilters = ref<RoomStatus[]>([]);
 const stayTypeFilters = ref<string[]>(["current"]); // По умолчанию показываем текущие проживания
 
 // Policy hours settings
@@ -1465,7 +1433,7 @@ const isWiFiValid = computed(() => {
 });
 
 // Функции для работы с фильтрами
-function toggleStatusFilter(status: string) {
+function toggleStatusFilter(status: RoomStatus) {
   const index = statusFilters.value.indexOf(status);
   if (index > -1) {
     statusFilters.value.splice(index, 1);
@@ -1553,14 +1521,13 @@ function getRoomDepartureDate(room: Room): string {
   return "—";
 }
 
-function getStatusLabel(status: string): string {
-  const labels: Record<string, string> = {
+function getStatusLabel(status: RoomStatus): string {
+  const labels: Record<RoomStatus, string> = {
     free: t("dashboard.stats.free"),
-    booked: t("dashboard.stats.booked"),
     occupied: t("dashboard.stats.occupied"),
     cleaning: t("dashboard.stats.cleaning"),
   };
-  return labels[status] || status;
+  return labels[status] ?? status;
 }
 
 function getTableTitle(): string {

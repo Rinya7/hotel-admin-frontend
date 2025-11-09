@@ -148,3 +148,5 @@ function getStayTypeLabel(type: string): string {
 
 
 
+
+

@@ -8,6 +8,9 @@ export interface AuditLogsQuery {
   role?: "guest" | "admin" | "editor" | "system";
   from?: string; // ISO date string
   to?: string; // ISO date string
+  roomNumber?: string;
+  stayId?: number;
+  bookingCode?: string;
 }
 
 /**
@@ -24,6 +27,13 @@ export async function getAuditLogs(
     if (params?.role) queryParams.append("role", params.role);
     if (params?.from) queryParams.append("from", params.from);
     if (params?.to) queryParams.append("to", params.to);
+    if (params?.roomNumber) queryParams.append("roomNumber", params.roomNumber);
+    if (typeof params?.stayId === "number") {
+      queryParams.append("stayId", String(params.stayId));
+    }
+    if (params?.bookingCode) {
+      queryParams.append("bookingCode", params.bookingCode);
+    }
 
     const { data } = await http.get<AuditLog[]>(
       `/audit/logs${queryParams.toString() ? `?${queryParams.toString()}` : ""}`
