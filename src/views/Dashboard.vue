@@ -23,7 +23,7 @@
               : 'text-gray-600 dark:text-gray-400',
           ]"
         >
-          {{ t('dashboard.stats.free') }}
+          {{ t("dashboard.stats.free") }}
         </strong>
         <div
           :class="[
@@ -33,7 +33,7 @@
               : 'text-gray-900 dark:text-white',
           ]"
         >
-          {{ stats?.free ?? '—' }}
+          {{ stats?.free ?? "—" }}
         </div>
       </button>
 
@@ -54,7 +54,7 @@
               : 'text-gray-600 dark:text-gray-400',
           ]"
         >
-          {{ t('dashboard.stats.occupied') }}
+          {{ t("dashboard.stats.occupied") }}
         </strong>
         <div
           :class="[
@@ -64,7 +64,7 @@
               : 'text-gray-900 dark:text-white',
           ]"
         >
-          {{ stats?.occupied ?? '—' }}
+          {{ stats?.occupied ?? "—" }}
         </div>
       </button>
 
@@ -85,7 +85,7 @@
               : 'text-gray-600 dark:text-gray-400',
           ]"
         >
-          {{ t('dashboard.stats.cleaning') }}
+          {{ t("dashboard.stats.cleaning") }}
         </strong>
         <div
           :class="[
@@ -95,7 +95,7 @@
               : 'text-gray-900 dark:text-white',
           ]"
         >
-          {{ stats?.cleaning ?? '—' }}
+          {{ stats?.cleaning ?? "—" }}
         </div>
       </button>
     </div>
@@ -317,42 +317,51 @@
         </div>
 
         <!-- Индикатор активных фильтров -->
-        <div
-          v-if="statusFilters.length > 0 || stayTypeFilters.length > 0"
-          class="flex items-center gap-2 mb-4"
-        >
-          <span class="text-sm text-gray-600 dark:text-gray-400"
-            >{{ t("dashboard.activeFilters") }}:</span
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div
+            v-if="statusFilters.length > 0 || stayTypeFilters.length > 0"
+            class="flex items-center gap-2"
           >
-          <div class="flex flex-wrap gap-2">
-            <span
-              v-for="status in statusFilters"
-              :key="status"
-              class="px-2 py-1 text-xs bg-brand/20 text-brand dark:text-brand-300 rounded-md"
+            <span class="text-sm text-gray-600 dark:text-gray-400"
+              >{{ t("dashboard.activeFilters") }}:</span
             >
-              {{ getStatusLabel(status) }}
-            </span>
-            <span
-              v-for="type in stayTypeFilters"
-              :key="type"
-              class="px-2 py-1 text-xs rounded-md"
-              :class="{
-                'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200':
-                  type === 'arrivals',
-                'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200':
-                  type === 'departures',
-              }"
-            >
-              {{ getStayTypeLabel(type) }}
-            </span>
-            <button
-              @click="clearFilters"
-              class="px-2 py-1 text-xs bg-red-100 hover:bg-red-200 dark:bg-red-900 dark:hover:bg-red-800 text-red-700 dark:text-red-300 rounded-md transition-colors"
-            >
-              {{ t("dashboard.clearAll") }}
-            </button>
+            <div class="flex flex-wrap gap-2">
+              <span
+                v-for="status in statusFilters"
+                :key="status"
+                class="px-2 py-1 text-xs bg-brand/20 text-brand dark:text-brand-300 rounded-md"
+              >
+                {{ getStatusLabel(status) }}
+              </span>
+              <span
+                v-for="type in stayTypeFilters"
+                :key="type"
+                class="px-2 py-1 text-xs rounded-md"
+                :class="{
+                  'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200':
+                    type === 'arrivals',
+                  'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200':
+                    type === 'departures',
+                }"
+              >
+                {{ getStayTypeLabel(type) }}
+              </span>
+              <button
+                @click="clearFilters"
+                class="px-2 py-1 text-xs bg-red-100 hover:bg-red-200 dark:bg-red-900 dark:hover:bg-red-800 text-red-700 dark:text-red-300 rounded-md transition-colors"
+              >
+                {{ t("dashboard.clearAll") }}
+              </button>
+            </div>
           </div>
+          <input
+            v-model="roomNumberSearch"
+            type="text"
+            :placeholder="t('dashboard.table.roomNumberSearchPlaceholder')"
+            class="w-full sm:w-64 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand"
+          />
         </div>
+
         <div
           class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
         >
@@ -416,6 +425,19 @@
                       ? t("dashboard.noRoomsMatch")
                       : t("dashboard.noRoomsFound")
                   }}
+                </td>
+              </tr>
+              <tr
+                v-else-if="
+                  filteredRooms.length === 0 &&
+                  roomNumberSearch.trim().length > 0
+                "
+              >
+                <td
+                  colspan="7"
+                  class="px-4 py-6 text-center text-gray-500 dark:text-gray-400"
+                >
+                  {{ t("dashboard.noRoomsMatch") }}
                 </td>
               </tr>
 
@@ -1106,11 +1128,151 @@
         </div>
       </div>
     </div>
+
+    <!-- Global Booking Overview -->
+    <section
+      class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 space-y-4"
+    >
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-lg font-semibold text-brand dark:text-white">
+            {{ t("dashboard.allStays.title") }}
+          </h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400">
+            {{ t("dashboard.allStays.subtitle") }}
+          </p>
+        </div>
+        <button
+          type="button"
+          class="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          :disabled="bookingStaysLoading"
+          @click="loadBookingStays()"
+        >
+          {{
+            bookingStaysLoading ? t("common.loading") : t("dashboard.refresh")
+          }}
+        </button>
+      </div>
+
+      <div class="flex flex-wrap gap-2 items-center">
+        <button
+          v-for="status in stayStatusOptions"
+          :key="status"
+          type="button"
+          :class="getBookingFilterButtonClasses(status)"
+          @click="toggleBookingStatusFilter(status)"
+        >
+          {{ getStayStatusLabel(status) }}
+        </button>
+        <input
+          v-model="bookingCodeSearch"
+          type="text"
+          :placeholder="t('dashboard.allStays.searchPlaceholder')"
+          class="ml-auto px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand"
+        />
+      </div>
+
+      <div
+        class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
+      >
+        <table class="min-w-full text-sm">
+          <thead
+            class="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
+          >
+            <tr>
+              <th class="px-4 py-3 text-left">
+                {{ t("dashboard.allStays.table.booking") }}
+              </th>
+              <th class="px-4 py-3 text-left">
+                {{ t("dashboard.allStays.table.room") }}
+              </th>
+              <th class="px-4 py-3 text-left">
+                {{ t("dashboard.allStays.table.guest") }}
+              </th>
+              <th class="px-4 py-3 text-left">
+                {{ t("dashboard.allStays.table.dates") }}
+              </th>
+              <th class="px-4 py-3 text-left">
+                {{ t("dashboard.allStays.table.status") }}
+              </th>
+              <th class="px-4 py-3 text-left">
+                {{ t("dashboard.allStays.table.actions") }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-if="bookingStaysLoading">
+              <td
+                colspan="6"
+                class="px-4 py-6 text-center text-gray-500 dark:text-gray-400"
+              >
+                {{ t("dashboard.loading") }}
+              </td>
+            </tr>
+            <tr v-else-if="bookingStaysError">
+              <td
+                colspan="6"
+                class="px-4 py-6 text-center text-red-500 dark:text-red-300"
+              >
+                {{ bookingStaysError }}
+              </td>
+            </tr>
+            <tr v-else-if="filteredBookingStays.length === 0">
+              <td
+                colspan="6"
+                class="px-4 py-6 text-center text-gray-500 dark:text-gray-400"
+              >
+                {{ t("dashboard.allStays.empty") }}
+              </td>
+            </tr>
+            <tr
+              v-for="stay in filteredBookingStays"
+              :key="stay.stayId"
+              class="border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50"
+            >
+              <td class="px-4 py-3 font-semibold text-gray-900 dark:text-white">
+                {{ formatBookingCode(stay) }}
+              </td>
+              <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
+                {{ stay.room?.number }}
+              </td>
+              <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
+                {{ stay.mainGuestName }}
+              </td>
+              <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
+                {{ formatStayPeriod(stay) }}
+              </td>
+              <td class="px-4 py-3">
+                <span
+                  :class="[
+                    getStayStatusClass(stay.status),
+                    'px-2 py-1 rounded text-xs font-medium',
+                  ]"
+                >
+                  {{ getStayStatusLabel(stay.status) }}
+                </span>
+              </td>
+              <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
+                <RouterLink
+                  :to="{
+                    name: 'room-stays',
+                    params: { roomNumber: stay.room?.number },
+                  }"
+                  class="text-brand hover:text-brand-light dark:text-emerald-300"
+                >
+                  {{ t("dashboard.allStays.openRoom") }}
+                </RouterLink>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
   </section>
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, computed, reactive } from "vue";
+import { onMounted, onUnmounted, ref, computed, reactive, watch } from "vue";
 import { RouterLink } from "vue-router";
 import { useI18n } from "vue-i18n";
 import type {
@@ -1120,7 +1282,7 @@ import type {
   BulkPolicyHoursRequest,
   BulkWiFiRequest,
 } from "@/types/rooms";
-import type { Stay, TodayStay } from "@/types/stays";
+import type { Stay, StayStatus, StayListItem, TodayStay } from "@/types/stays";
 import {
   getRoomsStats,
   getRooms,
@@ -1131,11 +1293,12 @@ import {
   getCurrentStays,
   getTodayArrivals,
   getTodayDepartures,
+  getStaysByStatus,
 } from "@/api/stays";
 import { useAuthStore } from "@/stores/auth";
 import { useNotifications } from "@/composables/useNotifications";
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const auth = useAuthStore();
 const { showSuccess, showError } = useNotifications();
 const stats = ref<RoomsStats | null>(null);
@@ -1147,6 +1310,19 @@ const loading = ref(false);
 const error = ref<string | null>(null);
 const statusFilters = ref<RoomStatus[]>([]);
 const stayTypeFilters = ref<string[]>(["current"]); // По умолчанию показываем текущие проживания
+const stayStatusOptions: StayStatus[] = [
+  "booked",
+  "occupied",
+  "completed",
+  "cancelled",
+];
+const bookingStatusFilters = ref<StayStatus[]>(["booked"]);
+const bookingCodeSearch = ref("");
+const bookingLoaded = ref(false);
+const bookingStays = ref<StayListItem[]>([]);
+const bookingStaysLoading = ref(false);
+const bookingStaysError = ref<string | null>(null);
+const roomNumberSearch = ref("");
 
 // Policy hours settings
 const showPolicyHours = ref(false);
@@ -1266,6 +1442,66 @@ async function load() {
   }
 }
 
+async function loadBookingStays(
+  statuses: StayStatus[] = stayStatusOptions
+): Promise<void> {
+  if (bookingStaysLoading.value) {
+    return;
+  }
+  const uniqueStatuses = Array.from(new Set(statuses));
+  bookingStaysLoading.value = true;
+  bookingStaysError.value = null;
+
+  try {
+    const chunks = await Promise.all(
+      uniqueStatuses.map(async (status) => {
+        try {
+          const data = await getStaysByStatus(status);
+          return data.map((stay) => ({
+            ...stay,
+            checkIn: normalizeDate(stay.checkIn),
+            checkOut: normalizeDate(stay.checkOut),
+          }));
+        } catch (err) {
+          console.error(`Failed to load stays with status ${status}:`, err);
+          return [] as StayListItem[];
+        }
+      })
+    );
+
+    bookingStays.value = chunks.flat().sort((a, b) => b.stayId - a.stayId);
+  } catch (err) {
+    console.error("Error loading booking stays:", err);
+    bookingStaysError.value =
+      err instanceof Error ? err.message : t("common.unknownError");
+    bookingStays.value = currentStays.value.map((stay) => ({
+      stayId: stay.id,
+      status: stay.status,
+      room: {
+        id: stay.room.id,
+        number: stay.room.roomNumber,
+        floor: (stay.room as { floor?: number }).floor ?? 0,
+      },
+      mainGuestName: stay.mainGuestName,
+      checkIn: normalizeDate(stay.checkIn),
+      checkOut: normalizeDate(stay.checkOut),
+      balance: stay.balance,
+    }));
+  } finally {
+    bookingStaysLoading.value = false;
+  }
+}
+
+watch(
+  currentStays,
+  (list) => {
+    if (!bookingLoaded.value && list.length > 0) {
+      void loadBookingStays();
+    }
+  },
+  { immediate: true }
+);
+
 // Функции для кнопок +/- времени
 function increaseCheckInHour() {
   const current = policyHoursForm.checkInHour || 0;
@@ -1286,6 +1522,69 @@ function decreaseCheckOutHour() {
   const current = policyHoursForm.checkOutHour || 0;
   policyHoursForm.checkOutHour = Math.max(0, current - 1);
 }
+
+function normalizeDate(value: string): string {
+  if (!value) {
+    return "";
+  }
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return value;
+  }
+  return new Date(value).toISOString().slice(0, 10);
+}
+
+function formatDate(value?: string | null): string {
+  if (!value) {
+    return "—";
+  }
+  return new Intl.DateTimeFormat(locale.value ?? undefined, {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date(value));
+}
+
+function formatStayPeriod(stay: { checkIn: string; checkOut: string }): string {
+  const start = formatDate(stay.checkIn);
+  const end = formatDate(stay.checkOut);
+  return `${start} → ${end}`;
+}
+
+function formatBookingCode(stay: StayListItem): string {
+  return `${stay.room?.number ?? "?"}-${stay.stayId}`;
+}
+
+function toggleBookingStatusFilter(status: StayStatus): void {
+  const current = [...bookingStatusFilters.value];
+  const index = current.indexOf(status);
+
+  if (index > -1) {
+    current.splice(index, 1);
+  } else {
+    current.push(status);
+  }
+
+  bookingStatusFilters.value = current;
+}
+
+const filteredBookingStays = computed(() => {
+  let list = bookingStays.value;
+
+  if (bookingStatusFilters.value.length > 0) {
+    list = list.filter((stay) =>
+      bookingStatusFilters.value.includes(stay.status)
+    );
+  }
+
+  const search = bookingCodeSearch.value.trim().toLowerCase();
+  if (search.length > 0) {
+    list = list.filter((stay) =>
+      formatBookingCode(stay).toLowerCase().includes(search)
+    );
+  }
+
+  return list;
+});
 
 async function savePolicyHours() {
   try {
@@ -1403,6 +1702,13 @@ const filteredRooms = computed(() => {
     );
     filtered = filtered.filter((room) =>
       departureRoomNumbers.includes(room.roomNumber)
+    );
+  }
+
+  const search = roomNumberSearch.value.trim().toLowerCase();
+  if (search.length > 0) {
+    filtered = filtered.filter((room) =>
+      room.roomNumber.toLowerCase().includes(search)
     );
   }
 
@@ -1530,6 +1836,48 @@ function getStatusLabel(status: RoomStatus): string {
   return labels[status] ?? status;
 }
 
+function getStayStatusClass(status: RoomStatus | Stay["status"]): string {
+  const classes: Record<string, string> = {
+    free: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
+    booked:
+      "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
+    occupied: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
+    completed: "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200",
+    cancelled: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
+  };
+
+  return (
+    classes[status] ??
+    "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200"
+  );
+}
+
+function getStayStatusLabel(status: StayStatus): string {
+  return t(`roomStays.status.${status}`) as string;
+}
+
+function getBookingFilterButtonClasses(status: StayStatus): string {
+  const base =
+    "px-3 py-1.5 text-sm font-medium rounded-full border transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand";
+  const isActive = bookingStatusFilters.value.includes(status);
+
+  const activeClasses: Record<StayStatus, string> = {
+    booked:
+      "bg-yellow-100 border-yellow-300 text-yellow-900 dark:bg-yellow-900/60 dark:border-yellow-600 dark:text-yellow-100",
+    occupied:
+      "bg-blue-100 border-blue-300 text-blue-900 dark:bg-blue-900/60 dark:border-blue-600 dark:text-blue-100",
+    completed:
+      "bg-gray-200 border-gray-300 text-gray-900 dark:bg-gray-700/70 dark:border-gray-500 dark:text-gray-50",
+    cancelled:
+      "bg-red-100 border-red-300 text-red-900 dark:bg-red-900/60 dark:border-red-600 dark:text-red-100",
+  };
+
+  const inactiveClasses =
+    "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:border-brand/60 hover:text-brand dark:hover:text-emerald-300";
+
+  return `${base} ${isActive ? activeClasses[status] : inactiveClasses}`;
+}
+
 function getTableTitle(): string {
   if (statusFilters.value.length === 0) {
     return "All Rooms";
@@ -1548,7 +1896,7 @@ function getTableTitle(): string {
   return "Filtered Rooms";
 }
 
-onMounted(() => {
+onMounted(async () => {
   document.addEventListener("keydown", handleEscKey);
   load();
 });

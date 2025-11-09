@@ -2,6 +2,7 @@
 import http from "./http";
 import type {
   Stay,
+  StayListItem,
   CreateStayRequest,
   CheckInRequest,
   CheckOutRequest,
@@ -116,9 +117,35 @@ export async function closeStayByDates(
 }
 
 // Список проживаний по статусу
-export async function getStaysByStatus(status: string): Promise<Stay[]> {
-  const { data } = await http.get<Stay[]>(`/stays/status/${status}`);
-  return data;
+export async function getStaysByStatus(status: string): Promise<StayListItem[]> {
+  const { data } = await http.get(
+    `/stays/status/${status}`
+  );
+
+  if (data && Array.isArray((data as { items?: unknown }).items)) {
+    const { items } = data as { items: StayListItem[] };
+    return items ?? [];
+  }
+
+  if (Array.isArray(data)) {
+    return (data as Stay[]).map((stay) => ({
+      stayId: stay.id,
+      status: stay.status,
+      room: {
+        id: stay.room.id,
+        number: (stay.room as { roomNumber?: string; number?: string }).roomNumber ??
+          (stay.room as { number?: string }).number ??
+          "?",
+        floor: (stay.room as { floor?: number }).floor ?? 0,
+      },
+      mainGuestName: stay.mainGuestName,
+      checkIn: stay.checkIn,
+      checkOut: stay.checkOut,
+      balance: stay.balance,
+    }));
+  }
+
+  return [];
 }
 
 // Сегодняшние заезды

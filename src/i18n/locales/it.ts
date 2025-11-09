@@ -283,6 +283,7 @@ const it = {
       arrivalDate: "Data arrivo",
       departureDate: "Data partenza",
       actions: "Azioni",
+      roomNumberSearchPlaceholder: "Filtra per numero di camera",
     },
     loading: "Caricamento camere...",
     refresh: "Aggiorna",
@@ -316,21 +317,27 @@ const it = {
       errorMessage: "Impossibile salvare gli orari politica",
     },
     wifiModal: {
-      title: "Credenziali Wi-Fi",
-      networkName: "Nome rete (SSID)",
-      password: "Password",
-      placeholderName: "Inserisci nome rete Wi-Fi",
-      placeholderPassword: "Inserisci password Wi-Fi",
-      noteTitle: "Nota:",
-      noteText:
-        "Questo aggiornerà le credenziali Wi-Fi per tutte le camere nel sistema.",
-      updateAllRooms: "Verrà aggiornato per tutte le camere",
-      passwordVisible: "La password è visibile per facilitare la modifica",
-      cancel: "Annulla",
-      save: "Salva credenziali Wi-Fi",
-      saving: "Salvataggio...",
-      successMessage: "Credenziali Wi-Fi aggiornate con successo!",
-      errorMessage: "Impossibile salvare le credenziali Wi-Fi",
+      title: "Aggiorna Wi-Fi per tutte le camere",
+      save: "Salva",
+      successMessage: "Wi-Fi aggiornato",
+      successDescription:
+        "Tutte le camere ora usano le nuove credenziali Wi-Fi.",
+      errorMessage: "Impossibile aggiornare il Wi-Fi",
+    },
+    allStays: {
+      title: "Panoramica prenotazioni",
+      subtitle: "Tutti i soggiorni per ogni camera",
+      empty: "Nessun soggiorno corrisponde ai filtri",
+      openRoom: "Apri camera",
+      searchPlaceholder: "Filtra per codice prenotazione",
+      table: {
+        booking: "Prenotazione",
+        room: "Camera",
+        guest: "Ospite",
+        dates: "Date",
+        status: "Stato",
+        actions: "Azioni",
+      },
     },
   },
   roomsList: {
@@ -551,7 +558,8 @@ const it = {
       },
       hints: {
         comment: "Il commento è obbligatorio in caso di cancellazione.",
-        extraGuests: "Usa l'elenco per tracciare gli ospiti prima del check-in.",
+        extraGuests:
+          "Usa l'elenco per tracciare gli ospiti prima del check-in.",
       },
       messages: {
         successTitle: "Aggiornato",
@@ -633,9 +641,11 @@ const it = {
     },
     errors: {
       noGuests: "Aggiungi almeno un ospite per procedere.",
-      invalidGuest: "Il nome di ogni ospite deve contenere almeno due caratteri.",
+      invalidGuest:
+        "Il nome di ogni ospite deve contenere almeno due caratteri.",
       capacityLimit: "Capienza massima per questa camera: {capacity} ospiti.",
-      capacityExceeded: "Numero di ospiti superiore alla capienza ({capacity}).",
+      capacityExceeded:
+        "Numero di ospiti superiore alla capienza ({capacity}).",
     },
   },
   auditLogViewer: {

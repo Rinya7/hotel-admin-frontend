@@ -102,7 +102,7 @@ const uk = {
       wifiPassword: "Пароль Wi-Fi мережі",
     },
     placeholders: {
-      // ⚠️ Значения по умолчанию (checkInDefault, checkOutDefault, phoneCountryCode) 
+      // ⚠️ Значения по умолчанию (checkInDefault, checkOutDefault, phoneCountryCode)
       // можно изменить в src/constants/defaults.ts
       checkInDefault: "14", // Соответствует DEFAULT_CHECK_IN_HOUR
       checkOutDefault: "10", // Соответствует DEFAULT_CHECK_OUT_HOUR
@@ -287,7 +287,7 @@ const uk = {
     },
   },
   dashboard: {
-    title: "Панель керування",
+    title: "Дашборд",
     stats: {
       free: "Вільні",
       occupied: "Зайняті",
@@ -314,6 +314,7 @@ const uk = {
       arrivalDate: "Дата заїзду",
       departureDate: "Дата виїзду",
       actions: "Дії",
+      roomNumberSearchPlaceholder: "Фільтр за номером кімнати",
     },
     loading: "Завантаження кімнат...",
     refresh: "Оновити",
@@ -347,21 +348,26 @@ const uk = {
       errorMessage: "Не вдалося зберегти політику часів",
     },
     wifiModal: {
-      title: "Дані Wi-Fi",
-      networkName: "Назва мережі (SSID)",
-      password: "Пароль",
-      placeholderName: "Введіть назву Wi-Fi мережі",
-      placeholderPassword: "Введіть пароль Wi-Fi",
-      noteTitle: "Примітка:",
-      noteText:
-        "Це оновить дані Wi-Fi для всіх кімнат у системі. Переконайтеся, що інформація правильна перед збереженням.",
-      updateAllRooms: "Буде оновлено для всіх кімнат",
-      passwordVisible: "Пароль видимий для зручності редагування",
-      cancel: "Скасувати",
-      save: "Зберегти дані Wi-Fi",
-      saving: "Збереження...",
-      successMessage: "Дані Wi-Fi успішно оновлені для всіх кімнат!",
-      errorMessage: "Не вдалося зберегти дані Wi-Fi",
+      title: "Оновлення Wi-Fi для всіх номерів",
+      save: "Зберегти",
+      successMessage: "Wi-Fi оновлено",
+      successDescription: "Усі номери тепер використовують нові дані Wi-Fi.",
+      errorMessage: "Не вдалося оновити Wi-Fi",
+    },
+    allStays: {
+      title: "Усі проживання",
+      subtitle: "Усі проживання по всіх номерах",
+      empty: "За обраними фільтрами немає проживань",
+      openRoom: "Відкрити номер",
+      searchPlaceholder: "Фільтр за номером бронювання",
+      table: {
+        booking: "Бронювання",
+        room: "Номер",
+        guest: "Гість",
+        dates: "Дати",
+        status: "Статус",
+        actions: "Дії",
+      },
     },
   },
   roomsList: {
@@ -640,7 +646,8 @@ const uk = {
       },
       hints: {
         comment: "Буде видно в історії проживання після заселення.",
-        capacity: "Максимум {capacity} гостей можна зареєструвати в цьому номері.",
+        capacity:
+          "Максимум {capacity} гостей можна зареєструвати в цьому номері.",
       },
       guests: {
         primary: "Основний гість",
@@ -665,7 +672,8 @@ const uk = {
       noGuests: "Додайте хоча б одного гостя, щоб продовжити.",
       invalidGuest: "Ім'я кожного гостя має містити щонайменше два символи.",
       capacityLimit: "Максимальна кількість гостей для номера — {capacity}.",
-      capacityExceeded: "Кількість гостей перевищує вмістимість номера ({capacity}).",
+      capacityExceeded:
+        "Кількість гостей перевищує вмістимість номера ({capacity}).",
     },
   },
   auditLogViewer: {
