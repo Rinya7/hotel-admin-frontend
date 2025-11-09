@@ -90,6 +90,20 @@ export interface TodayStay {
   checkOut: string;
 }
 
+export interface StayListItem {
+  stayId: number;
+  status: StayStatus;
+  room: {
+    id: number;
+    number: string;
+    floor: number;
+  };
+  mainGuestName: string;
+  checkIn: string;
+  checkOut: string;
+  balance: string | number;
+}
+
 export interface StayStatusLog {
   id?: number;
   oldStatus: StayStatus;

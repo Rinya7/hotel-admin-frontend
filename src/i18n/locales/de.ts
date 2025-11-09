@@ -277,13 +277,14 @@ const de = {
     noRoomsMatch: "Keine Zimmer entsprechen den Filtern",
     noRoomsFound: "Keine Zimmer gefunden",
     table: {
-      roomNumber: "Zimmer #",
+      roomNumber: "Zimmer",
       floor: "Etage",
       capacity: "Kapazität",
       status: "Status",
-      arrivalDate: "Ankunftsdatum",
-      departureDate: "Abreisedatum",
+      arrivalDate: "Anreise",
+      departureDate: "Abreise",
       actions: "Aktionen",
+      roomNumberSearchPlaceholder: "Nach Zimmernummer filtern",
     },
     loading: "Zimmer werden geladen...",
     refresh: "Aktualisieren",
@@ -317,21 +318,26 @@ const de = {
       errorMessage: "Fehler beim Speichern",
     },
     wifiModal: {
-      title: "Wi-Fi Zugangsdaten",
-      networkName: "Netzwerkname (SSID)",
-      password: "Passwort",
-      placeholderName: "Wi-Fi Netzwerkname eingeben",
-      placeholderPassword: "Wi-Fi Passwort eingeben",
-      noteTitle: "Hinweis:",
-      noteText:
-        "Dies aktualisiert Wi-Fi-Zugangsdaten für alle Zimmer im System.",
-      updateAllRooms: "Wird für alle Zimmer aktualisiert",
-      passwordVisible: "Passwort ist sichtbar zum einfachen Bearbeiten",
-      cancel: "Abbrechen",
-      save: "Wi-Fi Daten speichern",
-      saving: "Speichern...",
-      successMessage: "Wi-Fi Zugangsdaten erfolgreich aktualisiert!",
-      errorMessage: "Fehler beim Speichern der Wi-Fi Daten",
+      title: "Wi-Fi für alle Zimmer aktualisieren",
+      save: "Speichern",
+      successMessage: "Wi-Fi aktualisiert",
+      successDescription: "Alle Zimmer verwenden nun die neuen Wi-Fi-Daten.",
+      errorMessage: "Wi-Fi konnte nicht aktualisiert werden",
+    },
+    allStays: {
+      title: "Alle Aufenthalte",
+      subtitle: "Alle Aufenthalte für sämtliche Zimmer",
+      empty: "Keine Aufenthalte entsprechen den Filtern",
+      openRoom: "Zimmer öffnen",
+      searchPlaceholder: "Nach Buchungscode filtern",
+      table: {
+        booking: "Buchung",
+        room: "Zimmer",
+        guest: "Gast",
+        dates: "Zeitraum",
+        status: "Status",
+        actions: "Aktionen",
+      },
     },
   },
   roomsList: {
@@ -552,7 +558,8 @@ const de = {
       },
       hints: {
         comment: "Bei einer Stornierung ist ein Kommentar erforderlich.",
-        extraGuests: "Liste hilft, Gäste vor dem Check-in im Blick zu behalten.",
+        extraGuests:
+          "Liste hilft, Gäste vor dem Check-in im Blick zu behalten.",
       },
       messages: {
         successTitle: "Aktualisiert",
@@ -612,7 +619,8 @@ const de = {
       },
       hints: {
         comment: "Der Kommentar erscheint nach dem Check-in in der Historie.",
-        capacity: "Maximal {capacity} Gäste können für dieses Zimmer registriert werden.",
+        capacity:
+          "Maximal {capacity} Gäste können für dieses Zimmer registriert werden.",
       },
       guests: {
         primary: "Hauptgast",
@@ -634,9 +642,11 @@ const de = {
     },
     errors: {
       noGuests: "Füge mindestens einen Gast hinzu, um fortzufahren.",
-      invalidGuest: "Der Name jedes Gasts muss mindestens zwei Zeichen besitzen.",
+      invalidGuest:
+        "Der Name jedes Gasts muss mindestens zwei Zeichen besitzen.",
       capacityLimit: "Für dieses Zimmer sind maximal {capacity} Gäste erlaubt.",
-      capacityExceeded: "Gästezahl überschreitet die Zimmerkapazität ({capacity}).",
+      capacityExceeded:
+        "Gästezahl überschreitet die Zimmerkapazität ({capacity}).",
     },
   },
   auditLogViewer: {
