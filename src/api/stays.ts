@@ -65,7 +65,7 @@ export async function createStayForRoom(
 // Ручной check-in (booked -> occupied)
 export async function checkInStay(
   id: number,
-  payload?: CheckInRequest
+  payload: CheckInRequest
 ): Promise<StayRoomSyncResponse> {
   const { data } = await http.patch<StayRoomSyncResponse>(
     `/stays/${id}/checkin`,

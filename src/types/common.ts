@@ -9,5 +9,9 @@ export interface AuditLog {
   entityLabel?: string; // наприклад: ім'я гостя або номер кімнати
   entityLink?: string | null; // посилання для переходу
   comment?: string | null;
+  stayCheckIn?: string | null;
+  stayCheckOut?: string | null;
+  roomNumber?: string | null;
+  stayId?: number | null;
 }
 

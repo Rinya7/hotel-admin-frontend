@@ -54,6 +54,43 @@
 
         <div>
           <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+            Номер кімнати
+          </label>
+          <input
+            v-model="filters.roomNumber"
+            type="text"
+            class="border rounded px-2 py-1 min-w-[150px] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            placeholder="101"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+            ID проживання
+          </label>
+          <input
+            v-model="filters.stayId"
+            type="number"
+            min="1"
+            class="border rounded px-2 py-1 min-w-[150px] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            placeholder="2001"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+            {{ t("auditLogViewer.filters.bookingCode") }}
+          </label>
+          <input
+            v-model="filters.bookingCode"
+            type="text"
+            class="border rounded px-2 py-1 min-w-[150px] bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            placeholder="101-2001"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
             Від дати
           </label>
           <input
@@ -93,6 +130,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
 import AuditLogViewer from "@/components/common/AuditLogViewer.vue";
 import Button from "@/components/ui/Button.vue";
 import { getAuditLogs, type AuditLogsQuery } from "@/api/audit";
@@ -102,16 +140,24 @@ const logs = ref<AuditLog[]>([]);
 const loading = ref(false);
 const error = ref<string | null>(null);
 
+const { t } = useI18n();
+
 const filters = ref<{
   type: "" | "room" | "stay";
   user: string;
   role: "" | "guest" | "admin" | "editor" | "system";
+  roomNumber: string;
+  stayId: string | number | null;
+  bookingCode: string;
   from: string;
   to: string;
 }>({
   type: "",
   user: "",
   role: "",
+  roomNumber: "",
+  stayId: "",
+  bookingCode: "",
   from: "",
   to: "",
 });
@@ -136,6 +182,30 @@ async function loadLogs(): Promise<void> {
     if (filters.value.role) {
       params.role = filters.value.role;
     }
+    const roomNumberInput = filters.value.roomNumber
+      ? String(filters.value.roomNumber).trim()
+      : "";
+    if (roomNumberInput) {
+      params.roomNumber = roomNumberInput;
+    }
+    const stayIdRaw = filters.value.stayId;
+    const stayIdInput =
+      stayIdRaw === null || stayIdRaw === undefined
+        ? ""
+        : String(stayIdRaw).trim();
+    if (stayIdInput) {
+      const idNumber = Number.parseInt(stayIdInput, 10);
+      if (!Number.isNaN(idNumber) && idNumber > 0) {
+        params.stayId = idNumber;
+      }
+    }
+    const bookingCodeInput = filters.value.bookingCode
+      ? String(filters.value.bookingCode).trim()
+      : "";
+    if (bookingCodeInput) {
+      params.bookingCode = bookingCodeInput;
+    }
+
     if (filters.value.from) {
       // Конвертуємо дату в ISO формат (додаємо час, якщо потрібно)
       const fromDate = new Date(filters.value.from);
@@ -187,6 +257,9 @@ function clearFilters(): void {
     type: "",
     user: "",
     role: "",
+    roomNumber: "",
+    stayId: "",
+    bookingCode: "",
     from: "",
     to: "",
   };
