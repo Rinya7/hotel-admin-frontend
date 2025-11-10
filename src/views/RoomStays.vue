@@ -1432,6 +1432,31 @@ const form = reactive<CreateStayRequest>({
 const extraGuestsLine = ref("");
 const formError = ref("");
 
+function hasActiveOverlap(newCheckIn: string, newCheckOut: string): boolean {
+  if (!newCheckIn || !newCheckOut) {
+    return false;
+  }
+  const start = new Date(`${newCheckIn}T00:00:00`);
+  const end = new Date(`${newCheckOut}T00:00:00`);
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+    return false;
+  }
+  return stays.value.some((stay) => {
+    if (!stay.checkIn || !stay.checkOut) {
+      return false;
+    }
+    if (stay.status !== "booked" && stay.status !== "occupied") {
+      return false;
+    }
+    const stayStart = new Date(`${stay.checkIn}T00:00:00`);
+    const stayEnd = new Date(`${stay.checkOut}T00:00:00`);
+    if (Number.isNaN(stayStart.getTime()) || Number.isNaN(stayEnd.getTime())) {
+      return false;
+    }
+    return start < stayEnd && end > stayStart;
+  });
+}
+
 async function load() {
   const fetched = await listStaysByRoom(roomNumber);
   stays.value = fetched.map((stay) => ({
@@ -1451,6 +1476,21 @@ async function createNew() {
   formError.value = "";
 
   try {
+    if (!form.checkIn || !form.checkOut) {
+      formError.value = t("roomStays.messages.invalidData") as string;
+      return;
+    }
+
+    if (form.checkOut <= form.checkIn) {
+      formError.value = t("roomStays.messages.invalidRange") as string;
+      return;
+    }
+
+    if (hasActiveOverlap(form.checkIn, form.checkOut)) {
+      formError.value = t("roomStays.messages.dateConflict") as string;
+      return;
+    }
+
     form.extraGuestNames = extraGuestsLine.value
       .split(",")
       .map((x) => x.trim())

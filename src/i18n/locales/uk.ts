@@ -369,6 +369,52 @@ const uk = {
         actions: "Дії",
       },
     },
+    addEditor: {
+      cardTitle: "Редактори команди",
+      cardSubtitle: "Додайте співробітника з правами редактора",
+      highlights: {
+        manage: "Редактор може керувати бронюваннями та статусами номерів.",
+        audit: "Усі дії потрапляють до історії аудиту.",
+        revoke: "Доступ можна відкликати будь-коли.",
+      },
+      button: "Додати редактора",
+      modal: {
+        title: "Запросити редактора",
+        subtitle: "Новий користувач успадкує налаштування вашого готелю",
+        fields: {
+          username: "Логін",
+          fullName: "Повне ім'я",
+          password: "Пароль",
+          confirmPassword: "Підтвердження пароля",
+          email: "Email",
+          phoneCountryCode: "Код країни",
+          phoneNumber: "Номер телефону",
+        },
+        placeholders: {
+          username: "frontdesk-2",
+          fullName: "Ім'я та прізвище (необов'язково)",
+          password: "Мінімум 6 символів",
+          confirmPassword: "Повторіть пароль",
+          email: "editor@example.com",
+          phoneCountryCode: "+39",
+          phoneNumber: "123456789",
+        },
+        hints: {
+          password:
+            "Використовуйте щонайменше 6 символів. Діліться даними безпечно.",
+        },
+        errors: {
+          passwordMismatch: "Паролі не збігаються.",
+        },
+        validation: "Заповніть логін і паролі, щоб продовжити.",
+        notAllowed: "Тільки адміністратор може створювати редакторів.",
+        cancel: "Скасувати",
+        submit: "Створити редактора",
+        successTitle: "Редактора створено",
+        successMessage: "Користувача {username} додано успішно.",
+        errorTitle: "Не вдалося створити редактора",
+      },
+    },
   },
   roomsList: {
     title: "Кімнати",
@@ -480,6 +526,7 @@ const uk = {
       unknownError: "Невідома помилка",
       dateConflict:
         "Кімната вже заброньована або зайнята на ці дати. Оберіть інші дати заїзду та виїзду.",
+      invalidRange: "Дата виїзду має бути пізніше дати заїзду.",
       roomNotFound: "Кімната не знайдена",
       invalidData: "Невірно вказані дані. Перевірте форму.",
     },
