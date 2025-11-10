@@ -339,6 +339,53 @@ const it = {
         actions: "Azioni",
       },
     },
+    addEditor: {
+      cardTitle: "Editor del team",
+      cardSubtitle: "Invita un collaboratore con permessi di editor",
+      highlights: {
+        manage: "Gli editor possono gestire prenotazioni e stati delle camere.",
+        audit: "Tutte le azioni vengono tracciate nell'audit log.",
+        revoke: "L'accesso può essere revocato in qualsiasi momento.",
+      },
+      button: "Aggiungi editor",
+      modal: {
+        title: "Invita un editor",
+        subtitle: "Il nuovo utente erediterà le impostazioni del tuo hotel",
+        fields: {
+          username: "Username",
+          fullName: "Nome completo",
+          password: "Password",
+          confirmPassword: "Conferma password",
+          email: "Email",
+          phoneCountryCode: "Prefisso internazionale",
+          phoneNumber: "Numero di telefono",
+        },
+        placeholders: {
+          username: "frontdesk-2",
+          fullName: "Nome e cognome (opzionale)",
+          password: "Minimo 6 caratteri",
+          confirmPassword: "Ripeti password",
+          email: "editor@example.com",
+          phoneCountryCode: "+39",
+          phoneNumber: "123456789",
+        },
+        hints: {
+          password:
+            "Usa almeno 6 caratteri. Condividi le credenziali in modo sicuro.",
+        },
+        errors: {
+          passwordMismatch: "Le password non coincidono.",
+        },
+        validation:
+          "Compila username e password corrispondenti per continuare.",
+        notAllowed: "Solo gli amministratori possono creare editor.",
+        cancel: "Annulla",
+        submit: "Crea editor",
+        successTitle: "Editor creato",
+        successMessage: "L'editor {username} è stato creato con successo.",
+        errorTitle: "Impossibile creare l'editor",
+      },
+    },
   },
   roomsList: {
     title: "Camere",
@@ -450,6 +497,7 @@ const it = {
       unknownError: "Errore sconosciuto",
       dateConflict:
         "La camera è già prenotata o occupata per queste date. Si prega di scegliere date di check-in e check-out diverse.",
+      invalidRange: "La data di check-out deve essere successiva al check-in.",
       roomNotFound: "Camera non trovata",
       invalidData:
         "Dati non validi forniti. Si prega di controllare il modulo.",

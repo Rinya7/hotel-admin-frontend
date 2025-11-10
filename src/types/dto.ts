@@ -44,6 +44,8 @@ export interface CreateEditorRequest {
   confirmPassword: string;
   full_name?: string | null;
   phone?: string | null;
+  phoneCountryCode?: string | null;
+  phoneNumber?: string | null;
   email?: string | null;
 }
 

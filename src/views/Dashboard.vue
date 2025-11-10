@@ -421,27 +421,14 @@
                   class="px-4 py-6 text-center text-gray-500 dark:text-gray-400"
                 >
                   {{
-                    statusFilters.length > 0 || stayTypeFilters.length > 0
+                    roomNumberSearch.trim().length > 0 ||
+                    statusFilters.length > 0 ||
+                    stayTypeFilters.length > 0
                       ? t("dashboard.noRoomsMatch")
                       : t("dashboard.noRoomsFound")
                   }}
                 </td>
               </tr>
-              <tr
-                v-else-if="
-                  filteredRooms.length === 0 &&
-                  roomNumberSearch.trim().length > 0
-                "
-              >
-                <td
-                  colspan="7"
-                  class="px-4 py-6 text-center text-gray-500 dark:text-gray-400"
-                >
-                  {{ t("dashboard.noRoomsMatch") }}
-                </td>
-              </tr>
-
-              <!-- Данные -->
               <tr
                 v-else
                 v-for="room in filteredRooms"
@@ -1129,145 +1116,378 @@
       </div>
     </div>
 
-    <!-- Global Booking Overview -->
-    <section
-      class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 space-y-4"
-    >
-      <div class="flex items-center justify-between">
-        <div>
+    <!-- Global Booking Overview + Editor management -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <section
+        class="lg:col-span-2 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4"
+      >
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-semibold text-brand dark:text-white">
+              {{ t("dashboard.allStays.title") }}
+            </h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+              {{ t("dashboard.allStays.subtitle") }}
+            </p>
+          </div>
+          <button
+            type="button"
+            class="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            :disabled="bookingStaysLoading"
+            @click="loadBookingStays()"
+          >
+            {{
+              bookingStaysLoading ? t("common.loading") : t("dashboard.refresh")
+            }}
+          </button>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <button
+            v-for="status in stayStatusOptions"
+            :key="status"
+            type="button"
+            :class="getBookingFilterButtonClasses(status)"
+            @click="toggleBookingStatusFilter(status)"
+          >
+            {{ getStayStatusLabel(status) }}
+          </button>
+          <input
+            v-model="bookingCodeSearch"
+            type="text"
+            :placeholder="t('dashboard.allStays.searchPlaceholder')"
+            class="ml-auto px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand"
+          />
+        </div>
+
+        <div
+          class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
+        >
+          <table class="min-w-full text-sm">
+            <thead
+              class="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
+            >
+              <tr>
+                <th class="px-4 py-3 text-left">
+                  {{ t("dashboard.allStays.table.booking") }}
+                </th>
+                <th class="px-4 py-3 text-left">
+                  {{ t("dashboard.allStays.table.room") }}
+                </th>
+                <th class="px-4 py-3 text-left">
+                  {{ t("dashboard.allStays.table.guest") }}
+                </th>
+                <th class="px-4 py-3 text-left">
+                  {{ t("dashboard.allStays.table.dates") }}
+                </th>
+                <th class="px-4 py-3 text-left">
+                  {{ t("dashboard.allStays.table.status") }}
+                </th>
+                <th class="px-4 py-3 text-left">
+                  {{ t("dashboard.allStays.table.actions") }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-if="bookingStaysLoading">
+                <td
+                  colspan="6"
+                  class="px-4 py-6 text-center text-gray-500 dark:text-gray-400"
+                >
+                  {{ t("dashboard.loading") }}
+                </td>
+              </tr>
+              <tr v-else-if="bookingStaysError">
+                <td
+                  colspan="6"
+                  class="px-4 py-6 text-center text-red-500 dark:text-red-300"
+                >
+                  {{ bookingStaysError }}
+                </td>
+              </tr>
+              <tr v-else-if="filteredBookingStays.length === 0">
+                <td
+                  colspan="6"
+                  class="px-4 py-6 text-center text-gray-500 dark:text-gray-400"
+                >
+                  {{ t("dashboard.allStays.empty") }}
+                </td>
+              </tr>
+              <tr
+                v-for="stay in filteredBookingStays"
+                :key="stay.stayId"
+                class="border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50"
+              >
+                <td
+                  class="px-4 py-3 font-semibold text-gray-900 dark:text-white"
+                >
+                  {{ formatBookingCode(stay) }}
+                </td>
+                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
+                  {{ stay.room?.number }}
+                </td>
+                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
+                  {{ stay.mainGuestName }}
+                </td>
+                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
+                  {{ formatStayPeriod(stay) }}
+                </td>
+                <td class="px-4 py-3">
+                  <span
+                    :class="[
+                      getStayStatusClass(stay.status),
+                      'px-2 py-1 rounded text-xs font-medium',
+                    ]"
+                  >
+                    {{ getStayStatusLabel(stay.status) }}
+                  </span>
+                </td>
+                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
+                  <RouterLink
+                    :to="{
+                      name: 'room-stays',
+                      params: { roomNumber: stay.room?.number },
+                    }"
+                    class="text-brand hover:text-brand-light dark:text-emerald-300"
+                  >
+                    {{ t("dashboard.allStays.openRoom") }}
+                  </RouterLink>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <aside
+        v-if="canManageEditors"
+        class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 space-y-4"
+      >
+        <div class="mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
           <h3 class="text-lg font-semibold text-brand dark:text-white">
-            {{ t("dashboard.allStays.title") }}
+            {{ t("dashboard.addEditor.cardTitle") }}
           </h3>
-          <p class="text-sm text-gray-500 dark:text-gray-400">
-            {{ t("dashboard.allStays.subtitle") }}
+          <p class="text-sm text-gray-600 dark:text-gray-400">
+            {{ t("dashboard.addEditor.cardSubtitle") }}
           </p>
+          <ul class="space-y-1 text-sm text-gray-600 dark:text-gray-300">
+            <li>
+              <span class="font-medium text-brand dark:text-emerald-300"
+                >•</span
+              >
+              {{ t("dashboard.addEditor.highlights.manage") }}
+            </li>
+            <li>
+              <span class="font-medium text-brand dark:text-emerald-300"
+                >•</span
+              >
+              {{ t("dashboard.addEditor.highlights.audit") }}
+            </li>
+            <li>
+              <span class="font-medium text-brand dark:text-emerald-300"
+                >•</span
+              >
+              {{ t("dashboard.addEditor.highlights.revoke") }}
+            </li>
+          </ul>
         </div>
         <button
           type="button"
-          class="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          :disabled="bookingStaysLoading"
-          @click="loadBookingStays()"
+          class="inline-flex items-center justify-center w-full px-4 py-2 text-sm font-semibold text-white bg-brand hover:bg-brand-light rounded-md transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+          @click="openAddEditorModal"
         >
-          {{
-            bookingStaysLoading ? t("common.loading") : t("dashboard.refresh")
-          }}
+          {{ t("dashboard.addEditor.button") }}
         </button>
-      </div>
+      </aside>
+    </div>
 
-      <div class="flex flex-wrap gap-2 items-center">
-        <button
-          v-for="status in stayStatusOptions"
-          :key="status"
-          type="button"
-          :class="getBookingFilterButtonClasses(status)"
-          @click="toggleBookingStatusFilter(status)"
-        >
-          {{ getStayStatusLabel(status) }}
-        </button>
-        <input
-          v-model="bookingCodeSearch"
-          type="text"
-          :placeholder="t('dashboard.allStays.searchPlaceholder')"
-          class="ml-auto px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand"
-        />
-      </div>
-
+    <!-- Add Editor Modal -->
+    <div
+      v-if="canManageEditors && showAddEditorModal"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+      @click.self="closeAddEditorModal"
+    >
       <div
-        class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
+        class="w-full max-w-2xl rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-2xl"
       >
-        <table class="min-w-full text-sm">
-          <thead
-            class="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
+        <div
+          class="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-700"
+        >
+          <div>
+            <h3 class="text-lg font-semibold text-brand dark:text-white">
+              {{ t("dashboard.addEditor.modal.title") }}
+            </h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+              {{ t("dashboard.addEditor.modal.subtitle") }}
+            </p>
+          </div>
+          <button
+            type="button"
+            class="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+            @click="closeAddEditorModal"
           >
-            <tr>
-              <th class="px-4 py-3 text-left">
-                {{ t("dashboard.allStays.table.booking") }}
-              </th>
-              <th class="px-4 py-3 text-left">
-                {{ t("dashboard.allStays.table.room") }}
-              </th>
-              <th class="px-4 py-3 text-left">
-                {{ t("dashboard.allStays.table.guest") }}
-              </th>
-              <th class="px-4 py-3 text-left">
-                {{ t("dashboard.allStays.table.dates") }}
-              </th>
-              <th class="px-4 py-3 text-left">
-                {{ t("dashboard.allStays.table.status") }}
-              </th>
-              <th class="px-4 py-3 text-left">
-                {{ t("dashboard.allStays.table.actions") }}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-if="bookingStaysLoading">
-              <td
-                colspan="6"
-                class="px-4 py-6 text-center text-gray-500 dark:text-gray-400"
-              >
-                {{ t("dashboard.loading") }}
-              </td>
-            </tr>
-            <tr v-else-if="bookingStaysError">
-              <td
-                colspan="6"
-                class="px-4 py-6 text-center text-red-500 dark:text-red-300"
-              >
-                {{ bookingStaysError }}
-              </td>
-            </tr>
-            <tr v-else-if="filteredBookingStays.length === 0">
-              <td
-                colspan="6"
-                class="px-4 py-6 text-center text-gray-500 dark:text-gray-400"
-              >
-                {{ t("dashboard.allStays.empty") }}
-              </td>
-            </tr>
-            <tr
-              v-for="stay in filteredBookingStays"
-              :key="stay.stayId"
-              class="border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50"
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
-              <td class="px-4 py-3 font-semibold text-gray-900 dark:text-white">
-                {{ formatBookingCode(stay) }}
-              </td>
-              <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
-                {{ stay.room?.number }}
-              </td>
-              <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
-                {{ stay.mainGuestName }}
-              </td>
-              <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
-                {{ formatStayPeriod(stay) }}
-              </td>
-              <td class="px-4 py-3">
-                <span
-                  :class="[
-                    getStayStatusClass(stay.status),
-                    'px-2 py-1 rounded text-xs font-medium',
-                  ]"
-                >
-                  {{ getStayStatusLabel(stay.status) }}
-                </span>
-              </td>
-              <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
-                <RouterLink
-                  :to="{
-                    name: 'room-stays',
-                    params: { roomNumber: stay.room?.number },
-                  }"
-                  class="text-brand hover:text-brand-light dark:text-emerald-300"
-                >
-                  {{ t("dashboard.allStays.openRoom") }}
-                </RouterLink>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <div class="px-5 py-6 space-y-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="space-y-2">
+              <label
+                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                {{ t("dashboard.addEditor.modal.fields.username") }}
+              </label>
+              <input
+                v-model.trim="addEditorForm.username"
+                type="text"
+                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand"
+                :placeholder="
+                  t('dashboard.addEditor.modal.placeholders.username')
+                "
+              />
+            </div>
+            <div class="space-y-2">
+              <label
+                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                {{ t("dashboard.addEditor.modal.fields.fullName") }}
+              </label>
+              <input
+                v-model.trim="addEditorForm.fullName"
+                type="text"
+                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand"
+                :placeholder="
+                  t('dashboard.addEditor.modal.placeholders.fullName')
+                "
+              />
+            </div>
+            <div class="space-y-2">
+              <label
+                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                {{ t("dashboard.addEditor.modal.fields.password") }}
+              </label>
+              <input
+                v-model="addEditorForm.password"
+                type="password"
+                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand"
+                :placeholder="
+                  t('dashboard.addEditor.modal.placeholders.password')
+                "
+              />
+              <p class="text-xs text-gray-500 dark:text-gray-400">
+                {{ t("dashboard.addEditor.modal.hints.password") }}
+              </p>
+            </div>
+            <div class="space-y-2">
+              <label
+                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                {{ t("dashboard.addEditor.modal.fields.confirmPassword") }}
+              </label>
+              <input
+                v-model="addEditorForm.confirmPassword"
+                type="password"
+                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand"
+                :placeholder="
+                  t('dashboard.addEditor.modal.placeholders.confirmPassword')
+                "
+              />
+              <p
+                v-if="addEditorPasswordMismatch"
+                class="text-xs text-red-600 dark:text-red-400"
+              >
+                {{ t("dashboard.addEditor.modal.errors.passwordMismatch") }}
+              </p>
+            </div>
+            <div class="space-y-2">
+              <label
+                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                {{ t("dashboard.addEditor.modal.fields.email") }}
+              </label>
+              <input
+                v-model.trim="addEditorForm.email"
+                type="email"
+                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand"
+                placeholder="email"
+              />
+            </div>
+            <div class="space-y-2">
+              <label
+                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                {{ t("dashboard.addEditor.modal.fields.phoneCountryCode") }}
+              </label>
+              <input
+                v-model.trim="addEditorForm.phoneCountryCode"
+                type="text"
+                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand"
+                :placeholder="
+                  t('dashboard.addEditor.modal.placeholders.phoneCountryCode')
+                "
+              />
+            </div>
+            <div class="space-y-2">
+              <label
+                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                {{ t("dashboard.addEditor.modal.fields.phoneNumber") }}
+              </label>
+              <input
+                v-model.trim="addEditorForm.phoneNumber"
+                type="text"
+                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand"
+                :placeholder="
+                  t('dashboard.addEditor.modal.placeholders.phoneNumber')
+                "
+              />
+            </div>
+          </div>
+
+          <p
+            v-if="addEditorError"
+            class="text-sm text-red-600 dark:text-red-400"
+          >
+            {{ addEditorError }}
+          </p>
+        </div>
+
+        <div
+          class="flex justify-end gap-3 px-5 py-4 border-t border-gray-200 dark:border-gray-700"
+        >
+          <button
+            type="button"
+            class="px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
+            @click="closeAddEditorModal"
+          >
+            {{ t("dashboard.addEditor.modal.cancel") }}
+          </button>
+          <button
+            type="button"
+            class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-brand hover:bg-brand-light rounded-md transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+            :disabled="!canSubmitAddEditor || isCreatingEditor"
+            @click="submitAddEditor"
+          >
+            <span v-if="isCreatingEditor" class="animate-pulse">…</span>
+            <span>{{ t("dashboard.addEditor.modal.submit") }}</span>
+          </button>
+        </div>
       </div>
-    </section>
+    </div>
   </section>
 </template>
 
@@ -1297,6 +1517,8 @@ import {
 } from "@/api/stays";
 import { useAuthStore } from "@/stores/auth";
 import { useNotifications } from "@/composables/useNotifications";
+import { createEditor } from "@/api/auth";
+import type { CreateEditorRequest } from "@/types/dto";
 
 const { t, locale } = useI18n();
 const auth = useAuthStore();
@@ -1900,4 +2122,128 @@ onMounted(async () => {
   document.addEventListener("keydown", handleEscKey);
   load();
 });
+
+const canManageEditors = computed(() => auth.isSuperadmin || auth.isAdmin);
+const showAddEditorModal = ref(false);
+const isCreatingEditor = ref(false);
+const addEditorError = ref<string | null>(null);
+const addEditorForm = reactive({
+  username: "",
+  password: "",
+  confirmPassword: "",
+  fullName: "",
+  email: "",
+  phoneCountryCode: "+39",
+  phoneNumber: "",
+});
+
+const canSubmitAddEditor = computed(() => {
+  const username = addEditorForm.username.trim();
+  const password = addEditorForm.password.trim();
+  const confirm = addEditorForm.confirmPassword.trim();
+  return username.length >= 3 && password.length >= 6 && password === confirm;
+});
+
+const addEditorPasswordMismatch = computed(
+  () =>
+    addEditorForm.confirmPassword.length > 0 &&
+    addEditorForm.password !== addEditorForm.confirmPassword
+);
+
+function resetAddEditorForm(): void {
+  addEditorForm.username = "";
+  addEditorForm.password = "";
+  addEditorForm.confirmPassword = "";
+  addEditorForm.fullName = "";
+  addEditorForm.email = "";
+  addEditorForm.phoneCountryCode = "+39";
+  addEditorForm.phoneNumber = "";
+  addEditorError.value = null;
+}
+
+function openAddEditorModal(): void {
+  if (!canManageEditors.value) {
+    return;
+  }
+  showAddEditorModal.value = true;
+  addEditorError.value = null;
+  document.body.style.overflow = "hidden";
+}
+
+function closeAddEditorModal(): void {
+  showAddEditorModal.value = false;
+  document.body.style.overflow = "";
+  resetAddEditorForm();
+}
+
+function resolveErrorMessage(error: unknown): string {
+  if (error && typeof error === "object" && "response" in error) {
+    const axiosError = error as {
+      response?: { status?: number; data?: { message?: string } };
+    };
+    const message = axiosError.response?.data?.message;
+    if (typeof message === "string" && message.length > 0) {
+      return message;
+    }
+    if (axiosError.response?.status) {
+      return `Server error (${axiosError.response.status})`;
+    }
+  }
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return t("common.unknownError") as string;
+}
+
+async function submitAddEditor(): Promise<void> {
+  if (!canManageEditors.value) {
+    addEditorError.value = t("dashboard.addEditor.modal.notAllowed") as string;
+    return;
+  }
+  if (!canSubmitAddEditor.value || isCreatingEditor.value) {
+    addEditorError.value = canSubmitAddEditor.value
+      ? null
+      : (t("dashboard.addEditor.modal.validation") as string);
+    return;
+  }
+
+  const payload: CreateEditorRequest = {
+    username: addEditorForm.username.trim(),
+    password: addEditorForm.password,
+    confirmPassword: addEditorForm.confirmPassword,
+  };
+
+  if (addEditorForm.fullName.trim()) {
+    payload.full_name = addEditorForm.fullName.trim();
+  }
+  if (addEditorForm.email.trim()) {
+    payload.email = addEditorForm.email.trim();
+  }
+  if (addEditorForm.phoneCountryCode.trim()) {
+    payload.phoneCountryCode = addEditorForm.phoneCountryCode.trim();
+  }
+  if (addEditorForm.phoneNumber.trim()) {
+    payload.phoneNumber = addEditorForm.phoneNumber.trim();
+  }
+
+  isCreatingEditor.value = true;
+  addEditorError.value = null;
+
+  try {
+    await createEditor(payload);
+    showSuccess(
+      t("dashboard.addEditor.modal.successTitle"),
+      t("dashboard.addEditor.modal.successMessage", {
+        username: payload.username,
+      })
+    );
+    closeAddEditorModal();
+  } catch (error: unknown) {
+    const message = resolveErrorMessage(error);
+    addEditorError.value = message;
+    showError(t("dashboard.addEditor.modal.errorTitle"), message);
+  } finally {
+    isCreatingEditor.value = false;
+  }
+}
 </script>

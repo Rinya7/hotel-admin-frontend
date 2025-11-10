@@ -339,6 +339,54 @@ const de = {
         actions: "Aktionen",
       },
     },
+    addEditor: {
+      cardTitle: "Editor hinzufügen",
+      cardSubtitle: "Lade Mitarbeiter mit Editor-Rechten ein",
+      highlights: {
+        manage:
+          "Editoren helfen bei der Verwaltung von Buchungen und Zimmerstatus.",
+        audit: "Alle Aktionen werden im Audit-Log protokolliert.",
+        revoke: "Der Zugriff kann jederzeit entzogen werden.",
+      },
+      button: "Editor anlegen",
+      modal: {
+        title: "Editor einladen",
+        subtitle: "Der neue Benutzer übernimmt die Einstellungen Ihres Hotels",
+        fields: {
+          username: "Benutzername",
+          fullName: "Vollständiger Name",
+          password: "Passwort",
+          confirmPassword: "Passwort bestätigen",
+          email: "E-Mail",
+          phoneCountryCode: "Ländervorwahl",
+          phoneNumber: "Telefonnummer",
+        },
+        placeholders: {
+          username: "frontdesk-2",
+          fullName: "Name (optional)",
+          password: "Mindestens 6 Zeichen",
+          confirmPassword: "Passwort wiederholen",
+          email: "editor@example.com",
+          phoneCountryCode: "+39",
+          phoneNumber: "123456789",
+        },
+        hints: {
+          password:
+            "Verwenden Sie mindestens 6 Zeichen. Zugangsdaten sicher teilen.",
+        },
+        errors: {
+          passwordMismatch: "Passwörter stimmen nicht überein.",
+        },
+        validation:
+          "Benutzername und passende Passwörter eingeben, um fortzufahren.",
+        notAllowed: "Nur Administratoren können Editoren anlegen.",
+        cancel: "Abbrechen",
+        submit: "Editor erstellen",
+        successTitle: "Editor erstellt",
+        successMessage: "Editor {username} wurde erfolgreich erstellt.",
+        errorTitle: "Editor konnte nicht erstellt werden",
+      },
+    },
   },
   roomsList: {
     title: "Zimmer",
@@ -449,10 +497,10 @@ const de = {
       statusChangeError: "Status konnte nicht geändert werden",
       unknownError: "Unbekannter Fehler",
       dateConflict:
-        "Das Zimmer ist bereits für diese Daten gebucht oder belegt. Bitte wählen Sie andere Check-in- und Check-out-Daten.",
+        "Das Zimmer ist in diesem Zeitraum bereits gebucht oder belegt. Bitte wählen Sie andere Daten.",
+      invalidRange: "Das Abreisedatum muss nach dem Anreisedatum liegen.",
       roomNotFound: "Zimmer nicht gefunden",
-      invalidData:
-        "Ungültige Daten angegeben. Bitte überprüfen Sie das Formular.",
+      invalidData: "Ungültige Daten. Bitte überprüfen Sie das Formular.",
     },
     empty: {
       title: "Keine Aufenthalte gefunden",
