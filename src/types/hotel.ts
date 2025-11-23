@@ -57,3 +57,43 @@ export type HotelSortKey =
   | "isBlocked";
 
 export type SortDir = "asc" | "desc";
+
+// Профиль редактора: информация о редакторе, об отеле и об админе
+export interface EditorProfile {
+  editor: {
+    id: number;
+    username: string;
+    role: Role; // "editor"
+    full_name: string | null;
+    phoneCountryCode: string | null;
+    phoneNumber: string | null;
+    phone: string | null;
+    email: string | null;
+    isBlocked: boolean;
+    createdAt: string;
+    updatedAt: string;
+  };
+  hotel: {
+    hotel_name: string | null;
+    street: string | null;
+    buildingNumber: string | null;
+    apartmentNumber: string | null;
+    country: string | null;
+    province: string | null;
+    postalCode: string | null;
+    latitude: string | null;
+    longitude: string | null;
+    logo_url: string | null;
+    checkInHour: number | null;
+    checkOutHour: number | null;
+  };
+  admin: {
+    id: number;
+    username: string;
+    full_name: string | null;
+    phoneCountryCode: string | null;
+    phoneNumber: string | null;
+    phone: string | null;
+    email: string | null;
+  };
+}

@@ -21,7 +21,8 @@
     />
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- Current stays -->
+<div class="lg:col-span-2">
+      <!-- Current stays -->        
       <CurrentStaysTable
         :loading="loading"
         :error="error"
@@ -37,7 +38,32 @@
         @clear-filters="clearFilters"
         @update:search-query="roomNumberSearch = $event"
       />
-
+      <AllStaysTable
+        :loading="bookingStaysLoading"
+        :error="bookingStaysError"
+        :filtered-stays="filteredBookingStays"
+        :status-filters="bookingStatusFilters"
+        :search-query="bookingCodeSearch"
+        :stay-status-options="stayStatusOptions"
+        :needs-action-count="needsActionStore.items.length"
+        v-model:checking="checkingOverdue"
+        @refresh="loadBookingStays()"
+        @check-overdue="handleCheckOverdue"
+        @toggle-status-filter="toggleBookingStatusFilter"
+        @update:search-query="bookingCodeSearch = $event"
+      /> 
+    </div>
+      <div>
+        <!-- Editor Profile Info (для редактора) -->
+        <div v-if="auth.isEditor" class="mb-6" >
+      <EditorProfileInfo :profile="editorProfile" />
+    </div>
+       <!-- Hotel Management: Hotel Info  -->
+       <div v-if="auth.isAdmin" class=" mb-6">
+      <HotelInfo :hotel="hotelProfile" />
+      
+      
+    </div>
       <!-- Room Management -->
       <RoomManagementSidebar
         :is-admin="auth.isAdmin"
@@ -48,7 +74,18 @@
         @open-policy-hours="openPolicyHoursModal"
         @open-wifi="openWiFiModal"
       />
-
+      <AddEditorSidebar class="mb-6 "
+        :can-manage="canManageEditors"
+        @open-modal="openAddEditorModal"
+      />
+     <!-- Hotel Management:   Editors List (для админа) -->
+    <div v-if="auth.isAdmin" >
+    <EditorsList
+        :editors="hotelProfile?.editors || []"
+        :loading="hotelProfileLoading"
+        @open-info="openEditorInfo"
+      />
+    </div>
       <!-- Модальное окно Policy Hours -->
       <PolicyHoursModal
         v-model="showPolicyHours"
@@ -65,31 +102,20 @@
         :wifi-password="wifiForm.wifiPassword"
         :saving="savingWiFi"
         @save="handleSaveWiFi"
-      />
+      /></div>
     </div>
 
     <!-- Global Booking Overview + Editor management -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <AllStaysTable
-        :loading="bookingStaysLoading"
-        :error="bookingStaysError"
-        :filtered-stays="filteredBookingStays"
-        :status-filters="bookingStatusFilters"
-        :search-query="bookingCodeSearch"
-        :stay-status-options="stayStatusOptions"
-        :needs-action-count="needsActionStore.items.length"
-        v-model:checking="checkingOverdue"
-        @refresh="loadBookingStays()"
-        @check-overdue="handleCheckOverdue"
-        @toggle-status-filter="toggleBookingStatusFilter"
-        @update:search-query="bookingCodeSearch = $event"
-      />
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      
 
-      <AddEditorSidebar
-        :can-manage="canManageEditors"
-        @open-modal="openAddEditorModal"
-      />
+     
+    
     </div>
+
+    
+
+    
 
     <!-- Add Editor Modal -->
     <AddEditorModal
@@ -104,6 +130,26 @@
       v-model="showNeedsActionModal"
       :count="needsActionStore.items.length"
       @view="handleViewNeedsAction"
+    />
+
+    <!-- Editor Info Modal -->
+    <EditorInfoModal
+      :show="showEditorInfoModal"
+      :editor="selectedEditor"
+      :hotel="hotelProfile"
+      @close="closeEditorInfo"
+      @edit="openEditEditorModal"
+      @block="handleBlockEditor"
+      @unblock="handleUnblockEditor"
+      @delete="handleDeleteEditor"
+    />
+
+    <!-- Edit Editor Modal -->
+    <EditEditorModal
+      :show="showEditEditorModal"
+      :editor="selectedEditor"
+      @close="closeEditEditorModal"
+      @saved="handleEditorSaved"
     />
   </section>
 </template>
@@ -121,6 +167,11 @@ import AllStaysTable from "@/components/dashboard/AllStaysTable.vue";
 import AddEditorSidebar from "@/components/dashboard/AddEditorSidebar.vue";
 import AddEditorModal from "@/components/dashboard/AddEditorModal.vue";
 import NeedsActionModal from "@/components/needsAction/NeedsActionModal.vue";
+import HotelInfo from "@/components/dashboard/HotelInfo.vue";
+import EditorsList from "@/components/dashboard/EditorsList.vue";
+import EditorInfoModal from "@/components/dashboard/EditorInfoModal.vue";
+import EditEditorModal from "@/components/dashboard/EditEditorModal.vue";
+import EditorProfileInfo from "@/components/dashboard/EditorProfileInfo.vue";
 import { useNeedsActionStore } from "@/stores/needsAction";
 import { useRouter } from "vue-router";
 import type {
@@ -148,6 +199,9 @@ import { useAuthStore } from "@/stores/auth";
 import { useNotifications } from "@/composables/useNotifications";
 import { createEditor } from "@/api/auth";
 import type { CreateEditorRequest } from "@/types/dto";
+import { getHotelProfile, getEditorProfile } from "@/api/hotel";
+import type { PublicAdminUser, EditorProfile } from "@/types/hotel";
+import { blockEditor, unblockEditor, deleteEditor } from "@/api/auth";
 
 const { t } = useI18n();
 const auth = useAuthStore();
@@ -374,6 +428,11 @@ const filteredBookingStays = computed(() => {
  * Обробник для ручного запуску перевірки просрочених stays
  */
 async function handleCheckOverdue(): Promise<void> {
+  // Если нет stays, не выполняем проверку
+  if (bookingStays.value.length === 0) {
+    return;
+  }
+
   try {
     checkingOverdue.value = true;
     const result = await testAutoCheck();
@@ -562,6 +621,169 @@ function getTableTitle(): string {
   return "Filtered Rooms";
 }
 
+async function loadHotelProfile(): Promise<void> {
+  if (!auth.isAdmin) {
+    return;
+  }
+
+  try {
+    hotelProfileLoading.value = true;
+    hotelProfile.value = await getHotelProfile();
+  } catch (error) {
+    console.error("Error loading hotel profile:", error);
+    showError(
+      t("dashboard.hotelProfile.errorTitle"),
+      error instanceof Error ? error.message : t("common.unknownError")
+    );
+  } finally {
+    hotelProfileLoading.value = false;
+  }
+}
+
+async function loadEditorProfile(): Promise<void> {
+  if (!auth.isEditor) {
+    return;
+  }
+
+  try {
+    editorProfileLoading.value = true;
+    editorProfile.value = await getEditorProfile();
+  } catch (error) {
+    console.error("Error loading editor profile:", error);
+    showError(
+      t("editorProfileInfo.errorTitle"),
+      error instanceof Error ? error.message : t("common.unknownError")
+    );
+  } finally {
+    editorProfileLoading.value = false;
+  }
+}
+
+function openEditorInfo(editor: PublicAdminUser["editors"][number]): void {
+  selectedEditor.value = editor;
+  showEditorInfoModal.value = true;
+}
+
+function closeEditorInfo(): void {
+  showEditorInfoModal.value = false;
+  selectedEditor.value = null;
+}
+
+function openEditEditorModal(editor: PublicAdminUser["editors"][number]): void {
+  selectedEditor.value = editor;
+  showEditorInfoModal.value = false;
+  showEditEditorModal.value = true;
+}
+
+function closeEditEditorModal(): void {
+  showEditEditorModal.value = false;
+  selectedEditor.value = null;
+}
+
+async function handleEditorSaved(): Promise<void> {
+  // Перезагружаем профиль отеля после сохранения
+  await loadHotelProfile();
+  closeEditEditorModal();
+}
+
+async function handleBlockEditor(_editorId: number): Promise<void> {
+  if (!selectedEditor.value) {
+    return;
+  }
+
+  try {
+    await blockEditor(selectedEditor.value.username);
+    showSuccess(
+      t("editorInfoModal.messages.blockedTitle"),
+      t("editorInfoModal.messages.blockedMessage", {
+        username: selectedEditor.value.username,
+      })
+    );
+    // Перезагружаем профиль отеля
+    await loadHotelProfile();
+    closeEditorInfo();
+  } catch (err) {
+    console.error("Error blocking editor:", err);
+    const message =
+      err && typeof err === "object" && "response" in err
+        ? (err as { response?: { data?: { message?: string } } }).response?.data
+            ?.message
+        : err instanceof Error
+          ? err.message
+          : t("editorInfoModal.errors.blockError");
+    showError(t("editorInfoModal.errors.blockErrorTitle"), message || String(err));
+  }
+}
+
+async function handleUnblockEditor(_editorId: number): Promise<void> {
+  if (!selectedEditor.value) {
+    return;
+  }
+
+  try {
+    await unblockEditor(selectedEditor.value.username);
+    showSuccess(
+      t("editorInfoModal.messages.unblockedTitle"),
+      t("editorInfoModal.messages.unblockedMessage", {
+        username: selectedEditor.value.username,
+      })
+    );
+    // Перезагружаем профиль отеля
+    await loadHotelProfile();
+    closeEditorInfo();
+  } catch (err) {
+    console.error("Error unblocking editor:", err);
+    const message =
+      err && typeof err === "object" && "response" in err
+        ? (err as { response?: { data?: { message?: string } } }).response?.data
+            ?.message
+        : err instanceof Error
+          ? err.message
+          : t("editorInfoModal.errors.unblockError");
+    showError(
+      t("editorInfoModal.errors.unblockErrorTitle"),
+      message || String(err)
+    );
+  }
+}
+
+async function handleDeleteEditor(username: string): Promise<void> {
+  if (!selectedEditor.value) {
+    return;
+  }
+
+  const confirmed = confirm(
+    t("editorInfoModal.messages.confirmDelete", { username })
+  );
+  if (!confirmed) {
+    return;
+  }
+
+  try {
+    await deleteEditor(username);
+    showSuccess(
+      t("editorInfoModal.messages.deletedTitle"),
+      t("editorInfoModal.messages.deletedMessage", { username })
+    );
+    // Перезагружаем профиль отеля
+    await loadHotelProfile();
+    closeEditorInfo();
+  } catch (err) {
+    console.error("Error deleting editor:", err);
+    const message =
+      err && typeof err === "object" && "response" in err
+        ? (err as { response?: { data?: { message?: string } } }).response?.data
+            ?.message
+        : err instanceof Error
+          ? err.message
+          : t("editorInfoModal.errors.deleteError");
+    showError(
+      t("editorInfoModal.errors.deleteErrorTitle"),
+      message || String(err)
+    );
+  }
+}
+
 onMounted(async () => {
   await load();
   await loadBookingStays();
@@ -571,6 +793,15 @@ onMounted(async () => {
   // Показуємо modal, якщо є stays, які потребують дії
   if (needsActionStore.hasItems) {
     showNeedsActionModal.value = true;
+  }
+
+  // Загружаем информацию об отеле и редакторах (для админа)
+  if (auth.isAdmin) {
+    await loadHotelProfile();
+  }
+  // Загружаем профиль редактора (для редактора)
+  if (auth.isEditor) {
+    await loadEditorProfile();
   }
 });
 
@@ -583,6 +814,17 @@ const addEditorError = ref<string | null>(null);
 const needsActionStore = useNeedsActionStore();
 const router = useRouter();
 const showNeedsActionModal = ref(false);
+
+// Hotel Profile
+const hotelProfile = ref<PublicAdminUser | null>(null);
+const hotelProfileLoading = ref(false);
+const showEditorInfoModal = ref(false);
+const showEditEditorModal = ref(false);
+const selectedEditor = ref<PublicAdminUser["editors"][number] | null>(null);
+
+// Editor Profile
+const editorProfile = ref<EditorProfile | null>(null);
+const editorProfileLoading = ref(false);
 
 function handleViewNeedsAction(): void {
   showNeedsActionModal.value = false;
@@ -633,6 +875,8 @@ async function handleSubmitAddEditor(payload: CreateEditorRequest): Promise<void
       })
     );
     showAddEditorModal.value = false;
+    // Обновляем список редакторов после успешного создания
+    await loadHotelProfile();
   } catch (error: unknown) {
     const message = resolveErrorMessage(error);
     addEditorError.value = message;
