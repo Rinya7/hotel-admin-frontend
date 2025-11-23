@@ -187,6 +187,27 @@ interface Stay {
 - `booked` → `cancelled` (отмена)
 - Любой → `completed`/`cancelled` (закрытие по датам)
 
+### 🕓 Аудит
+
+```typescript
+import http from "@/api/http";
+
+// Всі логи змін
+const logs = await http.get("/audit/logs");
+
+// Фільтр по типу
+const roomLogs = await http.get("/audit/logs?type=room");
+const stayLogs = await http.get("/audit/logs?type=stay");
+
+// Фільтр по користувачу
+const userLogs = await http.get("/audit/logs?user=frontdesk-1");
+
+// Фільтр по діапазону дат
+const dateLogs = await http.get(
+  "/audit/logs?from=2025-01-01T00:00:00Z&to=2025-01-31T23:59:59Z"
+);
+```
+
 ## ⚠️ Важные замечания
 
 1. **Все API запросы** автоматически добавляют JWT токен в заголовки

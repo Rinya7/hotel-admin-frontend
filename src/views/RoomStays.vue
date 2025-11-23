@@ -53,6 +53,7 @@
 
     <div class="grid gap-6">
       <aside class="space-y-6">
+        <!-- Summary Card -->
         <div
           class="border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-lg p-5 shadow-sm"
         >
@@ -104,469 +105,72 @@
               </dd>
             </div>
           </dl>
+
+          <!-- Current Stay Card -->
           <div
-            class="mt-6 border-t border-dashed border-gray-200 dark:border-gray-700 pt-4 space-y-4"
+            class="mt-6 border-t border-dashed border-gray-200 dark:border-gray-700 pt-4"
           >
-            <div>
-              <h4 class="text-sm font-semibold text-brand dark:text-white">
-                {{ t("roomStays.summary.currentStay.title") }}
-              </h4>
-              <p
-                v-if="!summaryStay"
-                class="mt-2 text-sm text-gray-600 dark:text-gray-400"
-              >
-                {{ t("roomStays.summary.currentStay.noData") }}
-              </p>
-              <div v-else class="mt-3 space-y-4">
-                <div>
-                  <div class="border-b border-gray-200 dark:border-gray-700">
-                    <nav class="flex space-x-4">
-                      <button
-                        type="button"
-                        @click="summaryActiveTab = 'info'"
-                        :class="[
-                          'py-2 px-3 text-sm font-medium border-b-2 transition-colors',
-                          summaryActiveTab === 'info'
-                            ? 'border-brand text-brand dark:border-emerald-400 dark:text-emerald-400'
-                            : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300',
-                        ]"
-                      >
-                        {{ t("roomStays.summary.tabs.info") }}
-                      </button>
-                      <button
-                        type="button"
-                        @click="summaryActiveTab = 'history'"
-                        :class="[
-                          'py-2 px-3 text-sm font-medium border-b-2 transition-colors',
-                          summaryActiveTab === 'history'
-                            ? 'border-brand text-brand dark:border-emerald-400 dark:text-emerald-400'
-                            : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300',
-                        ]"
-                      >
-                        {{ t("roomStays.summary.tabs.history") }}
-                      </button>
-                    </nav>
-                  </div>
-
-                  <div
-                    v-if="summaryActiveTab === 'info'"
-                    class="mt-3 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 p-4 space-y-4"
-                  >
-                    <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <dt
-                          class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
-                        >
-                          {{ t("roomStays.summary.currentStay.fields.id") }}
-                        </dt>
-                        <dd class="mt-1 text-sm text-gray-900 dark:text-white">
-                          {{ summaryStay.id }}
-                        </dd>
-                      </div>
-                      <div>
-                        <dt
-                          class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
-                        >
-                          {{ t("roomStays.summary.currentStay.fields.room") }}
-                        </dt>
-                        <dd class="mt-1 text-sm text-gray-900 dark:text-white">
-                          {{ summaryStay.room.roomNumber }}
-                        </dd>
-                      </div>
-                      <div>
-                        <dt
-                          class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
-                        >
-                          {{
-                            t("roomStays.summary.currentStay.fields.booking")
-                          }}
-                        </dt>
-                        <dd class="mt-1 text-sm text-gray-900 dark:text-white">
-                          {{ formatBookingNumber(summaryStay) }}
-                        </dd>
-                      </div>
-                      <div>
-                        <dt
-                          class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
-                        >
-                          {{ t("roomStays.summary.currentStay.guest") }}
-                        </dt>
-                        <dd class="mt-1 text-sm text-gray-900 dark:text-white">
-                          {{ summaryStay.mainGuestName }}
-                        </dd>
-                      </div>
-                      <div>
-                        <dt
-                          class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
-                        >
-                          {{ t("roomStays.summary.currentStay.status") }}
-                        </dt>
-                        <dd class="mt-1">
-                          <span
-                            :class="[
-                              getStatusClass(summaryStay.status),
-                              'px-2 py-1 rounded text-xs font-semibold',
-                            ]"
-                          >
-                            {{ t(`roomStays.status.${summaryStay.status}`) }}
-                          </span>
-                        </dd>
-                      </div>
-                      <div>
-                        <dt
-                          class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
-                        >
-                          {{ t("roomStays.summary.currentStay.checkIn") }}
-                        </dt>
-                        <dd class="mt-1 text-sm text-gray-900 dark:text-white">
-                          {{ formatDateForDisplay(summaryStay.checkIn, false) }}
-                        </dd>
-                      </div>
-                      <div>
-                        <dt
-                          class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
-                        >
-                          {{ t("roomStays.summary.currentStay.checkOut") }}
-                        </dt>
-                        <dd class="mt-1 text-sm text-gray-900 dark:text-white">
-                          {{
-                            formatDateForDisplay(summaryStay.checkOut, false)
-                          }}
-                        </dd>
-                      </div>
-                      <div>
-                        <dt
-                          class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
-                        >
-                          {{ t("roomStays.summary.currentStay.balance") }}
-                        </dt>
-                        <dd class="mt-1 text-sm text-gray-900 dark:text-white">
-                          {{
-                            typeof summaryStay.balance === "number"
-                              ? summaryStay.balance.toFixed(2)
-                              : summaryStay.balance ?? "—"
-                          }}
-                        </dd>
-                      </div>
-                      <div v-if="summaryStay.createdBy">
-                        <dt
-                          class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
-                        >
-                          {{
-                            t("roomStays.summary.currentStay.fields.createdBy")
-                          }}
-                        </dt>
-                        <dd class="mt-1 text-sm text-gray-900 dark:text-white">
-                          {{ summaryStay.createdBy }}
-                        </dd>
-                      </div>
-                      <div v-if="summaryStay.updatedBy">
-                        <dt
-                          class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
-                        >
-                          {{
-                            t("roomStays.summary.currentStay.fields.updatedBy")
-                          }}
-                        </dt>
-                        <dd class="mt-1 text-sm text-gray-900 dark:text-white">
-                          {{ summaryStay.updatedBy }}
-                          <span
-                            v-if="summaryStay.updatedByRole"
-                            class="text-xs text-gray-500 dark:text-gray-400 ml-1"
-                          >
-                            {{
-                              t(
-                                "roomStays.summary.currentStay.fields.updatedByRole",
-                                { role: summaryStay.updatedByRole }
-                              )
-                            }}
-                          </span>
-                        </dd>
-                      </div>
-                      <div class="sm:col-span-2">
-                        <dt
-                          class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
-                        >
-                          {{ t("roomStays.summary.currentStay.extraGuests") }}
-                        </dt>
-                        <dd class="mt-1 text-sm text-gray-900 dark:text-white">
-                          <template v-if="summaryStay.extraGuestNames?.length">
-                            {{ summaryStay.extraGuestNames.join(", ") }}
-                          </template>
-                          <span v-else>
-                            {{
-                              t(
-                                "roomStays.summary.currentStay.extraGuestsEmpty"
-                              )
-                            }}
-                          </span>
-                        </dd>
-                      </div>
-                      <div class="sm:col-span-2">
-                        <dt
-                          class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
-                        >
-                          {{
-                            t("roomStays.summary.currentStay.registeredGuests")
-                          }}
-                        </dt>
-                        <dd class="mt-1 text-sm text-gray-900 dark:text-white">
-                          <template v-if="summaryStay.guests?.length">
-                            <ul class="space-y-2">
-                              <li
-                                v-for="guest in summaryStay.guests"
-                                :key="guest.id ?? guest.fullName"
-                                class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-3 py-2"
-                              >
-                                <p class="font-medium">
-                                  {{ guest.fullName }}
-                                </p>
-                                <p
-                                  v-if="
-                                    guest.documentType || guest.documentNumber
-                                  "
-                                  class="text-xs text-gray-600 dark:text-gray-300 mt-1"
-                                >
-                                  {{
-                                    t(
-                                      "roomStays.summary.currentStay.guestDocument"
-                                    )
-                                  }}:
-                                  <span class="font-medium">
-                                    {{ guest.documentType || "—" }}
-                                  </span>
-                                  <span v-if="guest.documentNumber">
-                                    · {{ guest.documentNumber }}
-                                  </span>
-                                </p>
-                                <p
-                                  v-if="guest.birthDate"
-                                  class="text-xs text-gray-600 dark:text-gray-300"
-                                >
-                                  {{
-                                    t(
-                                      "roomStays.summary.currentStay.guestBirthDate"
-                                    )
-                                  }}:
-                                  <span class="font-medium">
-                                    {{
-                                      formatDateForDisplay(
-                                        guest.birthDate,
-                                        false
-                                      )
-                                    }}
-                                  </span>
-                                </p>
-                                <p
-                                  v-if="guest.notes"
-                                  class="text-xs text-gray-600 dark:text-gray-300"
-                                >
-                                  {{
-                                    t(
-                                      "roomStays.summary.currentStay.guestNotes"
-                                    )
-                                  }}:
-                                  <span class="font-medium whitespace-pre-line">
-                                    {{ guest.notes }}
-                                  </span>
-                                </p>
-                              </li>
-                            </ul>
-                          </template>
-                          <span v-else>
-                            {{
-                              t(
-                                "roomStays.summary.currentStay.registeredGuestsEmpty"
-                              )
-                            }}
-                          </span>
-                        </dd>
-                      </div>
-                      <div
-                        v-if="summaryCancellationComment"
-                        class="sm:col-span-2"
-                      >
-                        <dt
-                          class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
-                        >
-                          {{ t("roomStays.summary.currentStay.commentLabel") }}
-                        </dt>
-                        <dd
-                          class="mt-1 text-sm text-gray-900 dark:text-white whitespace-pre-line"
-                        >
-                          {{ summaryCancellationComment }}
-                        </dd>
-                      </div>
-                    </dl>
-                  </div>
-                  <div
-                    v-else
-                    class="mt-3 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 p-3"
-                  >
-                    <StayHistory :stay-id="summaryStay.id" />
-                  </div>
-                </div>
-
-                <div class="flex flex-wrap gap-2">
-                  <button
-                    v-if="canEditSummaryDates"
-                    type="button"
-                    class="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-brand bg-brand/10 hover:bg-brand/20 border border-brand/20 rounded-md transition-colors"
-                    @click="openEditDatesModal"
-                  >
-                    {{ t("roomStays.summary.currentStay.editDates") }}
-                  </button>
-                </div>
-
-                <div
-                  v-if="!isSummaryFinal"
-                  class="space-y-3 rounded-lg bg-gray-50 dark:bg-gray-700/40 border border-gray-200 dark:border-gray-600 px-3 py-4"
-                >
-                  <h5 class="text-sm font-semibold text-brand dark:text-white">
-                    {{ t("roomStays.summary.currentStay.statusForm.title") }}
-                  </h5>
-                  <div class="space-y-2">
-                    <label
-                      class="block text-xs font-semibold text-gray-600 dark:text-gray-300"
-                    >
-                      {{
-                        t(
-                          "roomStays.summary.currentStay.statusForm.selectLabel"
-                        )
-                      }}
-                    </label>
-                    <select
-                      v-model="statusDraft"
-                      class="w-full text-sm px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand"
-                    >
-                      <option
-                        v-for="option in availableStatusOptions"
-                        :key="`summary-status-${option}`"
-                        :value="option"
-                      >
-                        {{ getStatusSelectLabel(option) }}
-                      </option>
-                    </select>
-                  </div>
-                  <div v-if="statusDraft === 'cancelled'" class="space-y-2">
-                    <label
-                      class="block text-xs font-semibold text-gray-600 dark:text-gray-300"
-                    >
-                      {{
-                        t(
-                          "roomStays.summary.currentStay.statusForm.commentLabel"
-                        )
-                      }}
-                    </label>
-                    <textarea
-                      v-model.trim="statusComment"
-                      rows="3"
-                      class="w-full text-sm px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand"
-                      :placeholder="statusCommentPlaceholder"
-                    ></textarea>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">
-                      {{ statusCommentHint }}
-                    </p>
-                  </div>
-                  <p
-                    v-if="statusDraft === 'completed' && !canCompleteToday"
-                    class="text-xs text-amber-600 dark:text-amber-400"
-                  >
-                    {{
-                      t("stayDetails.status.messages.completeOnlyOnCheckout")
-                    }}
-                  </p>
-                  <p
-                    v-if="statusError"
-                    class="text-xs text-red-600 dark:text-red-400"
-                  >
-                    {{ statusError }}
-                  </p>
-                  <div class="flex justify-end">
-                    <button
-                      type="button"
-                      class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-brand hover:bg-brand-light rounded-md transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-                      :disabled="statusSubmitDisabled"
-                      @click="submitStatusUpdate"
-                    >
-                      <span v-if="isSavingStatus" class="animate-pulse">…</span>
-                      <span>
-                        {{
-                          t("roomStays.summary.currentStay.statusForm.submit")
-                        }}
-                      </span>
-                    </button>
-                  </div>
-                </div>
-                <p v-else class="text-xs text-gray-500 dark:text-gray-400">
-                  {{
-                    t("roomStays.summary.currentStay.statusForm.finalMessage")
-                  }}
-                </p>
-              </div>
-            </div>
-            <div
-              class="border-t border-dashed border-gray-200 dark:border-gray-700 pt-4"
+            <RoomCurrentStayCard
+              v-if="summaryStay"
+              :stay="summaryStay"
+              :active-tab="summaryActiveTab"
+              :can-edit-dates="canEditSummaryDates"
+              :summary-cancellation-comment="summaryCancellationComment"
+              @tab-change="summaryActiveTab = $event"
+              @edit-dates="openEditDatesModal"
             >
-              <h4 class="text-sm font-semibold text-brand dark:text-white">
-                {{ t("roomStays.summary.nextStay.title") }}
-              </h4>
-              <p
-                v-if="!upcomingStay"
-                class="text-sm text-gray-600 dark:text-gray-400 mt-2"
-              >
-                {{ t("roomStays.summary.nextStay.empty") }}
-              </p>
-              <div
-                v-else
-                class="mt-3 space-y-2 rounded-lg bg-gray-50 dark:bg-gray-700/40 p-3"
-              >
-                <div class="text-sm text-gray-700 dark:text-gray-300">
-                  <span class="font-medium">
-                    {{ t("roomStays.summary.nextStay.guest") }}:
-                  </span>
-                  <span class="ml-1">{{ upcomingStay.mainGuestName }}</span>
-                </div>
-                <div class="text-sm text-gray-700 dark:text-gray-300">
-                  <span class="font-medium">
-                    {{ t("roomStays.summary.nextStay.booking") }}:
-                  </span>
-                  <span class="ml-1">{{
-                    formatBookingNumber(upcomingStay)
-                  }}</span>
-                </div>
-                <div class="text-sm text-gray-700 dark:text-gray-300">
-                  <span class="font-medium">
-                    {{ t("roomStays.summary.nextStay.dates") }}:
-                  </span>
-                  <span class="ml-1">{{ formatStayPeriod(upcomingStay) }}</span>
-                </div>
-                <div class="flex items-center gap-2">
-                  <span
-                    class="text-sm font-medium text-gray-700 dark:text-gray-300"
-                  >
-                    {{ t("roomStays.summary.nextStay.status") }}:
-                  </span>
-                  <span
-                    :class="[
-                      getStatusClass(upcomingStay.status),
-                      'px-2 py-1 rounded text-xs font-medium',
-                    ]"
-                  >
-                    {{ t(`roomStays.status.${upcomingStay.status}`) }}
-                  </span>
-                </div>
-                <p
-                  v-if="
-                    upcomingStay.status === 'occupied' &&
-                    isStayActive(upcomingStay)
-                  "
-                  class="text-xs font-medium text-emerald-600 dark:text-emerald-300"
-                >
-                  {{ t("roomStays.summary.nextStay.current") }}
-                </p>
-              </div>
+              <template #history>
+                <StayHistory :stay-id="summaryStay.id" />
+              </template>
+            </RoomCurrentStayCard>
+            <p
+              v-else
+              class="text-sm text-gray-600 dark:text-gray-400 mt-2"
+            >
+              {{ t("roomStays.summary.currentStay.noData") }}
+            </p>
+
+            <!-- Guest Access Link -->
+            <div
+              v-if="summaryStay"
+              class="mt-6 border-t border-gray-200 dark:border-gray-700 pt-6"
+            >
+              <GuestAccessLink :stay-id="summaryStay.id" />
             </div>
+
+            <!-- Status Form -->
+            <div
+              v-if="summaryStay && !isSummaryFinal"
+              class="mt-6 border-t border-gray-200 dark:border-gray-700 pt-6"
+            >
+              <StatusForm
+                :status-draft="statusDraft"
+                :status-comment="statusComment"
+                :options="availableStatusOptions"
+                :error="statusError"
+                :is-loading="isSavingStatus"
+                :can-complete-today="canCompleteToday"
+                :is-disabled="statusSubmitDisabled"
+                @update:status-draft="statusDraft = $event"
+                @update:status-comment="statusComment = $event"
+                @submit="submitStatusUpdate"
+              />
+            </div>
+            <p
+              v-else-if="summaryStay && isSummaryFinal"
+              class="mt-6 text-xs text-gray-500 dark:text-gray-400"
+            >
+              {{
+                t("roomStays.summary.currentStay.statusForm.finalMessage")
+              }}
+            </p>
+          </div>
+
+          <!-- Next Stay Card -->
+          <div
+            class="mt-6 border-t border-dashed border-gray-200 dark:border-gray-700 pt-4"
+          >
+            <NextStayCard :stay="upcomingStay" />
           </div>
         </div>
       </aside>
@@ -602,168 +206,45 @@
               </div>
             </div>
           </div>
-          <div
-            class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
-          >
-            <table class="min-w-full text-sm">
-              <thead
-                class="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
+          <!-- Stay List Cards -->
+          <div v-if="!hasAnyStays" class="text-center py-16">
+            <div class="flex flex-col items-center justify-center">
+              <div class="text-gray-400 dark:text-gray-500 mb-4">
+                <svg
+                  class="w-16 h-16 mx-auto"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1.5"
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  ></path>
+                </svg>
+              </div>
+              <h3
+                class="text-lg font-semibold text-gray-900 dark:text-white mb-2"
               >
-                <tr>
-                  <th class="px-4 py-3 text-center font-medium w-16">
-                    {{ t("roomStays.table.booking") }}
-                  </th>
-                  <th class="px-4 py-3 text-left font-medium">
-                    {{ t("roomStays.table.guest") }}
-                  </th>
-                  <th class="px-4 py-3 text-left font-medium min-w-[200px]">
-                    {{ t("roomStays.table.dates") }}
-                  </th>
-                  <th class="px-4 py-3 text-left font-medium min-w-[140px]">
-                    {{ t("roomStays.table.status") }}
-                  </th>
-                  <th class="px-4 py-3 text-center font-medium w-24">
-                    {{ t("roomStays.table.balance") }}
-                  </th>
-                  <th class="px-4 py-3 text-center font-medium w-28">
-                    {{ t("roomStays.table.actions") }}
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <template v-if="!hasAnyStays">
-                  <tr>
-                    <td colspan="6" class="px-4 py-16 text-center">
-                      <div class="flex flex-col items-center justify-center">
-                        <div class="text-gray-400 dark:text-gray-500 mb-4">
-                          <svg
-                            class="w-16 h-16 mx-auto"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="1.5"
-                              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                            ></path>
-                          </svg>
-                        </div>
-                        <h3
-                          class="text-lg font-semibold text-gray-900 dark:text-white mb-2"
-                        >
-                          {{ t("roomStays.empty.title") }}
-                        </h3>
-                        <p
-                          class="text-sm text-gray-500 dark:text-gray-400 max-w-md"
-                        >
-                          {{ t("roomStays.empty.message") }}
-                        </p>
-                      </div>
-                    </td>
-                  </tr>
-                </template>
-                <template v-else>
-                  <template v-if="filteredStays.length === 0">
-                    <tr>
-                      <td
-                        colspan="6"
-                        class="px-4 py-12 text-center text-sm text-gray-500 dark:text-gray-400"
-                      >
-                        {{ t("roomStays.filters.noResults") }}
-                      </td>
-                    </tr>
-                  </template>
-                  <template v-else>
-                    <tr
-                      v-for="s in filteredStays"
-                      :key="s.id"
-                      class="border-t border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
-                    >
-                      <td
-                        class="px-4 py-3 text-gray-900 dark:text-white font-semibold text-center"
-                      >
-                        {{ formatBookingNumber(s) }}
-                      </td>
-                      <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
-                        {{ s.mainGuestName }}
-                      </td>
-                      <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
-                        <span class="font-medium">
-                          {{
-                            formatDateForDisplay(`${s.checkIn}T00:00:00`, false)
-                          }}
-                        </span>
-                        <span class="mx-2 text-gray-400 dark:text-gray-500"
-                          >→</span
-                        >
-                        <span class="font-medium">
-                          {{
-                            formatDateForDisplay(
-                              `${s.checkOut}T00:00:00`,
-                              false
-                            )
-                          }}
-                        </span>
-                      </td>
-                      <td class="px-4 py-3">
-                        <span
-                          :class="[
-                            getStatusClass(s.status),
-                            'px-2 py-1 rounded text-xs font-medium',
-                          ]"
-                        >
-                          {{ t(`roomStays.status.${s.status}`) }}
-                        </span>
-                      </td>
-                      <td
-                        class="px-4 py-3 text-gray-700 dark:text-gray-300 text-center font-medium"
-                      >
-                        {{
-                          typeof s.balance === "number"
-                            ? s.balance.toFixed(2)
-                            : s.balance ?? "—"
-                        }}
-                      </td>
-                      <td class="px-4 py-3 text-center">
-                        <div
-                          class="flex flex-col gap-2 sm:flex-row sm:justify-center"
-                        >
-                          <button
-                            type="button"
-                            :disabled="s.status !== 'booked'"
-                            class="inline-flex items-center justify-center px-3 py-1.5 text-sm font-medium rounded-md transition-colors"
-                            :class="
-                              s.status === 'booked'
-                                ? 'text-white bg-brand hover:bg-brand-light'
-                                : 'text-gray-400 bg-gray-100 dark:bg-gray-700 cursor-not-allowed'
-                            "
-                            @click="openEditStayModal(s)"
-                          >
-                            {{ t("roomStays.editStayModal.open") }}
-                          </button>
-                          <button
-                            type="button"
-                            :disabled="!canCheckInStay(s)"
-                            class="inline-flex items-center justify-center px-3 py-1.5 text-sm font-medium rounded-md transition-colors"
-                            :class="
-                              canCheckInStay(s)
-                                ? 'text-white bg-amber-600 hover:bg-amber-500'
-                                : 'text-gray-400 bg-gray-100 dark:bg-gray-700 cursor-not-allowed'
-                            "
-                            @click="startCheckInProcess(s)"
-                          >
-                            {{ t("roomStays.table.checkIn") }}
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  </template>
-                </template>
-              </tbody>
-            </table>
+                {{ t("roomStays.empty.title") }}
+              </h3>
+              <p class="text-sm text-gray-500 dark:text-gray-400 max-w-md">
+                {{ t("roomStays.empty.message") }}
+              </p>
+            </div>
           </div>
+          <div v-else-if="filteredStays.length === 0" class="text-center py-12">
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+              {{ t("roomStays.filters.noResults") }}
+            </p>
+          </div>
+          <StayListCards
+            v-else
+            :stays="filteredStays"
+            @edit="openEditStayModal"
+            @checkin="startCheckInProcess"
+          />
         </div>
       </div>
     </div>
@@ -1181,6 +662,11 @@ import {
 import { getRooms, markRoomCleaned, fetchRoomHistory } from "@/api/rooms";
 import type { Room, RoomStatus, RoomStatusLog } from "@/types/rooms";
 import StayHistory from "@/components/stays/StayHistory.vue";
+import GuestAccessLink from "@/components/stays/GuestAccessLink.vue";
+import RoomCurrentStayCard from "@/components/rooms/RoomCurrentStayCard.vue";
+import NextStayCard from "@/components/rooms/NextStayCard.vue";
+import StatusForm from "@/components/rooms/ui/StatusForm.vue";
+import StayListCards from "@/components/rooms/StayListCards.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -1303,13 +789,6 @@ const editStayForm = reactive({
 const editStayError = ref<string | null>(null);
 const isSavingStay = ref(false);
 
-const statusCommentPlaceholder = computed(() =>
-  t("roomStays.summary.currentStay.statusForm.commentPlaceholder")
-);
-const statusCommentHint = computed(() =>
-  t("roomStays.summary.currentStay.statusForm.commentHint")
-);
-
 function normalizeDateString(value: string): string {
   if (!value) {
     return "";
@@ -1345,9 +824,14 @@ const availableStatusOptions = computed<Stay["status"][]>(() => {
     return [];
   }
   const current = summaryStay.value.status;
+  // Дозволяємо переходи між статусами для редакторів та адмінів
+  if (current === "booked") {
+    return ["booked", "occupied", "cancelled"];
+  }
   if (current === "occupied") {
     return ["occupied", "completed"];
   }
+  // Для completed та cancelled - тільки поточний статус
   return [current];
 });
 
@@ -1458,17 +942,27 @@ function hasActiveOverlap(newCheckIn: string, newCheckOut: string): boolean {
 }
 
 async function load() {
-  const fetched = await listStaysByRoom(roomNumber);
-  stays.value = fetched.map((stay) => ({
-    ...stay,
-    checkIn: toDateOnly(stay.checkIn),
-    checkOut: toDateOnly(stay.checkOut),
-    extraGuestNames: stay.extraGuestNames ?? [],
-    guests: stay.guests ?? [],
-  }));
-  sortStaysByDate();
-  await loadRoomInfo();
-  await loadRoomLogs();
+  try {
+    const fetched = await listStaysByRoom(roomNumber);
+    stays.value = fetched.map((stay) => ({
+      ...stay,
+      checkIn: toDateOnly(stay.checkIn),
+      checkOut: toDateOnly(stay.checkOut),
+      extraGuestNames: stay.extraGuestNames ?? [],
+      guests: stay.guests ?? [],
+    }));
+    sortStaysByDate();
+    await loadRoomInfo();
+    await loadRoomLogs();
+  } catch (err) {
+    console.error(`[RoomStays] Error loading stays for room ${roomNumber}:`, err);
+    if (err && typeof err === "object" && "response" in err) {
+      const axiosError = err as { response?: { status?: number; data?: unknown } };
+      console.error(`[RoomStays] Error status: ${axiosError.response?.status}`);
+      console.error(`[RoomStays] Error data:`, axiosError.response?.data);
+    }
+    throw err;
+  }
 }
 
 async function createNew() {
@@ -1566,19 +1060,7 @@ async function createNew() {
   }
 }
 
-function getStatusClass(status: Stay["status"]): string {
-  const classes: Record<Stay["status"], string> = {
-    booked:
-      "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
-    occupied: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
-    completed: "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200",
-    cancelled: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
-  };
-  return (
-    classes[status] ??
-    "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200"
-  );
-}
+// getStatusClass тепер використовується в компонентах (RoomCurrentStayCard, NextStayCard, StayListCards)
 
 function getRoomStatusClass(status?: RoomStatus | null): string {
   if (!status) {
@@ -1613,16 +1095,7 @@ function formatDateForDisplay(value?: string | null, withTime = false): string {
   return formatter.format(new Date(value));
 }
 
-function formatStayPeriod(stay: Stay): string {
-  const start = formatDateForDisplay(`${stay.checkIn}T00:00:00`, false);
-  const end = formatDateForDisplay(`${stay.checkOut}T00:00:00`, false);
-  return `${start} → ${end}`;
-}
-
-function formatBookingNumber(stay: Stay): string {
-  const roomId = stay.room?.roomNumber ?? roomNumber;
-  return `${roomId}-${stay.id}`;
-}
+// formatStayPeriod та formatBookingNumber тепер використовуються в компонентах (NextStayCard, RoomCurrentStayCard)
 
 function isStayActive(stay: Stay): boolean {
   const now = Date.now();
@@ -1662,6 +1135,7 @@ function getFilterButtonClasses(status: Stay["status"]): string {
   return `${base} ${isActive ? activeClasses[status] : inactiveClasses}`;
 }
 
+// getStatusSelectLabel використовується в StatusForm
 function getStatusSelectLabel(status: Stay["status"]): string {
   return t(`roomStays.status.${status}`) as string;
 }
@@ -1674,7 +1148,12 @@ async function loadSummaryCancellationComment(stayId: number): Promise<void> {
     );
     summaryCancellationComment.value = cancelledLog?.comment ?? null;
   } catch (err) {
-    console.error("Error loading cancellation comment for room summary:", err);
+    console.error(`[RoomStays] Error loading cancellation comment for stay ${stayId}:`, err);
+    if (err && typeof err === "object" && "response" in err) {
+      const axiosError = err as { response?: { status?: number; data?: unknown } };
+      console.error(`[RoomStays] Error status: ${axiosError.response?.status}`);
+      console.error(`[RoomStays] Error data:`, axiosError.response?.data);
+    }
     summaryCancellationComment.value = null;
   }
 }

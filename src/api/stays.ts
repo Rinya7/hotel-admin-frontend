@@ -13,14 +13,25 @@ import type {
   StayStatusLog,
   StayRoomSyncResponse,
   CancelStayRequest,
+  StayNeedsAction,
+  ResolveNoShowRequest,
+  ResolveCheckInNowRequest,
+  ResolveCheckOutNowRequest,
+  ResolveEditDatesRequest,
+  ResolveExtendStayRequest,
 } from "@/types/stays";
 
 // История проживаний по комнате
 export async function listStaysByRoom(roomNumber: string): Promise<Stay[]> {
-  const { data } = await http.get<Stay[]>(
-    `/rooms/number/${encodeURIComponent(roomNumber)}/stays`
-  );
-  return data;
+  try {
+    const { data } = await http.get<Stay[]>(
+      `/rooms/number/${encodeURIComponent(roomNumber)}/stays`
+    );
+    return data;
+  } catch (error) {
+    console.error(`[API] listStaysByRoom error for room ${roomNumber}:`, error);
+    throw error;
+  }
 }
 
 // Все активные проживания (booked/occupied)
@@ -270,8 +281,13 @@ export async function searchStays(params: {
 
 // Отримати проживання за ID
 export async function getStayById(stayId: number): Promise<Stay> {
-  const { data } = await http.get<Stay>(`/stays/${stayId}`);
-  return data;
+  try {
+    const { data } = await http.get<Stay>(`/stays/${stayId}`);
+    return data;
+  } catch (error) {
+    console.error(`[API] getStayById error for stay ${stayId}:`, error);
+    throw error;
+  }
 }
 
 // Отримати історію змін статусів проживання
@@ -280,10 +296,95 @@ export async function fetchStayHistory(stayId: number): Promise<{
   mainGuestName: string;
   logs: StayStatusLog[];
 }> {
-  const { data } = await http.get<{
-    stayId: number;
-    mainGuestName: string;
-    logs: StayStatusLog[];
-  }>(`/stays/${stayId}/history`);
+  try {
+    const { data } = await http.get<{
+      stayId: number;
+      mainGuestName: string;
+      logs: StayStatusLog[];
+    }>(`/stays/${stayId}/history`);
+    return data;
+  } catch (error) {
+    console.error(`[API] fetchStayHistory error for stay ${stayId}:`, error);
+    throw error;
+  }
+}
+
+// Отримати список stays, які потребують дії (needsAction = true)
+export async function getNeedsActionStays(): Promise<StayNeedsAction[]> {
+  const { data } = await http.get<{ count: number; items: StayNeedsAction[] }>(
+    "/stays/needs-action"
+  );
+  return Array.isArray(data?.items) ? data.items : [];
+}
+
+// Тестовий endpoint для ручного запуску перевірки просрочених stays
+export async function testAutoCheck(): Promise<{
+  message: string;
+  stats: { missedCheckIns: number; missedCheckOuts: number; total: number };
+}> {
+  const { data } = await http.post<{
+    message: string;
+    stats: { missedCheckIns: number; missedCheckOuts: number; total: number };
+  }>("/stays/test-auto-check");
+  return data;
+}
+
+// Скасувати stay (зміна статусу на cancelled)
+export async function resolveNoShow(
+  stayId: number,
+  payload?: ResolveNoShowRequest
+): Promise<StayRoomSyncResponse> {
+  const { data } = await http.post<StayRoomSyncResponse>(
+    `/stays/${stayId}/resolve/no-show`,
+    payload ?? {}
+  );
+  return data;
+}
+
+// Виконати check-in зараз (occupied)
+export async function resolveCheckInNow(
+  stayId: number,
+  payload?: ResolveCheckInNowRequest
+): Promise<StayRoomSyncResponse> {
+  const { data } = await http.post<StayRoomSyncResponse>(
+    `/stays/${stayId}/resolve/check-in-now`,
+    payload ?? {}
+  );
+  return data;
+}
+
+// Виконати check-out зараз (completed)
+export async function resolveCheckOutNow(
+  stayId: number,
+  payload?: ResolveCheckOutNowRequest
+): Promise<StayRoomSyncResponse> {
+  const { data } = await http.post<StayRoomSyncResponse>(
+    `/stays/${stayId}/resolve/check-out-now`,
+    payload ?? {}
+  );
+  return data;
+}
+
+// Оновити дати stay (check-in або check-out)
+export async function resolveEditDates(
+  stayId: number,
+  payload: ResolveEditDatesRequest
+): Promise<{ message: string; stay: Stay }> {
+  const { data } = await http.post<{ message: string; stay: Stay }>(
+    `/stays/${stayId}/resolve/edit-dates`,
+    payload
+  );
+  return data;
+}
+
+// Продовжити stay (оновлює checkOut)
+export async function resolveExtendStay(
+  stayId: number,
+  payload: ResolveExtendStayRequest
+): Promise<{ message: string; stay: Stay }> {
+  const { data } = await http.post<{ message: string; stay: Stay }>(
+    `/stays/${stayId}/resolve/extend-stay`,
+    payload
+  );
   return data;
 }

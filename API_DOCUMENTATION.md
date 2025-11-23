@@ -472,6 +472,59 @@ const departures = await getTodayDepartures();
 
 ---
 
+## Аудит
+
+### GET /audit/logs
+
+**Описание:** Об'єднані логи змін статусів кімнат та проживань (тільки для admin та editor)
+
+**Query Parameters (всі опціональні):**
+- `type` - "room" | "stay" (фільтр по типу)
+- `user` - ім'я користувача (часткове співпадіння)
+- `role` - "admin" | "editor" | "guest" | "system" (фільтр по ролі)
+- `from` - початкова дата (ISO format: YYYY-MM-DDTHH:mm:ssZ)
+- `to` - кінцева дата (ISO format: YYYY-MM-DDTHH:mm:ssZ)
+
+**Response:**
+```typescript
+Array<{
+  type: "room" | "stay";
+  entityLabel: string;        // "Room 102" або "John Doe"
+  entityLink: string | null;  // "/rooms/102/stays" або "/stays/77"
+  oldStatus: string;
+  newStatus: string;
+  changedAt: string;          // ISO date
+  changedBy: string;          // username або "system"
+  changedByRole: string;      // "admin" | "editor" | "guest" | "system"
+}>
+```
+
+**Использование:**
+```typescript
+import http from "@/api/http";
+
+// Всі логи
+const logs = await http.get("/audit/logs");
+
+// Фільтр по типу
+const roomLogs = await http.get("/audit/logs?type=room");
+
+// Фільтр по користувачу
+const userLogs = await http.get("/audit/logs?user=frontdesk-1");
+
+// Фільтр по діапазону дат
+const dateLogs = await http.get(
+  "/audit/logs?from=2025-01-01T00:00:00Z&to=2025-01-31T23:59:59Z"
+);
+```
+
+**Примітки:**
+- Логи автоматично фільтруються по готелю поточного користувача
+- Сортування за датою (новіші спочатку)
+- Доступ тільки для admin та editor
+
+---
+
 ## Суперадмин функции
 
 ### GET /auth/users

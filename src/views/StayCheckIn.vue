@@ -506,14 +506,18 @@ async function loadStay(): Promise<void> {
     guestRows.value = registry.length > 0 ? registry : [emptyGuestRow()];
   } catch (error: unknown) {
     console.error("Error loading stay:", error);
-    loadError.value =
-      (error &&
-        typeof error === "object" &&
-        "response" in error &&
-        (error as { response?: { data?: { message?: string } } }).response
-          ?.data?.message) ||
-      (error instanceof Error ? error.message : null) ||
-      (t("stayCheckIn.loadErrorFallback") as string);
+    let errorMessage: string | null = null;
+    
+    if (error && typeof error === "object" && "response" in error) {
+      const axiosError = error as { response?: { data?: { message?: string } } };
+      errorMessage = axiosError.response?.data?.message || null;
+    }
+    
+    if (!errorMessage && error instanceof Error) {
+      errorMessage = error.message;
+    }
+    
+    loadError.value = errorMessage || (t("stayCheckIn.loadErrorFallback") as string);
   } finally {
     loading.value = false;
   }
@@ -571,20 +575,25 @@ async function submit(): Promise<void> {
     goBackToRoom();
   } catch (error: unknown) {
     console.error("Error during check-in:", error);
-    const rawMessage =
-      (error &&
-        typeof error === "object" &&
-        "response" in error &&
-        (error as { response?: { data?: { message?: string } } }).response
-          ?.data?.message) ||
-      (error instanceof Error ? error.message : null) ||
-      (t("stayCheckIn.messages.error") as string);
+    let rawMessage: string | null = null;
+    
+    if (error && typeof error === "object" && "response" in error) {
+      const axiosError = error as { response?: { data?: { message?: string } } };
+      rawMessage = axiosError.response?.data?.message || null;
+    }
+    
+    if (!rawMessage && error instanceof Error) {
+      rawMessage = error.message;
+    }
 
     const capacityValue = maxGuests.value ?? "—";
-    const friendlyMessage =
-      rawMessage && rawMessage.includes("Guest count exceeds room capacity")
+    const defaultMessage = t("stayCheckIn.messages.error") as string;
+    const message = rawMessage || defaultMessage;
+    
+    const friendlyMessage: string =
+      message.includes("Guest count exceeds room capacity")
         ? (t("stayCheckIn.errors.capacityExceeded", { capacity: capacityValue }) as string)
-        : rawMessage;
+        : message;
 
     submitError.value = friendlyMessage;
     showError(t("stayCheckIn.messages.error"), friendlyMessage);
@@ -613,11 +622,12 @@ function formatBookingNumber(currentStay: Stay): string {
 
 const maxGuests = computed(() => {
   if (!stay.value) {
-    return 0;
+    return null;
   }
-  const currentGuests = guestRows.value.length;
-  const max = stay.value.room.capacity;
-  return max - currentGuests;
+  // room в Stay має спрощений тип без capacity
+  // Використовуємо null, якщо capacity недоступний
+  // Можна було б зробити окремий запит для отримання повної інформації про кімнату
+  return null;
 });
 
 const capacityDisplay = computed(() => {

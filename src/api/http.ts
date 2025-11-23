@@ -52,15 +52,54 @@ http.interceptors.response.use(
 
     const status = error.response?.status ?? 0;
     const url = error.config?.url ?? "";
+    const method = error.config?.method?.toUpperCase() ?? "UNKNOWN";
+    const errorData = error.response?.data;
+
+    // Детальне логування помилок
+    console.error(`❌ [HTTP ERROR] ${method} ${url} → ${status}`, {
+      status,
+      statusText: error.response?.statusText,
+      data: errorData,
+      message: error.message,
+      config: {
+        method: error.config?.method,
+        url: error.config?.url,
+        headers: error.config?.headers,
+      },
+    });
+
+    // Додатково логуємо деталі помилки, якщо вони є
+    if (errorData && typeof errorData === "object") {
+      if ("message" in errorData) {
+        console.error(`   Error message: ${errorData.message}`);
+      }
+      if ("error" in errorData) {
+        console.error(`   Error details: ${errorData.error}`);
+      }
+      if ("errors" in errorData) {
+        console.error(`   Validation errors:`, errorData.errors);
+      }
+    }
 
     // ❗ Не скидаємо сторінку, якщо це помилка логіну — інакше не побачиш повідомлення «Невірний логін…»
     const isLoginRequest = url.includes("/auth/login");
 
     if ((status === 401 || status === 403) && !isLoginRequest) {
-      console.warn(`Authentication failed (${status}): redirecting to login`);
-      // Используем store для корректного сброса состояния
-      const authStore = useAuthStore();
-      authStore.forceLogout();
+      // Виводимо детальну інформацію про помилку аутентифікації
+      console.error(`[AUTH ERROR] Authentication failed (${status}) for ${method} ${url}`, {
+        status,
+        statusText: error.response?.statusText,
+        data: errorData,
+        message: error.message,
+      });
+      
+      // Додаємо затримку перед редиректом, щоб користувач міг побачити помилку
+      const delay = 5000; // 5 секунд затримки
+      setTimeout(() => {
+        // Используем store для корректного сброса состояния
+        const authStore = useAuthStore();
+        authStore.forceLogout();
+      }, delay);
     }
 
     return Promise.reject(error);

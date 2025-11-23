@@ -50,7 +50,12 @@ async function loadHistory() {
   } catch (err) {
     error.value =
       err instanceof Error ? err.message : "Помилка завантаження історії";
-    console.error("Error loading stay history:", err);
+    console.error(`[StayHistory] Error loading stay history for stay ${props.stayId}:`, err);
+    if (err && typeof err === "object" && "response" in err) {
+      const axiosError = err as { response?: { status?: number; data?: unknown } };
+      console.error(`[StayHistory] Error status: ${axiosError.response?.status}`);
+      console.error(`[StayHistory] Error data:`, axiosError.response?.data);
+    }
   } finally {
     loading.value = false;
   }

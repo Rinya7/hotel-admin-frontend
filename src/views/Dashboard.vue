@@ -5,1496 +5,124 @@
       {{ t("dashboard.title") }}
     </h2>
 
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-      <button
-        @click="toggleStatusFilter('free')"
-        :class="[
-          'border   p-4 rounded-lg transition-all duration-200 hover:scale-105 cursor-pointer',
-          statusFilters.includes('free')
-            ? 'bg-green-100   dark:bg-green-900     border-brand dark:border-white'
-            : 'border-gray-200 dark:border-gray-700  bg-white dark:bg-gray-800 hover:border-brand/50',
-        ]"
-      >
-        <strong
-          :class="[
-            'text-sm block mb-1',
-            statusFilters.includes('free')
-              ? 'text-green-800 dark:text-green-200'
-              : 'text-gray-600 dark:text-gray-400',
-          ]"
-        >
-          {{ t("dashboard.stats.free") }}
-        </strong>
-        <div
-          :class="[
-            'text-3xl font-bold',
-            statusFilters.includes('free')
-              ? 'text-green-800 dark:text-green-200'
-              : 'text-gray-900 dark:text-white',
-          ]"
-        >
-          {{ stats?.free ?? "—" }}
-        </div>
-      </button>
-
-      <button
-        @click="toggleStatusFilter('occupied')"
-        :class="[
-          'border p-4 rounded-lg transition-all duration-200 hover:scale-105 cursor-pointer',
-          statusFilters.includes('occupied')
-            ? 'bg-red-100  dark:bg-red-900   border-brand dark:border-white'
-            : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-brand/50',
-        ]"
-      >
-        <strong
-          :class="[
-            'text-sm block mb-1',
-            statusFilters.includes('occupied')
-              ? 'text-red-800 dark:text-red-200'
-              : 'text-gray-600 dark:text-gray-400',
-          ]"
-        >
-          {{ t("dashboard.stats.occupied") }}
-        </strong>
-        <div
-          :class="[
-            'text-3xl font-bold',
-            statusFilters.includes('occupied')
-              ? 'text-red-800 dark:text-red-200'
-              : 'text-gray-900 dark:text-white',
-          ]"
-        >
-          {{ stats?.occupied ?? "—" }}
-        </div>
-      </button>
-
-      <button
-        @click="toggleStatusFilter('cleaning')"
-        :class="[
-          'border p-4 rounded-lg transition-all duration-200 hover:scale-105 cursor-pointer',
-          statusFilters.includes('cleaning')
-            ? 'bg-blue-100  dark:bg-blue-900   border-brand dark:border-white'
-            : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-brand/50',
-        ]"
-      >
-        <strong
-          :class="[
-            'text-sm block mb-1',
-            statusFilters.includes('cleaning')
-              ? 'text-blue-800 dark:text-blue-200'
-              : 'text-gray-600 dark:text-gray-400',
-          ]"
-        >
-          {{ t("dashboard.stats.cleaning") }}
-        </strong>
-        <div
-          :class="[
-            'text-3xl font-bold',
-            statusFilters.includes('cleaning')
-              ? 'text-blue-800 dark:text-blue-200'
-              : 'text-gray-900 dark:text-white',
-          ]"
-        >
-          {{ stats?.cleaning ?? "—" }}
-        </div>
-      </button>
-    </div>
+    <!-- Statistics Cards -->
+    <DashboardStatsCards
+      :stats="stats"
+      :status-filters="statusFilters"
+      @toggle-filter="toggleStatusFilter"
+    />
 
     <!-- Today's Summary -->
-    <div
-      v-if="todayArrivals.length > 0 || todayDepartures.length > 0"
-      class="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-6"
-    >
-      <button
-        @click="toggleStayTypeFilter('arrivals')"
-        :class="[
-          'border p-4 rounded-lg transition-all duration-200 hover:scale-105 cursor-pointer',
-          stayTypeFilters.includes('arrivals')
-            ? 'border-white bg-blue-500/90 dark:bg-blue-700/90'
-            : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-brand/50',
-        ]"
-      >
-        <div class="flex items-center justify-between">
-          <div>
-            <strong
-              :class="[
-                'text-sm block mb-1',
-                stayTypeFilters.includes('arrivals')
-                  ? 'text-white dark:text-blue-300'
-                  : 'text-blue-800 dark:text-blue-200',
-              ]"
-            >
-              {{ t("dashboard.todaySummary.arrivals") }}
-            </strong>
-            <div
-              :class="[
-                'text-3xl font-bold',
-                stayTypeFilters.includes('arrivals')
-                  ? 'text-white dark:text-blue-300'
-                  : 'text-blue-900 dark:text-blue-100',
-              ]"
-            >
-              {{ todayArrivals.length }}
-            </div>
-            <p
-              :class="[
-                'text-xs',
-                stayTypeFilters.includes('arrivals')
-                  ? 'text-white/80 dark:text-blue-300/80'
-                  : 'text-blue-600 dark:text-blue-300',
-              ]"
-            >
-              {{ t("dashboard.todaySummary.guestsCheckingIn") }}
-            </p>
-            <!-- Список номеров -->
-            <div
-              v-if="todayArrivals.length > 0"
-              class="mt-2 flex flex-wrap gap-1"
-            >
-              <span
-                v-for="stay in todayArrivals.slice(0, 3)"
-                :key="stay.stayId"
-                :class="[
-                  'px-2 py-1 text-xs rounded-full',
-                  stayTypeFilters.includes('arrivals')
-                    ? 'bg-white/20 text-white'
-                    : 'bg-blue-200 text-blue-800 dark:bg-blue-800 dark:text-blue-200',
-                ]"
-              >
-                {{ stay.room.number }}
-              </span>
-              <span
-                v-if="todayArrivals.length > 3"
-                :class="[
-                  'px-2 py-1 text-xs rounded-full',
-                  stayTypeFilters.includes('arrivals')
-                    ? 'bg-white/20 text-white'
-                    : 'bg-blue-200 text-blue-800 dark:bg-blue-800 dark:text-blue-200',
-                ]"
-              >
-                +{{ todayArrivals.length - 3 }}
-              </span>
-            </div>
-          </div>
-          <div
-            :class="[
-              'w-12 h-12 rounded-full flex items-center justify-center',
-              stayTypeFilters.includes('arrivals')
-                ? 'bg-white/20'
-                : 'bg-blue-500',
-            ]"
-          >
-            <svg
-              class="w-6 h-6 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-              ></path>
-            </svg>
-          </div>
-        </div>
-      </button>
-
-      <button
-        @click="toggleStayTypeFilter('departures')"
-        :class="[
-          'border p-4 rounded-lg transition-all duration-200 hover:scale-105 cursor-pointer',
-          stayTypeFilters.includes('departures')
-            ? 'border-white bg-red-500/90 dark:red-500/90'
-            : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-brand/50',
-        ]"
-      >
-        <div class="flex items-center justify-between">
-          <div>
-            <strong
-              :class="[
-                'text-sm block mb-1',
-                stayTypeFilters.includes('departures')
-                  ? 'text-white dark:text-green-300'
-                  : 'text-green-800 dark:text-green-200',
-              ]"
-            >
-              {{ t("dashboard.todaySummary.departures") }}
-            </strong>
-            <div
-              :class="[
-                'text-3xl font-bold',
-                stayTypeFilters.includes('departures')
-                  ? 'text-white dark:text-green-300'
-                  : 'text-green-900 dark:text-green-100',
-              ]"
-            >
-              {{ todayDepartures.length }}
-            </div>
-            <p
-              :class="[
-                'text-xs',
-                stayTypeFilters.includes('departures')
-                  ? 'text-white/80 dark:text-green-300/80'
-                  : 'text-green-600 dark:text-green-300',
-              ]"
-            >
-              {{ t("dashboard.todaySummary.roomsBecomingAvailable") }}
-            </p>
-            <!-- Список номеров -->
-            <div
-              v-if="todayDepartures.length > 0"
-              class="mt-2 flex flex-wrap gap-1"
-            >
-              <span
-                v-for="stay in todayDepartures.slice(0, 3)"
-                :key="stay.stayId"
-                :class="[
-                  'px-2 py-1 text-xs rounded-full',
-                  stayTypeFilters.includes('departures')
-                    ? 'bg-white/20 text-white'
-                    : 'bg-green-200 text-green-800 dark:bg-green-800 dark:text-green-200',
-                ]"
-              >
-                {{ stay.room.number }}
-              </span>
-              <span
-                v-if="todayDepartures.length > 3"
-                :class="[
-                  'px-2 py-1 text-xs rounded-full',
-                  stayTypeFilters.includes('departures')
-                    ? 'bg-white/20 text-white'
-                    : 'bg-green-200 text-green-800 dark:bg-green-800 dark:text-green-200',
-                ]"
-              >
-                +{{ todayDepartures.length - 3 }}
-              </span>
-            </div>
-          </div>
-          <div
-            :class="[
-              'w-12 h-12 rounded-full flex items-center justify-center',
-              stayTypeFilters.includes('departures')
-                ? 'bg-white/20'
-                : 'bg-green-500',
-            ]"
-          >
-            <svg
-              class="w-6 h-6 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-              ></path>
-            </svg>
-          </div>
-        </div>
-      </button>
-    </div>
+    <TodaySummaryCards
+      :arrivals="todayArrivals"
+      :departures="todayDepartures"
+      :stay-type-filters="stayTypeFilters"
+      @toggle-filter="toggleStayTypeFilter"
+    />
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <!-- Current stays -->
-      <section
-        class="lg:col-span-2 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4"
-      >
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-lg font-semibold text-brand dark:text-white">
-            {{ getTableTitle() }}
-          </h3>
-          <button
-            @click="load"
-            :disabled="loading"
-            class="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {{ loading ? t("common.loading") : t("dashboard.refresh") }}
-          </button>
-        </div>
-
-        <!-- Индикатор активных фильтров -->
-        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
-          <div
-            v-if="statusFilters.length > 0 || stayTypeFilters.length > 0"
-            class="flex items-center gap-2"
-          >
-            <span class="text-sm text-gray-600 dark:text-gray-400"
-              >{{ t("dashboard.activeFilters") }}:</span
-            >
-            <div class="flex flex-wrap gap-2">
-              <span
-                v-for="status in statusFilters"
-                :key="status"
-                class="px-2 py-1 text-xs bg-brand/20 text-brand dark:text-brand-300 rounded-md"
-              >
-                {{ getStatusLabel(status) }}
-              </span>
-              <span
-                v-for="type in stayTypeFilters"
-                :key="type"
-                class="px-2 py-1 text-xs rounded-md"
-                :class="{
-                  'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200':
-                    type === 'arrivals',
-                  'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200':
-                    type === 'departures',
-                }"
-              >
-                {{ getStayTypeLabel(type) }}
-              </span>
-              <button
-                @click="clearFilters"
-                class="px-2 py-1 text-xs bg-red-100 hover:bg-red-200 dark:bg-red-900 dark:hover:bg-red-800 text-red-700 dark:text-red-300 rounded-md transition-colors"
-              >
-                {{ t("dashboard.clearAll") }}
-              </button>
-            </div>
-          </div>
-          <input
-            v-model="roomNumberSearch"
-            type="text"
-            :placeholder="t('dashboard.table.roomNumberSearchPlaceholder')"
-            class="w-full sm:w-64 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand"
-          />
-        </div>
-
-        <div
-          class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
-        >
-          <table class="min-w-full text-sm">
-            <thead
-              class="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
-            >
-              <tr>
-                <th class="px-4 py-3 text-left">
-                  {{ t("dashboard.table.roomNumber") }}
-                </th>
-                <th class="px-4 py-3 text-left">
-                  {{ t("dashboard.table.floor") }}
-                </th>
-                <th class="px-4 py-3 text-left">
-                  {{ t("dashboard.table.capacity") }}
-                </th>
-                <th class="px-4 py-3 text-left">
-                  {{ t("dashboard.table.status") }}
-                </th>
-                <th class="px-4 py-3 text-left">
-                  {{ t("dashboard.table.arrivalDate") }}
-                </th>
-                <th class="px-4 py-3 text-left">
-                  {{ t("dashboard.table.departureDate") }}
-                </th>
-                <th class="px-4 py-3 text-left">
-                  {{ t("dashboard.table.actions") }}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Состояние загрузки -->
-              <tr v-if="loading">
-                <td
-                  colspan="7"
-                  class="px-4 py-6 text-center text-gray-500 dark:text-gray-400"
-                >
-                  {{ t("dashboard.loading") }}
-                </td>
-              </tr>
-
-              <!-- Ошибка загрузки -->
-              <tr v-else-if="error">
-                <td
-                  colspan="7"
-                  class="px-4 py-6 text-center text-red-600 dark:text-red-400"
-                >
-                  {{ error }}
-                </td>
-              </tr>
-
-              <!-- Нет данных -->
-              <tr v-else-if="filteredRooms.length === 0">
-                <td
-                  colspan="7"
-                  class="px-4 py-6 text-center text-gray-500 dark:text-gray-400"
-                >
-                  {{
-                    roomNumberSearch.trim().length > 0 ||
-                    statusFilters.length > 0 ||
-                    stayTypeFilters.length > 0
-                      ? t("dashboard.noRoomsMatch")
-                      : t("dashboard.noRoomsFound")
-                  }}
-                </td>
-              </tr>
-              <tr
-                v-else
-                v-for="room in filteredRooms"
-                :key="room.id"
-                class="border-t border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
-              >
-                <td class="px-4 py-3 text-gray-900 dark:text-white font-medium">
-                  {{ room.roomNumber }}
-                </td>
-                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
-                  {{ room.floor }}
-                </td>
-                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
-                  {{ room.capacity }}
-                </td>
-                <td class="px-4 py-3">
-                  <span
-                    class="px-2 py-1 text-xs rounded-full block text-center"
-                    :class="{
-                      'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200':
-                        room.status === 'free',
-                      'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200':
-                        room.status === 'occupied',
-                      'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200':
-                        room.status === 'cleaning',
-                    }"
-                  >
-                    {{ room.status }}
-                  </span>
-                </td>
-                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
-                  {{ getRoomArrivalDate(room) }}
-                </td>
-                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
-                  {{ getRoomDepartureDate(room) }}
-                </td>
-                <td class="px-4 py-3">
-                  <RouterLink
-                    :to="{
-                      name: 'room-stays',
-                      params: { roomNumber: room.roomNumber },
-                    }"
-                    class="inline-flex items-center px-3 py-1 text-xs font-medium text-brand bg-brand/10 hover:bg-brand/20 dark:text-emerald-400 dark:bg-emerald-400/10 dark:hover:bg-emerald-400/20 rounded-md transition-colors"
-                  >
-                    {{ t("dashboard.viewRoom") }}
-                    <svg
-                      class="w-3 h-3 ml-1"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M9 5l7 7-7 7"
-                      ></path>
-                    </svg>
-                  </RouterLink>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
+      <CurrentStaysTable
+        :loading="loading"
+        :error="error"
+        :filtered-rooms="filteredRooms"
+        :status-filters="statusFilters"
+        :stay-type-filters="stayTypeFilters"
+        :search-query="roomNumberSearch"
+        :table-title="getTableTitle()"
+        :today-arrivals="todayArrivals"
+        :today-departures="todayDepartures"
+        :current-stays="currentStays"
+        @refresh="load"
+        @clear-filters="clearFilters"
+        @update:search-query="roomNumberSearch = $event"
+      />
 
       <!-- Room Management -->
-      <section
-        class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6"
-      >
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-semibold text-brand dark:text-white">
-            Hotel Management
-          </h2>
-          <button
-            v-if="auth.isAdmin"
-            @click="openPolicyHoursModal"
-            class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-brand bg-brand/10 hover:bg-brand/20 dark:text-emerald-400 dark:bg-emerald-400/10 dark:hover:bg-emerald-400/20 rounded-lg transition-colors"
-          >
-            <svg
-              class="w-4 h-4 mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-              ></path>
-            </svg>
-            {{ t("dashboard.roomManagement.policyHours") }}
-          </button>
-        </div>
-
-        <!-- Policy Hours Display -->
-        <div class="space-y-4">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
-              <div class="flex items-center mb-2">
-                <svg
-                  class="w-4 h-4 text-brand dark:text-emerald-400 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                  ></path>
-                </svg>
-                <span
-                  class="text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  {{ t("dashboard.roomManagement.checkInTime") }}
-                </span>
-              </div>
-              <p class="text-sm text-gray-900 dark:text-white font-mono">
-                {{
-                  policyHoursForm.checkInHour !== null
-                    ? `${policyHoursForm.checkInHour}:00`
-                    : "Not set"
-                }}
-              </p>
-            </div>
-
-            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
-              <div class="flex items-center mb-2">
-                <svg
-                  class="w-4 h-4 text-brand dark:text-emerald-400 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                  ></path>
-                </svg>
-                <span
-                  class="text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  {{ t("dashboard.roomManagement.checkOutTime") }}
-                </span>
-              </div>
-              <p class="text-sm text-gray-900 dark:text-white font-mono">
-                {{
-                  policyHoursForm.checkOutHour !== null
-                    ? `${policyHoursForm.checkOutHour}:00`
-                    : "Not set"
-                }}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Wi-Fi Display -->
-        <div class="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-base font-semibold text-brand dark:text-white">
-              {{ t("dashboard.roomManagement.wifiCredentials") }}
-            </h3>
-            <button
-              v-if="auth.isAdmin"
-              @click="openWiFiModal"
-              class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-brand bg-brand/10 hover:bg-brand/20 dark:text-emerald-400 dark:bg-emerald-400/10 dark:hover:bg-emerald-400/20 rounded-lg transition-colors"
-            >
-              <svg
-                class="w-4 h-4 mr-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"
-                ></path>
-              </svg>
-              {{ t("dashboard.roomManagement.editWifi") }}
-            </button>
-          </div>
-
-          <div class="grid grid-cols-1 gap-3">
-            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
-              <div class="flex items-center mb-2">
-                <svg
-                  class="w-4 h-4 text-brand dark:text-emerald-400 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"
-                  ></path>
-                </svg>
-                <span
-                  class="text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  {{ t("dashboard.roomManagement.networkName") }}
-                </span>
-              </div>
-              <p class="text-sm text-gray-900 dark:text-white font-mono">
-                {{
-                  currentWiFi.wifiName && currentWiFi.wifiName.trim()
-                    ? currentWiFi.wifiName
-                    : t("dashboard.roomManagement.notSet")
-                }}
-              </p>
-            </div>
-
-            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
-              <div class="flex items-center mb-2">
-                <svg
-                  class="w-4 h-4 text-brand dark:text-emerald-400 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                  ></path>
-                </svg>
-                <span
-                  class="text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
-                  {{ t("dashboard.roomManagement.password") }}
-                </span>
-              </div>
-              <p class="text-sm text-gray-900 dark:text-white font-mono">
-                {{
-                  currentWiFi.wifiPassword && currentWiFi.wifiPassword.trim()
-                    ? "••••••••"
-                    : t("dashboard.roomManagement.notSet")
-                }}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div class="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-          <div class="flex items-center justify-between">
-            <div class="space-y-1 text-sm text-gray-600 dark:text-gray-400">
-              <p>{{ t("dashboard.roomManagement.info.viewAllRooms") }}</p>
-              <p>{{ t("dashboard.roomManagement.info.filterByStatus") }}</p>
-              <p>{{ t("dashboard.roomManagement.info.manageInRooms") }}</p>
-            </div>
-            <RouterLink
-              to="/rooms"
-              class="inline-flex items-center px-4 py-2 bg-brand hover:bg-brand-light text-white rounded-lg transition-colors"
-            >
-              {{ t("dashboard.roomManagement.goToRooms") }}
-              <svg
-                class="w-4 h-4 ml-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 5l7 7-7 7"
-                ></path>
-              </svg>
-            </RouterLink>
-          </div>
-        </div>
-      </section>
+      <RoomManagementSidebar
+        :is-admin="auth.isAdmin"
+        :check-in-hour="policyHoursForm.checkInHour"
+        :check-out-hour="policyHoursForm.checkOutHour"
+        :wifi-name="currentWiFi.wifiName"
+        :wifi-password="currentWiFi.wifiPassword"
+        @open-policy-hours="openPolicyHoursModal"
+        @open-wifi="openWiFiModal"
+      />
 
       <!-- Модальное окно Policy Hours -->
-      <div
-        v-if="showPolicyHours"
-        class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-        @click.self="closePolicyHoursModal"
-      >
-        <div
-          class="bg-white border border-brand dark:border-white dark:bg-gray-800 rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-xl"
-          @click.stop
-        >
-          <div class="flex items-center justify-between mb-6">
-            <h3 class="text-xl font-semibold text-brand dark:text-white">
-              {{ t("dashboard.policyHoursModal.title") }}
-            </h3>
-            <button
-              @click="closePolicyHoursModal"
-              class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              <svg
-                class="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M6 18L18 6M6 6l12 12"
-                ></path>
-              </svg>
-            </button>
-          </div>
-
-          <form @submit.prevent="savePolicyHours" class="space-y-6">
-            <div class="space-y-4">
-              <div>
-                <label
-                  class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                >
-                  {{ t("dashboard.policyHoursModal.checkInHour") }}
-                </label>
-                <div class="flex items-center gap-2">
-                  <button
-                    type="button"
-                    @click="decreaseCheckInHour"
-                    class="flex items-center justify-center w-10 h-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
-                  >
-                    <svg
-                      class="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M20 12H4"
-                      ></path>
-                    </svg>
-                  </button>
-                  <input
-                    v-model="policyHoursForm.checkInHour"
-                    type="number"
-                    min="0"
-                    max="23"
-                    placeholder="14"
-                    class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand text-center"
-                  />
-                  <button
-                    type="button"
-                    @click="increaseCheckInHour"
-                    class="flex items-center justify-center w-10 h-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
-                  >
-                    <svg
-                      class="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M12 4v16m8-8H4"
-                      ></path>
-                    </svg>
-                  </button>
-                </div>
-                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  {{ t("dashboard.policyHoursModal.format24") }}
-                </p>
-              </div>
-
-              <div>
-                <label
-                  class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                >
-                  {{ t("dashboard.policyHoursModal.checkOutHour") }}
-                </label>
-                <div class="flex items-center gap-2">
-                  <button
-                    type="button"
-                    @click="decreaseCheckOutHour"
-                    class="flex items-center justify-center w-10 h-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
-                  >
-                    <svg
-                      class="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M20 12H4"
-                      ></path>
-                    </svg>
-                  </button>
-                  <input
-                    v-model="policyHoursForm.checkOutHour"
-                    type="number"
-                    min="0"
-                    max="23"
-                    placeholder="10"
-                    class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand text-center"
-                  />
-                  <button
-                    type="button"
-                    @click="increaseCheckOutHour"
-                    class="flex items-center justify-center w-10 h-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
-                  >
-                    <svg
-                      class="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M12 4v16m8-8H4"
-                      ></path>
-                    </svg>
-                  </button>
-                </div>
-                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  {{ t("dashboard.policyHoursModal.format24") }}
-                </p>
-              </div>
-            </div>
-
-            <div
-              class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700"
-            >
-              <button
-                type="button"
-                @click="closePolicyHoursModal"
-                class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
-              >
-                {{ t("dashboard.policyHoursModal.cancel") }}
-              </button>
-              <button
-                type="submit"
-                :disabled="savingPolicyHours || !isPolicyHoursValid"
-                class="px-6 py-3 text-sm font-medium text-white bg-brand hover:bg-brand-light disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-colors shadow-sm hover:shadow-md"
-              >
-                <span v-if="savingPolicyHours" class="flex items-center">
-                  <svg
-                    class="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      class="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      stroke-width="4"
-                    ></circle>
-                    <path
-                      class="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                  {{ t("dashboard.policyHoursModal.saving") }}
-                </span>
-                <span v-else class="flex items-center">
-                  <svg
-                    class="w-4 h-4 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    ></path>
-                  </svg>
-                  {{ t("dashboard.policyHoursModal.save") }}
-                </span>
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
+      <PolicyHoursModal
+        v-model="showPolicyHours"
+        :check-in-hour="policyHoursForm.checkInHour"
+        :check-out-hour="policyHoursForm.checkOutHour"
+        :saving="savingPolicyHours"
+        @save="handleSavePolicyHours"
+      />
 
       <!-- Модальное окно Wi-Fi -->
-      <div
-        v-if="showWiFi"
-        class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-        @click.self="closeWiFiModal"
-      >
-        <div
-          class="bg-white border border-brand dark:border-white dark:bg-gray-800 rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-xl"
-          @click.stop
-        >
-          <div class="flex items-center justify-between mb-6">
-            <h3 class="text-xl font-semibold text-brand dark:text-white">
-              {{ t("dashboard.wifiModal.title") }}
-            </h3>
-            <button
-              @click="closeWiFiModal"
-              class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              <svg
-                class="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M6 18L18 6M6 6l12 12"
-                ></path>
-              </svg>
-            </button>
-          </div>
-
-          <form @submit.prevent="saveWiFi" class="space-y-6">
-            <div class="space-y-4">
-              <div>
-                <label
-                  class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                >
-                  <div class="flex items-center">
-                    <svg
-                      class="w-4 h-4 text-brand dark:text-emerald-400 mr-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"
-                      ></path>
-                    </svg>
-                    {{ t("dashboard.wifiModal.networkName") }}
-                  </div>
-                </label>
-                <input
-                  v-model="wifiForm.wifiName"
-                  type="text"
-                  :placeholder="t('dashboard.wifiModal.placeholderName')"
-                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand"
-                  required
-                />
-                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  This will be updated for all rooms
-                </p>
-              </div>
-
-              <div>
-                <label
-                  class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                >
-                  <div class="flex items-center">
-                    <svg
-                      class="w-4 h-4 text-brand dark:text-emerald-400 mr-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                      ></path>
-                    </svg>
-                    {{ t("dashboard.wifiModal.password") }}
-                  </div>
-                </label>
-                <input
-                  v-model="wifiForm.wifiPassword"
-                  type="text"
-                  :placeholder="t('dashboard.wifiModal.placeholderPassword')"
-                  class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand font-mono"
-                  required
-                />
-                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  Password is visible for security purposes during editing
-                </p>
-              </div>
-            </div>
-
-            <div
-              class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4"
-            >
-              <div class="flex items-start">
-                <svg
-                  class="w-5 h-5 text-blue-600 dark:text-blue-400 mr-2 mt-0.5 flex-shrink-0"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  ></path>
-                </svg>
-                <div class="text-sm text-blue-800 dark:text-blue-200">
-                  <p class="font-medium mb-1">
-                    {{ t("dashboard.wifiModal.noteTitle") }}
-                  </p>
-                  <p>
-                    {{ t("dashboard.wifiModal.noteText") }}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div
-              class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700"
-            >
-              <button
-                type="button"
-                @click="closeWiFiModal"
-                class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
-              >
-                {{ t("dashboard.wifiModal.cancel") }}
-              </button>
-              <button
-                type="submit"
-                :disabled="savingWiFi || !isWiFiValid"
-                class="px-6 py-3 text-sm font-medium text-white bg-brand hover:bg-brand-light disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-colors shadow-sm hover:shadow-md"
-              >
-                <span v-if="savingWiFi" class="flex items-center">
-                  <svg
-                    class="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      class="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      stroke-width="4"
-                    ></circle>
-                    <path
-                      class="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                  {{ t("dashboard.wifiModal.saving") }}
-                </span>
-                <span v-else class="flex items-center">
-                  <svg
-                    class="w-4 h-4 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"
-                    ></path>
-                  </svg>
-                  {{ t("dashboard.wifiModal.save") }}
-                </span>
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
+      <WifiModal
+        v-model="showWiFi"
+        :wifi-name="wifiForm.wifiName"
+        :wifi-password="wifiForm.wifiPassword"
+        :saving="savingWiFi"
+        @save="handleSaveWiFi"
+      />
     </div>
 
     <!-- Global Booking Overview + Editor management -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <section
-        class="lg:col-span-2 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4"
-      >
-        <div class="flex items-center justify-between mb-4">
-          <div>
-            <h3 class="text-lg font-semibold text-brand dark:text-white">
-              {{ t("dashboard.allStays.title") }}
-            </h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400">
-              {{ t("dashboard.allStays.subtitle") }}
-            </p>
-          </div>
-          <button
-            type="button"
-            class="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            :disabled="bookingStaysLoading"
-            @click="loadBookingStays()"
-          >
-            {{
-              bookingStaysLoading ? t("common.loading") : t("dashboard.refresh")
-            }}
-          </button>
-        </div>
+      <AllStaysTable
+        :loading="bookingStaysLoading"
+        :error="bookingStaysError"
+        :filtered-stays="filteredBookingStays"
+        :status-filters="bookingStatusFilters"
+        :search-query="bookingCodeSearch"
+        :stay-status-options="stayStatusOptions"
+        :needs-action-count="needsActionStore.items.length"
+        v-model:checking="checkingOverdue"
+        @refresh="loadBookingStays()"
+        @check-overdue="handleCheckOverdue"
+        @toggle-status-filter="toggleBookingStatusFilter"
+        @update:search-query="bookingCodeSearch = $event"
+      />
 
-        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
-          <button
-            v-for="status in stayStatusOptions"
-            :key="status"
-            type="button"
-            :class="getBookingFilterButtonClasses(status)"
-            @click="toggleBookingStatusFilter(status)"
-          >
-            {{ getStayStatusLabel(status) }}
-          </button>
-          <input
-            v-model="bookingCodeSearch"
-            type="text"
-            :placeholder="t('dashboard.allStays.searchPlaceholder')"
-            class="ml-auto px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand"
-          />
-        </div>
-
-        <div
-          class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
-        >
-          <table class="min-w-full text-sm">
-            <thead
-              class="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
-            >
-              <tr>
-                <th class="px-4 py-3 text-left">
-                  {{ t("dashboard.allStays.table.booking") }}
-                </th>
-                <th class="px-4 py-3 text-left">
-                  {{ t("dashboard.allStays.table.room") }}
-                </th>
-                <th class="px-4 py-3 text-left">
-                  {{ t("dashboard.allStays.table.guest") }}
-                </th>
-                <th class="px-4 py-3 text-left">
-                  {{ t("dashboard.allStays.table.dates") }}
-                </th>
-                <th class="px-4 py-3 text-left">
-                  {{ t("dashboard.allStays.table.status") }}
-                </th>
-                <th class="px-4 py-3 text-left">
-                  {{ t("dashboard.allStays.table.actions") }}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-if="bookingStaysLoading">
-                <td
-                  colspan="6"
-                  class="px-4 py-6 text-center text-gray-500 dark:text-gray-400"
-                >
-                  {{ t("dashboard.loading") }}
-                </td>
-              </tr>
-              <tr v-else-if="bookingStaysError">
-                <td
-                  colspan="6"
-                  class="px-4 py-6 text-center text-red-500 dark:text-red-300"
-                >
-                  {{ bookingStaysError }}
-                </td>
-              </tr>
-              <tr v-else-if="filteredBookingStays.length === 0">
-                <td
-                  colspan="6"
-                  class="px-4 py-6 text-center text-gray-500 dark:text-gray-400"
-                >
-                  {{ t("dashboard.allStays.empty") }}
-                </td>
-              </tr>
-              <tr
-                v-for="stay in filteredBookingStays"
-                :key="stay.stayId"
-                class="border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50"
-              >
-                <td
-                  class="px-4 py-3 font-semibold text-gray-900 dark:text-white"
-                >
-                  {{ formatBookingCode(stay) }}
-                </td>
-                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
-                  {{ stay.room?.number }}
-                </td>
-                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
-                  {{ stay.mainGuestName }}
-                </td>
-                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
-                  {{ formatStayPeriod(stay) }}
-                </td>
-                <td class="px-4 py-3">
-                  <span
-                    :class="[
-                      getStayStatusClass(stay.status),
-                      'px-2 py-1 rounded text-xs font-medium',
-                    ]"
-                  >
-                    {{ getStayStatusLabel(stay.status) }}
-                  </span>
-                </td>
-                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
-                  <RouterLink
-                    :to="{
-                      name: 'room-stays',
-                      params: { roomNumber: stay.room?.number },
-                    }"
-                    class="text-brand hover:text-brand-light dark:text-emerald-300"
-                  >
-                    {{ t("dashboard.allStays.openRoom") }}
-                  </RouterLink>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <aside
-        v-if="canManageEditors"
-        class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 space-y-4"
-      >
-        <div class="mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
-          <h3 class="text-lg font-semibold text-brand dark:text-white">
-            {{ t("dashboard.addEditor.cardTitle") }}
-          </h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400">
-            {{ t("dashboard.addEditor.cardSubtitle") }}
-          </p>
-          <ul class="space-y-1 text-sm text-gray-600 dark:text-gray-300">
-            <li>
-              <span class="font-medium text-brand dark:text-emerald-300"
-                >•</span
-              >
-              {{ t("dashboard.addEditor.highlights.manage") }}
-            </li>
-            <li>
-              <span class="font-medium text-brand dark:text-emerald-300"
-                >•</span
-              >
-              {{ t("dashboard.addEditor.highlights.audit") }}
-            </li>
-            <li>
-              <span class="font-medium text-brand dark:text-emerald-300"
-                >•</span
-              >
-              {{ t("dashboard.addEditor.highlights.revoke") }}
-            </li>
-          </ul>
-        </div>
-        <button
-          type="button"
-          class="inline-flex items-center justify-center w-full px-4 py-2 text-sm font-semibold text-white bg-brand hover:bg-brand-light rounded-md transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-          @click="openAddEditorModal"
-        >
-          {{ t("dashboard.addEditor.button") }}
-        </button>
-      </aside>
+      <AddEditorSidebar
+        :can-manage="canManageEditors"
+        @open-modal="openAddEditorModal"
+      />
     </div>
 
     <!-- Add Editor Modal -->
-    <div
-      v-if="canManageEditors && showAddEditorModal"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
-      @click.self="closeAddEditorModal"
-    >
-      <div
-        class="w-full max-w-2xl rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-2xl"
-      >
-        <div
-          class="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-700"
-        >
-          <div>
-            <h3 class="text-lg font-semibold text-brand dark:text-white">
-              {{ t("dashboard.addEditor.modal.title") }}
-            </h3>
-            <p class="text-sm text-gray-600 dark:text-gray-400">
-              {{ t("dashboard.addEditor.modal.subtitle") }}
-            </p>
-          </div>
-          <button
-            type="button"
-            class="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-            @click="closeAddEditorModal"
-          >
-            <svg
-              class="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-        </div>
+    <AddEditorModal
+      v-model="showAddEditorModal"
+      :saving="isCreatingEditor"
+      :error="addEditorError"
+      @submit="handleSubmitAddEditor"
+    />
 
-        <div class="px-5 py-6 space-y-6">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div class="space-y-2">
-              <label
-                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
-                {{ t("dashboard.addEditor.modal.fields.username") }}
-              </label>
-              <input
-                v-model.trim="addEditorForm.username"
-                type="text"
-                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand"
-                :placeholder="
-                  t('dashboard.addEditor.modal.placeholders.username')
-                "
-              />
-            </div>
-            <div class="space-y-2">
-              <label
-                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
-                {{ t("dashboard.addEditor.modal.fields.fullName") }}
-              </label>
-              <input
-                v-model.trim="addEditorForm.fullName"
-                type="text"
-                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand"
-                :placeholder="
-                  t('dashboard.addEditor.modal.placeholders.fullName')
-                "
-              />
-            </div>
-            <div class="space-y-2">
-              <label
-                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
-                {{ t("dashboard.addEditor.modal.fields.password") }}
-              </label>
-              <input
-                v-model="addEditorForm.password"
-                type="password"
-                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand"
-                :placeholder="
-                  t('dashboard.addEditor.modal.placeholders.password')
-                "
-              />
-              <p class="text-xs text-gray-500 dark:text-gray-400">
-                {{ t("dashboard.addEditor.modal.hints.password") }}
-              </p>
-            </div>
-            <div class="space-y-2">
-              <label
-                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
-                {{ t("dashboard.addEditor.modal.fields.confirmPassword") }}
-              </label>
-              <input
-                v-model="addEditorForm.confirmPassword"
-                type="password"
-                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand"
-                :placeholder="
-                  t('dashboard.addEditor.modal.placeholders.confirmPassword')
-                "
-              />
-              <p
-                v-if="addEditorPasswordMismatch"
-                class="text-xs text-red-600 dark:text-red-400"
-              >
-                {{ t("dashboard.addEditor.modal.errors.passwordMismatch") }}
-              </p>
-            </div>
-            <div class="space-y-2">
-              <label
-                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
-                {{ t("dashboard.addEditor.modal.fields.email") }}
-              </label>
-              <input
-                v-model.trim="addEditorForm.email"
-                type="email"
-                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand"
-                placeholder="email"
-              />
-            </div>
-            <div class="space-y-2">
-              <label
-                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
-                {{ t("dashboard.addEditor.modal.fields.phoneCountryCode") }}
-              </label>
-              <input
-                v-model.trim="addEditorForm.phoneCountryCode"
-                type="text"
-                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand"
-                :placeholder="
-                  t('dashboard.addEditor.modal.placeholders.phoneCountryCode')
-                "
-              />
-            </div>
-            <div class="space-y-2">
-              <label
-                class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-              >
-                {{ t("dashboard.addEditor.modal.fields.phoneNumber") }}
-              </label>
-              <input
-                v-model.trim="addEditorForm.phoneNumber"
-                type="text"
-                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand"
-                :placeholder="
-                  t('dashboard.addEditor.modal.placeholders.phoneNumber')
-                "
-              />
-            </div>
-          </div>
-
-          <p
-            v-if="addEditorError"
-            class="text-sm text-red-600 dark:text-red-400"
-          >
-            {{ addEditorError }}
-          </p>
-        </div>
-
-        <div
-          class="flex justify-end gap-3 px-5 py-4 border-t border-gray-200 dark:border-gray-700"
-        >
-          <button
-            type="button"
-            class="px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
-            @click="closeAddEditorModal"
-          >
-            {{ t("dashboard.addEditor.modal.cancel") }}
-          </button>
-          <button
-            type="button"
-            class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-brand hover:bg-brand-light rounded-md transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-            :disabled="!canSubmitAddEditor || isCreatingEditor"
-            @click="submitAddEditor"
-          >
-            <span v-if="isCreatingEditor" class="animate-pulse">…</span>
-            <span>{{ t("dashboard.addEditor.modal.submit") }}</span>
-          </button>
-        </div>
-      </div>
-    </div>
+    <!-- Needs Action Modal -->
+    <NeedsActionModal
+      v-model="showNeedsActionModal"
+      :count="needsActionStore.items.length"
+      @view="handleViewNeedsAction"
+    />
   </section>
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, computed, reactive, watch } from "vue";
-import { RouterLink } from "vue-router";
+import { onMounted, ref, computed, reactive, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import DashboardStatsCards from "@/components/dashboard/DashboardStatsCards.vue";
+import TodaySummaryCards from "@/components/dashboard/TodaySummaryCards.vue";
+import CurrentStaysTable from "@/components/dashboard/CurrentStaysTable.vue";
+import RoomManagementSidebar from "@/components/dashboard/RoomManagementSidebar.vue";
+import PolicyHoursModal from "@/components/dashboard/PolicyHoursModal.vue";
+import WifiModal from "@/components/dashboard/WifiModal.vue";
+import AllStaysTable from "@/components/dashboard/AllStaysTable.vue";
+import AddEditorSidebar from "@/components/dashboard/AddEditorSidebar.vue";
+import AddEditorModal from "@/components/dashboard/AddEditorModal.vue";
+import NeedsActionModal from "@/components/needsAction/NeedsActionModal.vue";
+import { useNeedsActionStore } from "@/stores/needsAction";
+import { useRouter } from "vue-router";
 import type {
   RoomsStats,
   Room,
@@ -1514,13 +142,14 @@ import {
   getTodayArrivals,
   getTodayDepartures,
   getStaysByStatus,
+  testAutoCheck,
 } from "@/api/stays";
 import { useAuthStore } from "@/stores/auth";
 import { useNotifications } from "@/composables/useNotifications";
 import { createEditor } from "@/api/auth";
 import type { CreateEditorRequest } from "@/types/dto";
 
-const { t, locale } = useI18n();
+const { t } = useI18n();
 const auth = useAuthStore();
 const { showSuccess, showError } = useNotifications();
 const stats = ref<RoomsStats | null>(null);
@@ -1544,6 +173,7 @@ const bookingLoaded = ref(false);
 const bookingStays = ref<StayListItem[]>([]);
 const bookingStaysLoading = ref(false);
 const bookingStaysError = ref<string | null>(null);
+const checkingOverdue = ref(false);
 const roomNumberSearch = ref("");
 
 // Policy hours settings
@@ -1569,44 +199,13 @@ const currentWiFi = ref({
 });
 
 // Функции для управления модалками
-function openPolicyHoursModal() {
+function openPolicyHoursModal(): void {
   showPolicyHours.value = true;
-  document.body.style.overflow = "hidden";
 }
 
-function closePolicyHoursModal() {
-  showPolicyHours.value = false;
-  document.body.style.overflow = "";
-}
-
-function openWiFiModal() {
+function openWiFiModal(): void {
   showWiFi.value = true;
-  document.body.style.overflow = "hidden";
 }
-
-function closeWiFiModal() {
-  showWiFi.value = false;
-  document.body.style.overflow = "";
-}
-
-// Обработчик нажатия Esc
-function handleEscKey(event: KeyboardEvent) {
-  if (event.key === "Escape") {
-    if (showPolicyHours.value) {
-      closePolicyHoursModal();
-    }
-    if (showWiFi.value) {
-      closeWiFiModal();
-    }
-  }
-}
-
-// Убираем обработчик при размонтировании
-onUnmounted(() => {
-  document.removeEventListener("keydown", handleEscKey);
-  // Восстанавливаем скролл на всякий случай
-  document.body.style.overflow = "";
-});
 
 async function load() {
   try {
@@ -1724,26 +323,6 @@ watch(
   { immediate: true }
 );
 
-// Функции для кнопок +/- времени
-function increaseCheckInHour() {
-  const current = policyHoursForm.checkInHour || 0;
-  policyHoursForm.checkInHour = Math.min(23, current + 1);
-}
-
-function decreaseCheckInHour() {
-  const current = policyHoursForm.checkInHour || 0;
-  policyHoursForm.checkInHour = Math.max(0, current - 1);
-}
-
-function increaseCheckOutHour() {
-  const current = policyHoursForm.checkOutHour || 0;
-  policyHoursForm.checkOutHour = Math.min(23, current + 1);
-}
-
-function decreaseCheckOutHour() {
-  const current = policyHoursForm.checkOutHour || 0;
-  policyHoursForm.checkOutHour = Math.max(0, current - 1);
-}
 
 function normalizeDate(value: string): string {
   if (!value) {
@@ -1753,27 +332,6 @@ function normalizeDate(value: string): string {
     return value;
   }
   return new Date(value).toISOString().slice(0, 10);
-}
-
-function formatDate(value?: string | null): string {
-  if (!value) {
-    return "—";
-  }
-  return new Intl.DateTimeFormat(locale.value ?? undefined, {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(new Date(value));
-}
-
-function formatStayPeriod(stay: { checkIn: string; checkOut: string }): string {
-  const start = formatDate(stay.checkIn);
-  const end = formatDate(stay.checkOut);
-  return `${start} → ${end}`;
-}
-
-function formatBookingCode(stay: StayListItem): string {
-  return `${stay.room?.number ?? "?"}-${stay.stayId}`;
 }
 
 function toggleBookingStatusFilter(status: StayStatus): void {
@@ -1800,30 +358,47 @@ const filteredBookingStays = computed(() => {
 
   const search = bookingCodeSearch.value.trim().toLowerCase();
   if (search.length > 0) {
-    list = list.filter((stay) =>
-      formatBookingCode(stay).toLowerCase().includes(search)
-    );
+    list = list.filter((stay) => {
+      // Фильтруем по номеру брони (формат: номер-стайId, например "101-123")
+      const roomNumber = String(stay.room?.number ?? "?").toLowerCase();
+      const stayId = String(stay.stayId ?? "").toLowerCase();
+      const bookingCode = `${roomNumber}-${stayId}`;
+      return bookingCode.includes(search);
+    });
   }
 
   return list;
 });
 
-async function savePolicyHours() {
+/**
+ * Обробник для ручного запуску перевірки просрочених stays
+ */
+async function handleCheckOverdue(): Promise<void> {
+  try {
+    checkingOverdue.value = true;
+    const result = await testAutoCheck();
+    showSuccess(
+      `Перевірка завершена: ${result.stats.total} stays позначено (${result.stats.missedCheckIns} check-ins, ${result.stats.missedCheckOuts} check-outs)`
+    );
+    // Перезавантажуємо stays та needsAction
+    await loadBookingStays();
+    await needsActionStore.load();
+  } catch (err) {
+    const message =
+      err instanceof Error ? err.message : "Помилка при перевірці просрочених stays";
+    showError(message);
+    console.error("[Dashboard] Check overdue error:", err);
+  } finally {
+    checkingOverdue.value = false;
+  }
+}
+
+async function handleSavePolicyHours(payload: BulkPolicyHoursRequest): Promise<void> {
   try {
     savingPolicyHours.value = true;
 
-    // Преобразуем значения в числа
-    const payload = {
-      checkInHour: policyHoursForm.checkInHour
-        ? Number(policyHoursForm.checkInHour)
-        : null,
-      checkOutHour: policyHoursForm.checkOutHour
-        ? Number(policyHoursForm.checkOutHour)
-        : null,
-    };
-
     await updateBulkPolicyHours(payload);
-    closePolicyHoursModal();
+    showPolicyHours.value = false;
 
     // Обновляем дефолтные часы в authStore (базовое время отеля)
     auth.defaultCheckInHour = payload.checkInHour;
@@ -1861,17 +436,12 @@ async function savePolicyHours() {
 }
 
 // Функция для сохранения Wi-Fi данных
-async function saveWiFi() {
+async function handleSaveWiFi(payload: BulkWiFiRequest): Promise<void> {
   try {
     savingWiFi.value = true;
 
-    const payload = {
-      wifiName: wifiForm.wifiName.trim(),
-      wifiPassword: wifiForm.wifiPassword.trim(),
-    };
-
     await updateBulkWiFi(payload);
-    closeWiFiModal();
+    showWiFi.value = false;
 
     // Обновляем отображаемые значения
     currentWiFi.value.wifiName = payload.wifiName;
@@ -1937,28 +507,6 @@ const filteredRooms = computed(() => {
   return filtered;
 });
 
-// Валидация формы Policy Hours
-const isPolicyHoursValid = computed(() => {
-  const checkIn = policyHoursForm.checkInHour;
-  const checkOut = policyHoursForm.checkOutHour;
-
-  return (
-    checkIn !== null &&
-    checkOut !== null &&
-    checkIn >= 0 &&
-    checkIn <= 23 &&
-    checkOut >= 0 &&
-    checkOut <= 23
-  );
-});
-
-// Валидация формы Wi-Fi
-const isWiFiValid = computed(() => {
-  return (
-    wifiForm.wifiName.trim().length > 0 &&
-    wifiForm.wifiPassword.trim().length > 0
-  );
-});
 
 // Функции для работы с фильтрами
 function toggleStatusFilter(status: RoomStatus) {
@@ -1984,70 +532,6 @@ function clearFilters() {
   stayTypeFilters.value = []; // Очищаем все фильтры
 }
 
-function getStayTypeLabel(type: string): string {
-  const labels: Record<string, string> = {
-    current: "Current",
-    arrival: "Arrival",
-    departure: "Departure",
-  };
-  return labels[type] || type;
-}
-
-function getRoomArrivalDate(room: Room): string {
-  // Приоритет 1: Ищем заезд сегодня для этой комнаты
-  const arrival = todayArrivals.value.find(
-    (stay) => stay.room.number === room.roomNumber
-  );
-  if (arrival) {
-    return arrival.checkIn;
-  }
-
-  // Приоритет 2: Ищем выезд сегодня для этой комнаты (может быть заезд в тот же день)
-  const departure = todayDepartures.value.find(
-    (stay) => stay.room.number === room.roomNumber
-  );
-  if (departure) {
-    return departure.checkIn;
-  }
-
-  // Приоритет 3: Ищем текущее проживание для этой комнаты
-  const currentStay = currentStays.value.find(
-    (stay) => stay.room.roomNumber === room.roomNumber
-  );
-  if (currentStay) {
-    return currentStay.checkIn;
-  }
-
-  return "—";
-}
-
-function getRoomDepartureDate(room: Room): string {
-  // Приоритет 1: Ищем выезд сегодня для этой комнаты
-  const departure = todayDepartures.value.find(
-    (stay) => stay.room.number === room.roomNumber
-  );
-  if (departure) {
-    return departure.checkOut;
-  }
-
-  // Приоритет 2: Ищем заезд сегодня для этой комнаты (может быть выезд в тот же день)
-  const arrival = todayArrivals.value.find(
-    (stay) => stay.room.number === room.roomNumber
-  );
-  if (arrival) {
-    return arrival.checkOut;
-  }
-
-  // Приоритет 3: Ищем текущее проживание для этой комнаты
-  const currentStay = currentStays.value.find(
-    (stay) => stay.room.roomNumber === room.roomNumber
-  );
-  if (currentStay) {
-    return currentStay.checkOut;
-  }
-
-  return "—";
-}
 
 function getStatusLabel(status: RoomStatus): string {
   const labels: Record<RoomStatus, string> = {
@@ -2058,47 +542,7 @@ function getStatusLabel(status: RoomStatus): string {
   return labels[status] ?? status;
 }
 
-function getStayStatusClass(status: RoomStatus | Stay["status"]): string {
-  const classes: Record<string, string> = {
-    free: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
-    booked:
-      "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
-    occupied: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
-    completed: "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200",
-    cancelled: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
-  };
 
-  return (
-    classes[status] ??
-    "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200"
-  );
-}
-
-function getStayStatusLabel(status: StayStatus): string {
-  return t(`roomStays.status.${status}`) as string;
-}
-
-function getBookingFilterButtonClasses(status: StayStatus): string {
-  const base =
-    "px-3 py-1.5 text-sm font-medium rounded-full border transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand";
-  const isActive = bookingStatusFilters.value.includes(status);
-
-  const activeClasses: Record<StayStatus, string> = {
-    booked:
-      "bg-yellow-100 border-yellow-300 text-yellow-900 dark:bg-yellow-900/60 dark:border-yellow-600 dark:text-yellow-100",
-    occupied:
-      "bg-blue-100 border-blue-300 text-blue-900 dark:bg-blue-900/60 dark:border-blue-600 dark:text-blue-100",
-    completed:
-      "bg-gray-200 border-gray-300 text-gray-900 dark:bg-gray-700/70 dark:border-gray-500 dark:text-gray-50",
-    cancelled:
-      "bg-red-100 border-red-300 text-red-900 dark:bg-red-900/60 dark:border-red-600 dark:text-red-100",
-  };
-
-  const inactiveClasses =
-    "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:border-brand/60 hover:text-brand dark:hover:text-emerald-300";
-
-  return `${base} ${isActive ? activeClasses[status] : inactiveClasses}`;
-}
 
 function getTableTitle(): string {
   if (statusFilters.value.length === 0) {
@@ -2119,61 +563,37 @@ function getTableTitle(): string {
 }
 
 onMounted(async () => {
-  document.addEventListener("keydown", handleEscKey);
-  load();
+  await load();
+  await loadBookingStays();
+  
+  // Завантажуємо stays, які потребують дії
+  await needsActionStore.load();
+  // Показуємо modal, якщо є stays, які потребують дії
+  if (needsActionStore.hasItems) {
+    showNeedsActionModal.value = true;
+  }
 });
 
 const canManageEditors = computed(() => auth.isSuperadmin || auth.isAdmin);
 const showAddEditorModal = ref(false);
 const isCreatingEditor = ref(false);
 const addEditorError = ref<string | null>(null);
-const addEditorForm = reactive({
-  username: "",
-  password: "",
-  confirmPassword: "",
-  fullName: "",
-  email: "",
-  phoneCountryCode: "+39",
-  phoneNumber: "",
-});
 
-const canSubmitAddEditor = computed(() => {
-  const username = addEditorForm.username.trim();
-  const password = addEditorForm.password.trim();
-  const confirm = addEditorForm.confirmPassword.trim();
-  return username.length >= 3 && password.length >= 6 && password === confirm;
-});
+// Needs Action
+const needsActionStore = useNeedsActionStore();
+const router = useRouter();
+const showNeedsActionModal = ref(false);
 
-const addEditorPasswordMismatch = computed(
-  () =>
-    addEditorForm.confirmPassword.length > 0 &&
-    addEditorForm.password !== addEditorForm.confirmPassword
-);
-
-function resetAddEditorForm(): void {
-  addEditorForm.username = "";
-  addEditorForm.password = "";
-  addEditorForm.confirmPassword = "";
-  addEditorForm.fullName = "";
-  addEditorForm.email = "";
-  addEditorForm.phoneCountryCode = "+39";
-  addEditorForm.phoneNumber = "";
-  addEditorError.value = null;
+function handleViewNeedsAction(): void {
+  showNeedsActionModal.value = false;
+  router.push({ name: "needs-action" });
 }
-
 function openAddEditorModal(): void {
   if (!canManageEditors.value) {
     return;
   }
   showAddEditorModal.value = true;
   addEditorError.value = null;
-  document.body.style.overflow = "hidden";
-}
-
-function closeAddEditorModal(): void {
-  showAddEditorModal.value = false;
-  document.body.style.overflow = "";
-  resetAddEditorForm();
 }
 
 function resolveErrorMessage(error: unknown): string {
@@ -2195,35 +615,10 @@ function resolveErrorMessage(error: unknown): string {
   return t("common.unknownError") as string;
 }
 
-async function submitAddEditor(): Promise<void> {
+async function handleSubmitAddEditor(payload: CreateEditorRequest): Promise<void> {
   if (!canManageEditors.value) {
     addEditorError.value = t("dashboard.addEditor.modal.notAllowed") as string;
     return;
-  }
-  if (!canSubmitAddEditor.value || isCreatingEditor.value) {
-    addEditorError.value = canSubmitAddEditor.value
-      ? null
-      : (t("dashboard.addEditor.modal.validation") as string);
-    return;
-  }
-
-  const payload: CreateEditorRequest = {
-    username: addEditorForm.username.trim(),
-    password: addEditorForm.password,
-    confirmPassword: addEditorForm.confirmPassword,
-  };
-
-  if (addEditorForm.fullName.trim()) {
-    payload.full_name = addEditorForm.fullName.trim();
-  }
-  if (addEditorForm.email.trim()) {
-    payload.email = addEditorForm.email.trim();
-  }
-  if (addEditorForm.phoneCountryCode.trim()) {
-    payload.phoneCountryCode = addEditorForm.phoneCountryCode.trim();
-  }
-  if (addEditorForm.phoneNumber.trim()) {
-    payload.phoneNumber = addEditorForm.phoneNumber.trim();
   }
 
   isCreatingEditor.value = true;
@@ -2237,7 +632,7 @@ async function submitAddEditor(): Promise<void> {
         username: payload.username,
       })
     );
-    closeAddEditorModal();
+    showAddEditorModal.value = false;
   } catch (error: unknown) {
     const message = resolveErrorMessage(error);
     addEditorError.value = message;

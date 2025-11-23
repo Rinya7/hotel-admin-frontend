@@ -98,7 +98,7 @@
               <td class="px-4 py-3">
                 <div class="flex items-center gap-3">
                   <img
-                    :src="h.logo_url"
+                    :src="h.logo_url ?? undefined"
                     alt="logo"
                     class="h-8 w-8 rounded object-cover flex-shrink-0"
                   />

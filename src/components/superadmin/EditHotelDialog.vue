@@ -10,19 +10,19 @@
     ></div>
 
     <div
-      class="relative w-full max-w-2xl rounded-2xl bg-white dark:bg-gray-800 shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden"
+      class="relative w-full max-w-2xl max-h-[90vh] rounded-2xl bg-white dark:bg-gray-800 shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col"
     >
       <!-- Header -->
       <div
-        class="bg-gradient-to-r from-brand to-brand-light dark:from-brand dark:to-brand-light px-6 py-4"
+        class="flex-shrink-0 bg-gradient-to-r from-brand to-brand-light dark:from-brand dark:to-brand-light px-6 py-4"
       >
         <h3 class="text-xl font-bold text-white">
           {{ t("editHotelDialog.title") }}: {{ initial.username }}
         </h3>
       </div>
 
-      <!-- Form Content -->
-      <div class="p-6 dark:bg-gray-800">
+      <!-- Form Content (scrollable) -->
+      <div class="flex-1 overflow-y-auto p-6 dark:bg-gray-800">
         <form class="space-y-6" @submit.prevent="onSubmit">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Hotel Name -->
@@ -251,11 +251,13 @@
           <p v-if="error" class="text-red-600 dark:text-red-400 text-center">
             {{ error }}
           </p>
+        </form>
+      </div>
 
-          <!-- Action Buttons -->
-          <div
-            class="flex items-center justify-end gap-3 pt-6 border-t border-gray-200 dark:border-gray-700"
-          >
+      <!-- Action Buttons (fixed footer) -->
+      <div
+        class="flex-shrink-0 flex items-center justify-end gap-3 p-6 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
+      >
             <Button type="button" variant="outline" @click="onClose">
               {{ t("editHotelDialog.messages.cancel") }}
             </Button>
@@ -271,8 +273,6 @@
                   : t("editHotelDialog.messages.save")
               }}
             </Button>
-          </div>
-        </form>
       </div>
     </div>
   </div>

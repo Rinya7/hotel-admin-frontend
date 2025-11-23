@@ -122,3 +122,39 @@ export interface StayRoomSyncResponse {
   room: Room;
 }
 
+/**
+ * Stay, який потребує дії від адміністратора.
+ * Використовується для відображення просрочених check-in/check-out.
+ */
+export interface StayNeedsAction {
+  id: number;
+  roomNumber: string;
+  mainGuestName: string;
+  checkIn: string; // YYYY-MM-DD
+  checkOut: string; // YYYY-MM-DD
+  status: "booked" | "occupied"; // не змінюється
+  needsAction: true;
+  needsActionReason: "missed_checkin" | "missed_checkout";
+}
+
+export interface ResolveNoShowRequest {
+  comment?: string;
+}
+
+export interface ResolveCheckInNowRequest {
+  comment?: string;
+}
+
+export interface ResolveCheckOutNowRequest {
+  comment?: string;
+}
+
+export interface ResolveEditDatesRequest {
+  checkIn?: string; // YYYY-MM-DD
+  checkOut?: string; // YYYY-MM-DD
+}
+
+export interface ResolveExtendStayRequest {
+  checkOut: string; // YYYY-MM-DD
+}
+

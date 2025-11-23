@@ -14,7 +14,7 @@
       <!-- Заголовок + кнопки действий -->
       <div class="flex items-center gap-4">
         <img
-          :src="hotel.logo_url"
+          :src="hotel.logo_url ?? undefined"
           class="h-16 w-16 rounded object-cover"
           alt="logo"
         />
@@ -234,7 +234,6 @@ import { onMounted, computed, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import { useSuperHotelsStore } from "@/stores/superadmin";
-import type { PublicAdminUser } from "@/types/hotel";
 import type { UpdateHotelAdminRequest } from "@/types/dto";
 import EditHotelDialog from "@/components/superadmin/EditHotelDialog.vue";
 import { useLocale } from "@/composables/useLocale";
