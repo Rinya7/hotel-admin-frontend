@@ -183,6 +183,15 @@ export const useSuperHotelsStore = defineStore("super-hotels", {
       username: string,
       patch: UpdateHotelAdminRequest
     ): Promise<void> {
+      console.log("[superadmin store] updateHotel called:", {
+        username,
+        patch: {
+          ...patch,
+          defaultWifiPassword: patch.defaultWifiPassword ? "***" : null,
+          phoneNumber: patch.phoneNumber ? "***" : null,
+        },
+      });
+
       // Мінімальна фронт-валідація годин (якщо передані)
       const isHourOrNull = (v: unknown): v is number | null =>
         v === null ||
@@ -192,19 +201,32 @@ export const useSuperHotelsStore = defineStore("super-hotels", {
         typeof patch.checkInHour !== "undefined" &&
         !isHourOrNull(patch.checkInHour)
       ) {
+        console.error("[superadmin store] Invalid checkInHour:", patch.checkInHour);
         throw new Error("checkInHour має бути 0..23 або null");
       }
       if (
         typeof patch.checkOutHour !== "undefined" &&
         !isHourOrNull(patch.checkOutHour)
       ) {
+        console.error("[superadmin store] Invalid checkOutHour:", patch.checkOutHour);
         throw new Error("checkOutHour має бути 0..23 або null");
       }
 
+      console.log("[superadmin store] Sending PUT request to:", `/auth/admin/${encodeURIComponent(username)}`);
       const res = await http.put<UpdateHotelAdminResponse>(
         `/auth/admin/${encodeURIComponent(username)}`,
         patch
       );
+      console.log("[superadmin store] Response received:", {
+        status: res.status,
+        data: {
+          ...res.data,
+          admin: res.data.admin ? {
+            ...res.data.admin,
+            defaultWifiPassword: res.data.admin.defaultWifiPassword ? "***" : null,
+          } : null,
+        },
+      });
 
       // Оптимістично оновимо локальний кеш
       const updated = res.data.admin;
@@ -231,6 +253,8 @@ export const useSuperHotelsStore = defineStore("super-hotels", {
           logo_url: updated.logo_url,
           checkInHour: updated.checkInHour,
           checkOutHour: updated.checkOutHour,
+          defaultWifiName: updated.defaultWifiName,
+          defaultWifiPassword: updated.defaultWifiPassword,
           updatedAt: updated.updatedAt,
         };
       }
@@ -243,9 +267,32 @@ export const useSuperHotelsStore = defineStore("super-hotels", {
       try {
         // Бекенд: GET /auth/users — для superadmin повертає масив PublicAdminUser
         const res = await http.get<SuperAdminUsersResponse>("/auth/users");
+        
+        // Отладочный вывод для проверки данных с бэкенда
+        if (import.meta.env.DEV && res.data.length > 0) {
+          const firstHotel = res.data[0];
+          console.log("[superadmin store] First hotel from backend:", {
+            username: firstHotel.username,
+            defaultWifiName: firstHotel.defaultWifiName,
+            defaultWifiPassword: firstHotel.defaultWifiPassword ? "***" : null,
+          });
+        }
+        
         this.raw = res.data;
-      } catch (e) {
-        this.error = e instanceof Error ? e.message : "Unknown error";
+      } catch (e: unknown) {
+        // Обрабатываем различные типы ошибок
+        if (e && typeof e === "object" && "response" in e) {
+          const axiosError = e as { response?: { data?: { message?: string }; status?: number } };
+          this.error = axiosError.response?.data?.message || 
+            (axiosError.response?.status === 401 ? "Unauthorized" : 
+             axiosError.response?.status === 403 ? "Forbidden" : 
+             axiosError.response?.status === 500 ? "Server error" : 
+             "Failed to load hotels");
+        } else if (e instanceof Error) {
+          this.error = e.message;
+        } else {
+          this.error = "Unknown error occurred";
+        }
       } finally {
         this.loading = false;
       }

@@ -148,6 +148,8 @@ const en = {
       logoUrl: "Logo (URL)",
       checkInHour: "Check-in (0..23, or empty)",
       checkOutHour: "Check-out (0..23, or empty)",
+      defaultWifiName: "Wi-Fi Network Name",
+      defaultWifiPassword: "Wi-Fi Password",
     },
     messages: {
       saving: "Saving...",
@@ -261,6 +263,8 @@ const en = {
       phone: "Phone",
       checkInTime: "Check-in time",
       checkOutTime: "Check-out time",
+      wifiName: "Wi-Fi Network Name",
+      wifiPassword: "Wi-Fi Password",
       editors: "Editors",
       created: "Created",
       updated: "Updated",
@@ -720,7 +724,31 @@ const en = {
       placeholders: {
         phoneCountryCode: "Select country code",
         phoneNumber: "123456789",
+        documentType: "Select document type",
       },
+      documentType: "Document type",
+      documentTypes: {
+        passport: "Passport",
+        idCard: "ID Card",
+        driverLicense: "Driver's License",
+        other: "Other",
+      },
+      maxGuests: "Max {capacity} guests",
+      capacityInfo: "Room capacity: {capacity} guests",
+    },
+    createStayModal: {
+      title: "Create Booking",
+      cancel: "Cancel",
+      create: "Create",
+    },
+    createBooking: {
+      button: "Create Booking",
+    },
+    checkIn: {
+      button: "Check In",
+      disabledHint: "Check-in date must be today",
+      hint: "For check-in, the check-in date must be today",
+      mustBeToday: "Check-in date must be today for check-in",
     },
     status: {
       booked: "booked",
@@ -750,6 +778,13 @@ const en = {
       invalidRange: "Check-out date must be later than check-in date.",
       roomNotFound: "Room not found",
       invalidData: "Invalid data provided. Please check the form.",
+      firstNameRequired: "First name is required",
+      lastNameRequired: "Last name is required",
+      emailRequired: "Email is required",
+      phoneCountryCodeRequired: "Country code is required",
+      phoneNumberRequired: "Phone number is required",
+      guestsCountRequired: "Number of guests is required",
+      guestsCountExceedsCapacity: "Number of guests cannot exceed {capacity}",
     },
     empty: {
       title: "No stays found",

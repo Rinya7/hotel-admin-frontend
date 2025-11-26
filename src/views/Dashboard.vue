@@ -266,6 +266,11 @@ async function load() {
     loading.value = true;
     error.value = null;
 
+    // Сначала загружаем профиль отеля (для админа), чтобы получить актуальные данные из БД
+    if (auth.isAdmin) {
+      await loadHotelProfile();
+    }
+
     stats.value = await getRoomsStats();
     rooms.value = await getRooms();
 
@@ -292,26 +297,52 @@ async function load() {
       todayDepartures.value = [];
     }
 
-    // Заполняем форму Policy Hours из authStore (базовое время отеля из профиля админа)
-    policyHoursForm.checkInHour = auth.defaultCheckInHour ?? 14; // 14:00 по умолчанию
-    policyHoursForm.checkOutHour = auth.defaultCheckOutHour ?? 10; // 10:00 по умолчанию
+    // Заполняем форму Policy Hours из профиля отеля (из БД), а не из localStorage
+    // Используем данные из hotelProfile, если они есть, иначе fallback на authStore
+    if (hotelProfile.value) {
+      policyHoursForm.checkInHour = hotelProfile.value.checkInHour ?? 14; // 14:00 по умолчанию
+      policyHoursForm.checkOutHour = hotelProfile.value.checkOutHour ?? 10; // 10:00 по умолчанию
+    } else {
+      // Fallback на authStore (для редакторов или если профиль не загружен)
+      policyHoursForm.checkInHour = auth.defaultCheckInHour ?? 14;
+      policyHoursForm.checkOutHour = auth.defaultCheckOutHour ?? 10;
+    }
 
     // Заполняем текущие значения Wi-Fi данными из первой комнаты
-    // (у всех комнат одинаковые Wi-Fi данные)
+    // Если у комнат нет значений, используем значения по умолчанию из admin
     if (rooms.value.length > 0) {
       const firstRoom = rooms.value[0];
 
       if (firstRoom) {
-        currentWiFi.value.wifiName = firstRoom.wifiName ?? "";
-        currentWiFi.value.wifiPassword = firstRoom.wifiPassword ?? "";
+        // Используем значения из комнаты, если они есть, иначе - значения по умолчанию из admin
+        currentWiFi.value.wifiName = firstRoom.wifiName ?? hotelProfile.value?.defaultWifiName ?? "";
+        currentWiFi.value.wifiPassword = firstRoom.wifiPassword ?? hotelProfile.value?.defaultWifiPassword ?? "";
         // Также заполняем форму для редактирования
-        wifiForm.wifiName = firstRoom.wifiName ?? "";
-        wifiForm.wifiPassword = firstRoom.wifiPassword ?? "";
+        wifiForm.wifiName = firstRoom.wifiName ?? hotelProfile.value?.defaultWifiName ?? "";
+        wifiForm.wifiPassword = firstRoom.wifiPassword ?? hotelProfile.value?.defaultWifiPassword ?? "";
       }
+    } else if (hotelProfile.value) {
+      // Если комнат нет, используем значения по умолчанию из admin
+      currentWiFi.value.wifiName = hotelProfile.value.defaultWifiName ?? "";
+      currentWiFi.value.wifiPassword = hotelProfile.value.defaultWifiPassword ?? "";
+      wifiForm.wifiName = hotelProfile.value.defaultWifiName ?? "";
+      wifiForm.wifiPassword = hotelProfile.value.defaultWifiPassword ?? "";
     }
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error("Error loading dashboard data:", e);
-    error.value = e?.message || "Failed to load data";
+    // Обрабатываем различные типы ошибок
+    if (e && typeof e === "object" && "response" in e) {
+      const axiosError = e as { response?: { data?: { message?: string }; status?: number } };
+      error.value = axiosError.response?.data?.message || 
+        (axiosError.response?.status === 401 ? "Unauthorized" : 
+         axiosError.response?.status === 403 ? "Forbidden" : 
+         axiosError.response?.status === 500 ? "Server error" : 
+         "Failed to load data");
+    } else if (e instanceof Error) {
+      error.value = e.message;
+    } else {
+      error.value = "Failed to load data";
+    }
   } finally {
     loading.value = false;
   }
@@ -459,21 +490,10 @@ async function handleSavePolicyHours(payload: BulkPolicyHoursRequest): Promise<v
     await updateBulkPolicyHours(payload);
     showPolicyHours.value = false;
 
-    // Обновляем дефолтные часы в authStore (базовое время отеля)
+    // Обновляем значения в authStore для использования в других компонентах
+    // (например, в RoomsList.vue)
     auth.defaultCheckInHour = payload.checkInHour;
     auth.defaultCheckOutHour = payload.checkOutHour;
-
-    // Сохраняем в localStorage
-    if (payload.checkInHour !== null) {
-      localStorage.setItem("defaultCheckInHour", String(payload.checkInHour));
-    } else {
-      localStorage.removeItem("defaultCheckInHour");
-    }
-    if (payload.checkOutHour !== null) {
-      localStorage.setItem("defaultCheckOutHour", String(payload.checkOutHour));
-    } else {
-      localStorage.removeItem("defaultCheckOutHour");
-    }
 
     // Показываем сообщение об успехе
     showSuccess(
@@ -482,13 +502,23 @@ async function handleSavePolicyHours(payload: BulkPolicyHoursRequest): Promise<v
     );
 
     // Перезагружаем данные после успешного сохранения
+    // Это обновит hotelProfile из БД и отобразит актуальные значения
     await load();
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error("Error saving policy hours:", e);
-    showError(
-      t("dashboard.policyHoursModal.errorMessage"),
-      e.response?.data?.message || e.message
-    );
+    // Обрабатываем различные типы ошибок
+    let errorMessage = t("dashboard.policyHoursModal.errorMessage");
+    if (e && typeof e === "object" && "response" in e) {
+      const axiosError = e as { response?: { data?: { message?: string }; status?: number } };
+      errorMessage = axiosError.response?.data?.message || 
+        (axiosError.response?.status === 400 ? "Invalid data" : 
+         axiosError.response?.status === 403 ? "Permission denied" : 
+         axiosError.response?.status === 500 ? "Server error" : 
+         errorMessage);
+    } else if (e instanceof Error) {
+      errorMessage = e.message;
+    }
+    showError(t("dashboard.policyHoursModal.errorMessage"), errorMessage);
   } finally {
     savingPolicyHours.value = false;
   }
@@ -502,10 +532,6 @@ async function handleSaveWiFi(payload: BulkWiFiRequest): Promise<void> {
     await updateBulkWiFi(payload);
     showWiFi.value = false;
 
-    // Обновляем отображаемые значения
-    currentWiFi.value.wifiName = payload.wifiName;
-    currentWiFi.value.wifiPassword = payload.wifiPassword;
-
     // Показываем сообщение об успехе
     showSuccess(
       t("dashboard.wifiModal.successMessage"),
@@ -513,13 +539,23 @@ async function handleSaveWiFi(payload: BulkWiFiRequest): Promise<void> {
     );
 
     // Перезагружаем данные после успешного сохранения
+    // Это обновит комнаты и hotelProfile из БД и отобразит актуальные значения
     await load();
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error("Error saving Wi-Fi credentials:", e);
-    showError(
-      t("dashboard.wifiModal.errorMessage"),
-      e.response?.data?.message || e.message
-    );
+    // Обрабатываем различные типы ошибок
+    let errorMessage = t("dashboard.wifiModal.errorMessage");
+    if (e && typeof e === "object" && "response" in e) {
+      const axiosError = e as { response?: { data?: { message?: string }; status?: number } };
+      errorMessage = axiosError.response?.data?.message || 
+        (axiosError.response?.status === 400 ? "Invalid data" : 
+         axiosError.response?.status === 403 ? "Permission denied" : 
+         axiosError.response?.status === 500 ? "Server error" : 
+         errorMessage);
+    } else if (e instanceof Error) {
+      errorMessage = e.message;
+    }
+    showError(t("dashboard.wifiModal.errorMessage"), errorMessage);
   } finally {
     savingWiFi.value = false;
   }

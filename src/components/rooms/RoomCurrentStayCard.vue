@@ -99,6 +99,41 @@
             :label="t('roomStays.summary.currentStay.guest')"
             :value="stay.mainGuestName"
           />
+
+          <!-- First Name -->
+          <InfoRow
+            v-if="stay.firstName"
+            :label="t('roomStays.summary.currentStay.fields.firstName')"
+            :value="stay.firstName"
+          />
+
+          <!-- Last Name -->
+          <InfoRow
+            v-if="stay.lastName"
+            :label="t('roomStays.summary.currentStay.fields.lastName')"
+            :value="stay.lastName"
+          />
+
+          <!-- Email -->
+          <InfoRow
+            v-if="stay.email"
+            :label="t('roomStays.summary.currentStay.fields.email')"
+            :value="stay.email"
+          />
+
+          <!-- Phone -->
+          <InfoRow
+            v-if="stay.phoneCountryCode || stay.phoneNumber"
+            :label="t('roomStays.summary.currentStay.fields.phone')"
+            :value="phoneDisplay"
+          />
+
+          <!-- Guests Count -->
+          <InfoRow
+            v-if="stay.guestsCount"
+            :label="t('roomStays.summary.currentStay.fields.guestsCount')"
+            :value="String(stay.guestsCount)"
+          />
   
           <!-- CheckIn -->
           <InfoRow
@@ -262,6 +297,22 @@
     const rn = stay.room.roomNumber;
     return `${rn}-${stay.id}`;
   }
+
+  // Отображение телефона
+  const phoneDisplay = computed(() => {
+    if (!props.stay) return "—";
+    const { phoneCountryCode, phoneNumber } = props.stay;
+    if (phoneCountryCode && phoneNumber) {
+      return `${phoneCountryCode} ${phoneNumber}`;
+    }
+    if (phoneCountryCode) {
+      return phoneCountryCode;
+    }
+    if (phoneNumber) {
+      return phoneNumber;
+    }
+    return "—";
+  });
   
   const balanceValue = computed(() => {
     if (!props.stay) return "—";

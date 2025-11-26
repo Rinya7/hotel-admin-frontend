@@ -397,6 +397,7 @@ const stayNights = computed(() => {
   return nights > 0 ? nights : 1;
 });
 
+// При отмене просто возвращаемся - stay остается в статусе booked
 function goBackToRoom(): void {
   router.push({
     name: "room-stays",
@@ -477,31 +478,61 @@ async function loadStay(): Promise<void> {
       guests: data.guests ?? [],
     };
 
-    const registry =
-      stay.value.guests && stay.value.guests.length > 0
-        ? stay.value.guests.map((guest) => ({
-            fullName: guest.fullName,
-            documentType: guest.documentType ?? "",
-            documentNumber: guest.documentNumber ?? "",
-            birthDate: toDateOnly(guest.birthDate ?? ""),
-            notes: guest.notes ?? "",
-          }))
-        : [
-            {
-              fullName: stay.value.mainGuestName,
-              documentType: "",
-              documentNumber: "",
-              birthDate: "",
-              notes: "",
-            },
-            ...((stay.value.extraGuestNames ?? []).map((name) => ({
-              fullName: name,
-              documentType: "",
-              documentNumber: "",
-              birthDate: "",
-              notes: "",
-            })) as GuestFormRow[]),
-          ];
+    // Проверяем query параметры для предзаполнения формы
+    const query = route.query;
+    const hasQueryData = query.firstName || query.lastName;
+
+    let registry: GuestFormRow[] = [];
+
+    if (hasQueryData) {
+      // Предзаполняем из query параметров (при переходе из "Заселить")
+      const firstName = String(query.firstName || "");
+      const lastName = String(query.lastName || "");
+      const fullName = `${firstName} ${lastName}`.trim() || stay.value.mainGuestName;
+      
+      registry = [
+        {
+          fullName,
+          documentType: String(query.documentType || ""),
+          documentNumber: String(query.documentNumber || ""),
+          birthDate: String(query.birthDate || ""),
+          notes: "",
+        },
+      ];
+
+      // Добавляем дополнительные гости, если указано guestsCount
+      const guestsCount = Number(query.guestsCount) || 1;
+      for (let i = 1; i < guestsCount; i++) {
+        registry.push(emptyGuestRow());
+      }
+    } else {
+      // Обычная загрузка из stay
+      registry =
+        stay.value.guests && stay.value.guests.length > 0
+          ? stay.value.guests.map((guest) => ({
+              fullName: guest.fullName,
+              documentType: guest.documentType ?? "",
+              documentNumber: guest.documentNumber ?? "",
+              birthDate: toDateOnly(guest.birthDate ?? ""),
+              notes: guest.notes ?? "",
+            }))
+          : [
+              {
+                fullName: stay.value.mainGuestName,
+                documentType: "",
+                documentNumber: "",
+                birthDate: "",
+                notes: "",
+              },
+              ...((stay.value.extraGuestNames ?? []).map((name) => ({
+                fullName: name,
+                documentType: "",
+                documentNumber: "",
+                birthDate: "",
+                notes: "",
+              })) as GuestFormRow[]),
+            ];
+    }
 
     guestRows.value = registry.length > 0 ? registry : [emptyGuestRow()];
   } catch (error: unknown) {
@@ -624,10 +655,8 @@ const maxGuests = computed(() => {
   if (!stay.value) {
     return null;
   }
-  // room в Stay має спрощений тип без capacity
-  // Використовуємо null, якщо capacity недоступний
-  // Можна було б зробити окремий запит для отримання повної інформації про кімнату
-  return null;
+  // Получаем capacity из room объекта
+  return stay.value.room.capacity ?? null;
 });
 
 const capacityDisplay = computed(() => {

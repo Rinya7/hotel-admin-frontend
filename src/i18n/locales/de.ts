@@ -684,7 +684,31 @@ const de = {
       placeholders: {
         phoneCountryCode: "Ländercode auswählen",
         phoneNumber: "123456789",
+        documentType: "Dokumenttyp wählen",
       },
+      documentType: "Dokumenttyp",
+      documentTypes: {
+        passport: "Reisepass",
+        idCard: "Personalausweis",
+        driverLicense: "Führerschein",
+        other: "Andere",
+      },
+      maxGuests: "Max {capacity} Gäste",
+      capacityInfo: "Zimmerkapazität: {capacity} Gäste",
+    },
+    createStayModal: {
+      title: "Buchung erstellen",
+      cancel: "Abbrechen",
+      create: "Erstellen",
+    },
+    createBooking: {
+      button: "Buchung erstellen",
+    },
+    checkIn: {
+      button: "Einchecken",
+      disabledHint: "Check-in-Datum muss heute sein",
+      hint: "Für das Check-in muss das Check-in-Datum heute sein",
+      mustBeToday: "Check-in-Datum muss heute sein für das Check-in",
     },
     status: {
       booked: "gebucht",
@@ -714,6 +738,13 @@ const de = {
       invalidRange: "Das Abreisedatum muss nach dem Anreisedatum liegen.",
       roomNotFound: "Zimmer nicht gefunden",
       invalidData: "Ungültige Daten. Bitte überprüfen Sie das Formular.",
+      firstNameRequired: "Vorname ist erforderlich",
+      lastNameRequired: "Nachname ist erforderlich",
+      emailRequired: "E-Mail ist erforderlich",
+      phoneCountryCodeRequired: "Ländercode ist erforderlich",
+      phoneNumberRequired: "Telefonnummer ist erforderlich",
+      guestsCountRequired: "Anzahl der Gäste ist erforderlich",
+      guestsCountExceedsCapacity: "Anzahl der Gäste darf {capacity} nicht überschreiten",
     },
     empty: {
       title: "Keine Aufenthalte gefunden",

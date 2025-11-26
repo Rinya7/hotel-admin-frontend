@@ -118,18 +118,30 @@
           <h2 class="font-medium mb-3 text-brand dark:text-white">
             {{ t("saHotelDetail.sections.checkinPolicies") }}
           </h2>
-          <div class="text-sm text-gray-700 dark:text-gray-300">
+          <div class="text-sm text-gray-700 dark:text-gray-300 space-y-2">
             <div>
               <b class="text-brand dark:text-white"
                 >{{ t("saHotelDetail.fields.checkInTime") }}:</b
               >
-              {{ hotel.checkInHour ?? t("saHotelDetail.fields.default") }}
+              {{ hotel.checkInHour !== null ? `${hotel.checkInHour}:00` : t("saHotelDetail.fields.default") }}
             </div>
             <div>
               <b class="text-brand dark:text-white"
                 >{{ t("saHotelDetail.fields.checkOutTime") }}:</b
               >
-              {{ hotel.checkOutHour ?? t("saHotelDetail.fields.default") }}
+              {{ hotel.checkOutHour !== null ? `${hotel.checkOutHour}:00` : t("saHotelDetail.fields.default") }}
+            </div>
+            <div class="pt-2 border-t border-gray-200 dark:border-gray-600">
+              <b class="text-brand dark:text-white"
+                >{{ t("saHotelDetail.fields.wifiName") }}:</b
+              >
+              {{ hotel.defaultWifiName ?? "—" }}
+            </div>
+            <div>
+              <b class="text-brand dark:text-white"
+                >{{ t("saHotelDetail.fields.wifiPassword") }}:</b
+              >
+              {{ hotel.defaultWifiPassword ? "••••••••" : "—" }}
             </div>
           </div>
         </div>
@@ -250,12 +262,23 @@ const { t } = useLocale();
 const { raw, loading } = storeToRefs(store);
 
 // Используем computed для автоматического обновления при изменении данных в store
-const hotel = computed(() => store.byId(idParam));
+const hotel = computed(() => {
+  const h = store.byId(idParam);
+  // Отладочный вывод для проверки данных
+  if (import.meta.env.DEV && h) {
+    console.log("[SaHotelDetail] Hotel data:", {
+      id: h.id,
+      username: h.username,
+      defaultWifiName: h.defaultWifiName,
+      defaultWifiPassword: h.defaultWifiPassword ? "***" : null,
+    });
+  }
+  return h;
+});
 
 onMounted(async () => {
-  if (raw.value.length === 0) {
-    await store.fetchAll(); // якщо зайшли напряму
-  }
+  // Всегда перезагружаем данные, чтобы получить актуальные значения из БД
+  await store.fetchAll();
 });
 
 // Кнопки действий
@@ -288,20 +311,58 @@ function openEdit(username: string): void {
 }
 
 async function onSavePatch(patch: UpdateHotelAdminRequest): Promise<void> {
-  if (!hotel.value) return;
+  console.log("[SaHotelDetail] onSavePatch called with patch:", {
+    ...patch,
+    defaultWifiPassword: patch.defaultWifiPassword ? "***" : null,
+    phoneNumber: patch.phoneNumber ? "***" : null,
+  });
+  
+  if (!hotel.value) {
+    console.error("[SaHotelDetail] No hotel value, cannot save");
+    return;
+  }
+  
+  console.log("[SaHotelDetail] Updating hotel:", hotel.value.username);
+  
   try {
+    console.log("[SaHotelDetail] Calling store.updateHotel...");
     await store.updateHotel(hotel.value.username, patch);
-    // Данные автоматически обновляются в store после успешного API вызова
-    // store.updateHotel уже обновляет локальный кеш (raw массив)
+    console.log("[SaHotelDetail] store.updateHotel completed successfully");
+    
+    // Перезагружаем данные из БД, чтобы получить актуальные значения
+    console.log("[SaHotelDetail] Fetching all hotels...");
+    await store.fetchAll();
+    console.log("[SaHotelDetail] Data refreshed");
+    
+    // Закрываем модалку только после успешного сохранения
+    console.log("[SaHotelDetail] Closing modal");
+    editOpen.value = false;
+    
+    console.log("[SaHotelDetail] Showing success message");
     showSuccess(
       "Hotel updated successfully",
       "Hotel information has been saved and updated"
     );
-  } catch (e) {
+  } catch (e: unknown) {
+    console.error("[SaHotelDetail] Error in onSavePatch:", e);
+    // Обрабатываем различные типы ошибок
+    let errorMessage = "Unknown error occurred";
+    if (e && typeof e === "object" && "response" in e) {
+      const axiosError = e as { response?: { data?: { message?: string }; status?: number } };
+      errorMessage = axiosError.response?.data?.message || 
+        (axiosError.response?.status === 400 ? "Invalid data" : 
+         axiosError.response?.status === 403 ? "Permission denied" : 
+         axiosError.response?.status === 500 ? "Server error" : 
+         errorMessage);
+    } else if (e instanceof Error) {
+      errorMessage = e.message;
+    }
+    console.error("[SaHotelDetail] Error message:", errorMessage);
     showError(
       t("saHotelDetail.messages.saveError"),
-      e instanceof Error ? e.message : "Unknown error occurred"
+      errorMessage
     );
+    // Не закрываем модалку при ошибке, чтобы пользователь мог исправить
   }
 }
 </script>

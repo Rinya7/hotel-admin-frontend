@@ -501,148 +501,27 @@
       </div>
     </div>
 
-    <details
-      open
-      class="border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-lg p-4"
-    >
-      <summary
-        class="text-lg font-medium text-brand dark:text-white cursor-pointer mb-4"
-      >
-        {{ t("roomStays.createNewStay") }}
-      </summary>
-      <form @submit.prevent="createNew" class="space-y-4">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input
-            v-model.trim="form.mainGuestName"
-            :placeholder="t('roomStays.form.mainGuestName')"
-            required
-            :class="[
-              'w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border rounded-lg text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand',
-              formError
-                ? 'border-red-500 dark:border-red-500'
-                : 'border-gray-300 dark:border-gray-600',
-            ]"
-            @input="formError = ''"
-          />
-          <input
-            v-model.trim="extraGuestsLine"
-            :placeholder="t('roomStays.form.extraGuests')"
-            :class="[
-              'w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border rounded-lg text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand',
-              formError
-                ? 'border-red-500 dark:border-red-500'
-                : 'border-gray-300 dark:border-gray-600',
-            ]"
-            @input="formError = ''"
-          />
-          <div class="flex gap-2">
-            <input
-              v-model="form.checkIn"
-              type="date"
-              required
-              :class="[
-                'flex-1 text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border rounded-lg text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand',
-                formError
-                  ? 'border-red-500 dark:border-red-500'
-                  : 'border-gray-300 dark:border-gray-600',
-              ]"
-              @change="formError = ''"
-            />
-            <input
-              v-model="form.checkOut"
-              type="date"
-              required
-              :class="[
-                'flex-1 text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border rounded-lg text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand',
-                formError
-                  ? 'border-red-500 dark:border-red-500'
-                  : 'border-gray-300 dark:border-gray-600',
-              ]"
-              @change="formError = ''"
-            />
-          </div>
-          <div class="flex gap-2">
-            <select
-              v-model="form.status"
-              class="flex-1 text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
-              @change="formError = ''"
-            >
-              <option value="booked">{{ t("roomStays.status.booked") }}</option>
-              <option value="occupied">
-                {{ t("roomStays.status.occupied") }}
-              </option>
-            </select>
-            <input
-              v-model.number="form.balance"
-              type="number"
-              step="0.01"
-              :placeholder="t('roomStays.form.balance')"
-              class="flex-1 text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
-              @input="formError = ''"
-            />
-          </div>
-        </div>
+    <!-- Форма создания stay -->
+    <CreateStayForm
+      :room-number="roomNumber"
+      :existing-stays="stays"
+      @open-create-modal="handleOpenCreateModal"
+      @check-in="handleCheckIn"
+      @error="(msg) => (formError = msg)"
+      @warning="(msg) => showWarning(msg)"
+    />
 
-        <!-- Сообщение об ошибке прямо в форме -->
-        <div
-          v-if="formError"
-          class="flex items-start gap-3 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg"
-        >
-          <svg
-            class="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            ></path>
-          </svg>
-          <div class="flex-1">
-            <p
-              class="text-sm font-semibold text-red-800 dark:text-red-300 mb-1"
-            >
-              {{ t("roomStays.messages.error") }}
-            </p>
-            <p class="text-sm text-red-700 dark:text-red-400">
-              {{ formError }}
-            </p>
-          </div>
-          <button
-            type="button"
-            @click="formError = ''"
-            class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 transition-colors flex-shrink-0"
-          >
-            <svg
-              class="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M6 18L18 6M6 6l12 12"
-              ></path>
-            </svg>
-          </button>
-        </div>
-
-        <!-- Кнопка создания по центру -->
-        <div class="flex justify-center py-10">
-          <button
-            type="submit"
-            class="px-6 py-2.5 bg-brand hover:bg-brand-light text-white rounded-lg transition-colors font-medium shadow-sm hover:shadow-md"
-          >
-            {{ t("roomStays.createButton") }}
-          </button>
-        </div>
-      </form>
-    </details>
+    <!-- Модалка создания stay -->
+    <CreateStayModal
+      :visible="showCreateModal"
+      :check-in="modalDates.checkIn"
+      :check-out="modalDates.checkOut"
+      :is-loading="isCreatingStay"
+      :error="createModalError"
+      :room-capacity="currentRoom?.capacity ?? null"
+      @close="handleCloseCreateModal"
+      @submit="handleCreateStay"
+    />
   </section>
 </template>
 
@@ -667,6 +546,8 @@ import RoomCurrentStayCard from "@/components/rooms/RoomCurrentStayCard.vue";
 import NextStayCard from "@/components/rooms/NextStayCard.vue";
 import StatusForm from "@/components/rooms/ui/StatusForm.vue";
 import StayListCards from "@/components/rooms/StayListCards.vue";
+import CreateStayForm from "@/components/rooms/CreateStayForm.vue";
+import CreateStayModal from "@/components/rooms/CreateStayModal.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -904,17 +785,15 @@ function sortStaysByDate(): void {
   });
 }
 
-const form = reactive<CreateStayRequest>({
-  mainGuestName: "",
-  extraGuestNames: [],
+const formError = ref("");
+const showCreateModal = ref(false);
+const isCreatingStay = ref(false);
+const createModalError = ref<string | null>(null);
+const modalDates = ref<{ checkIn: string; checkOut: string }>({
   checkIn: "",
   checkOut: "",
-  status: "booked",
-  balance: 0,
 });
-
-const extraGuestsLine = ref("");
-const formError = ref("");
+const isCheckInFlow = ref(false); // Флаг для определения, создаем букинг или переходим на чекин
 
 function hasActiveOverlap(newCheckIn: string, newCheckOut: string): boolean {
   if (!newCheckIn || !newCheckOut) {
@@ -965,39 +844,113 @@ async function load() {
   }
 }
 
-async function createNew() {
-  // Сбрасываем предыдущую ошибку
-  formError.value = "";
+// Обработчик открытия модалки для создания букинга
+function handleOpenCreateModal(dates: { checkIn: string; checkOut: string }): void {
+  modalDates.value = dates;
+  isCheckInFlow.value = false;
+  showCreateModal.value = true;
+  createModalError.value = null;
+}
+
+// Обработчик нажатия "Заселить" - создаем букинг и переходим на чекин
+async function handleCheckIn(dates: { checkIn: string; checkOut: string }): Promise<void> {
+  modalDates.value = dates;
+  isCheckInFlow.value = true;
+  showCreateModal.value = true;
+  createModalError.value = null;
+}
+
+// Закрытие модалки
+function handleCloseCreateModal(): void {
+  showCreateModal.value = false;
+  createModalError.value = null;
+  isCheckInFlow.value = false;
+}
+
+// Создание stay из модалки
+async function handleCreateStay(modalData: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneCountryCode: string;
+  phoneNumber: string;
+  guestsCount: number | null;
+  documentType: string;
+  documentNumber: string;
+  birthDate: string;
+}): Promise<void> {
+  isCreatingStay.value = true;
+  createModalError.value = null;
 
   try {
-    if (!form.checkIn || !form.checkOut) {
-      formError.value = t("roomStays.messages.invalidData") as string;
-      return;
+    // Безопасная нормализация обязательных полей
+    const normalizeRequiredString = (value: string | null | undefined): string => {
+      if (!value || typeof value !== "string") {
+        throw new Error("Required field is missing or invalid");
+      }
+      const trimmed = value.trim();
+      if (!trimmed) {
+        throw new Error("Required field cannot be empty");
+      }
+      return trimmed;
+    };
+
+    // Формируем mainGuestName из firstName и lastName
+    const normalizedFirstName = normalizeRequiredString(modalData.firstName);
+    const normalizedLastName = normalizeRequiredString(modalData.lastName);
+    const mainGuestName = `${normalizedFirstName} ${normalizedLastName}`.trim();
+
+    // Нормализуем остальные обязательные поля
+    const normalizedEmail = normalizeRequiredString(modalData.email);
+    const normalizedPhoneCountryCode = normalizeRequiredString(modalData.phoneCountryCode);
+    const normalizedPhoneNumber = normalizeRequiredString(modalData.phoneNumber);
+
+    // Валидация guestsCount
+    if (!modalData.guestsCount || modalData.guestsCount < 1) {
+      throw new Error("guestsCount must be at least 1");
     }
 
-    if (form.checkOut <= form.checkIn) {
-      formError.value = t("roomStays.messages.invalidRange") as string;
-      return;
-    }
+    // Формируем payload для создания stay (обязательные поля всегда отправляем)
+    const payload: CreateStayRequest = {
+      mainGuestName,
+      firstName: normalizedFirstName,
+      lastName: normalizedLastName,
+      email: normalizedEmail,
+      phoneCountryCode: normalizedPhoneCountryCode,
+      phoneNumber: normalizedPhoneNumber,
+      guestsCount: modalData.guestsCount,
+      checkIn: modalDates.value.checkIn,
+      checkOut: modalDates.value.checkOut,
+      status: "booked", // Всегда создаем как booked
+      balance: 0,
+    };
 
-    if (hasActiveOverlap(form.checkIn, form.checkOut)) {
-      formError.value = t("roomStays.messages.dateConflict") as string;
-      return;
-    }
+    // Проверяем, что все обязательные поля присутствуют
+    console.log("[handleCreateStay] Payload before send:", JSON.stringify(payload, null, 2));
+    console.log("[handleCreateStay] Payload fields check:", {
+      hasFirstName: !!payload.firstName,
+      firstNameValue: payload.firstName,
+      firstNameType: typeof payload.firstName,
+      hasLastName: !!payload.lastName,
+      lastNameValue: payload.lastName,
+      hasEmail: !!payload.email,
+      emailValue: payload.email,
+      hasPhoneCountryCode: !!payload.phoneCountryCode,
+      phoneCountryCodeValue: payload.phoneCountryCode,
+      hasPhoneNumber: !!payload.phoneNumber,
+      phoneNumberValue: payload.phoneNumber,
+      hasGuestsCount: payload.guestsCount !== null && payload.guestsCount !== undefined,
+      guestsCountValue: payload.guestsCount,
+      guestsCountType: typeof payload.guestsCount,
+    });
 
-    form.extraGuestNames = extraGuestsLine.value
-      .split(",")
-      .map((x) => x.trim())
-      .filter((x) => x.length > 0);
-    const created = await createStayForRoom(roomNumber, form);
+    const created = await createStayForRoom(roomNumber, payload);
 
-    // Проверяем, что объект создан корректно
     if (!created || !created.id) {
-      console.error("Invalid response from server:", created);
       throw new Error("Invalid response from server");
     }
 
-    // Добавляем созданный стейт в список и пересортировываем
+    // Добавляем созданный stay в список
     stays.value.push({
       ...created,
       checkIn: toDateOnly(created.checkIn),
@@ -1007,25 +960,41 @@ async function createNew() {
     } as Stay);
     sortStaysByDate();
 
-    // Сброс формы
-    form.mainGuestName = "";
-    extraGuestsLine.value = "";
-    form.checkIn = "";
-    form.checkOut = "";
-    form.status = "booked";
-    form.balance = 0;
-    formError.value = "";
+    // Закрываем модалку
+    showCreateModal.value = false;
+    createModalError.value = null;
 
-    showSuccess(
-      t("roomStays.messages.success"),
-      t("roomStays.messages.stayCreated")
-    );
-    await loadRoomInfo();
+    // Если это flow "Заселить", переходим на страницу чекина
+    if (isCheckInFlow.value) {
+      // Переходим на страницу чекина с данными для заполнения
+      await router.push({
+        name: "StayCheckIn",
+        params: { stayId: created.id },
+        query: {
+          // Передаем данные для предзаполнения формы
+          firstName: modalData.firstName,
+          lastName: modalData.lastName,
+          email: modalData.email,
+          phoneCountryCode: modalData.phoneCountryCode,
+          phoneNumber: modalData.phoneNumber,
+          documentType: modalData.documentType,
+          documentNumber: modalData.documentNumber,
+          birthDate: modalData.birthDate,
+          guestsCount: modalData.guestsCount?.toString() ?? "",
+        },
+      });
+    } else {
+      // Если это просто букинг, показываем успех
+      showSuccess(
+        t("roomStays.messages.success"),
+        t("roomStays.messages.stayCreated")
+      );
+      await loadRoomInfo();
+    }
   } catch (error: unknown) {
     console.error("Error creating stay:", error);
 
-    // Извлекаем понятное сообщение об ошибке
-    let errorMessage = t("roomStays.messages.unknownError");
+    let errorMessage = t("roomStays.messages.unknownError") as string;
 
     if (error && typeof error === "object" && "response" in error) {
       const axiosError = error as {
@@ -1034,29 +1003,37 @@ async function createNew() {
       const status = axiosError.response?.status;
       const serverMessage = axiosError.response?.data?.message;
 
-      // Обработка конфликта дат (409)
       if (status === 409) {
-        if (
-          serverMessage &&
-          serverMessage.includes("already booked/occupied")
-        ) {
-          errorMessage = t("roomStays.messages.dateConflict");
-        } else {
-          errorMessage = t("roomStays.messages.dateConflict");
-        }
+        errorMessage = t("roomStays.messages.dateConflict") as string;
       } else if (serverMessage) {
+        // Используем сообщение с сервера (может быть "firstName is required" и т.д.)
         errorMessage = serverMessage;
       } else if (status === 404) {
-        errorMessage = t("roomStays.messages.roomNotFound");
+        errorMessage = t("roomStays.messages.roomNotFound") as string;
       } else if (status === 400) {
-        errorMessage = t("roomStays.messages.invalidData");
+        // Для 400 показываем сообщение с сервера, если есть, иначе общее
+        errorMessage = serverMessage || (t("roomStays.messages.invalidData") as string);
       }
     } else if (error instanceof Error) {
       errorMessage = error.message;
     }
 
-    // Показываем ошибку в форме
-    formError.value = errorMessage;
+    console.error("[handleCreateStay] Error details:", {
+      error,
+      errorMessage,
+      modalData: {
+        firstName: modalData.firstName,
+        lastName: modalData.lastName,
+        email: modalData.email,
+        phoneCountryCode: modalData.phoneCountryCode,
+        phoneNumber: modalData.phoneNumber,
+        guestsCount: modalData.guestsCount,
+      },
+    });
+
+    createModalError.value = errorMessage;
+  } finally {
+    isCreatingStay.value = false;
   }
 }
 

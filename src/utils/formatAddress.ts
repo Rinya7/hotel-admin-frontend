@@ -4,11 +4,23 @@
 import type { PublicAdminUser } from "@/types/hotel";
 
 /**
+ * Тип для объекта с полями адреса (используется в PublicAdminUser и EditorProfile["hotel"])
+ */
+export interface AddressFields {
+  street?: string | null;
+  buildingNumber?: string | null;
+  apartmentNumber?: string | null;
+  province?: string | null;
+  postalCode?: string | null;
+  country?: string | null;
+}
+
+/**
  * Форматирует детальный адрес отеля в строку для отображения
- * @param hotel - объект отеля с детальными полями адреса
+ * @param hotel - объект отеля с детальными полями адреса (PublicAdminUser или EditorProfile["hotel"])
  * @returns отформатированный адрес или "—" если адреса нет
  */
-export function formatHotelAddress(hotel: PublicAdminUser): string {
+export function formatHotelAddress(hotel: PublicAdminUser | AddressFields): string {
   const parts: string[] = [];
 
   // Улица - обязательная часть
@@ -48,7 +60,7 @@ export function formatHotelAddress(hotel: PublicAdminUser): string {
 /**
  * Получает строку адреса для поиска (все части адреса)
  */
-export function getAddressSearchString(hotel: PublicAdminUser): string {
+export function getAddressSearchString(hotel: PublicAdminUser | AddressFields): string {
   const parts: string[] = [];
 
   if (hotel.street) parts.push(hotel.street);

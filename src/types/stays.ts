@@ -25,8 +25,15 @@ export interface Stay {
     id: number;
     roomNumber: string;
     status: Room["status"];
+    capacity?: number; // Вместимость комнаты
   };
   mainGuestName: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  email?: string | null;
+  phoneCountryCode?: string | null;
+  phoneNumber?: string | null;
+  guestsCount?: number | null;
   extraGuestNames?: string[];
   guests?: StayGuest[];
   checkIn: string; // YYYY-MM-DD
@@ -40,6 +47,12 @@ export interface Stay {
 
 export interface CreateStayRequest {
   mainGuestName: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  email?: string | null;
+  phoneCountryCode?: string | null;
+  phoneNumber?: string | null;
+  guestsCount?: number | null;
   extraGuestNames?: string[];
   checkIn: string; // YYYY-MM-DD
   checkOut: string; // YYYY-MM-DD

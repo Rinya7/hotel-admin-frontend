@@ -84,8 +84,26 @@ async function onSubmit(): Promise<void> {
   try {
     await auth.login({ username: form.username, password: form.password });
     router.replace({ name: auth.isSuperadmin ? "sa-dashboard" : "dashboard" });
-  } catch {
-    error.value = t("validation.invalidLogin");
+  } catch (err: unknown) {
+    // Обрабатываем ошибку блокировки аккаунта (403)
+    if (
+      err &&
+      typeof err === "object" &&
+      "response" in err &&
+      err.response &&
+      typeof err.response === "object" &&
+      "status" in err.response &&
+      err.response.status === 403 &&
+      "data" in err.response &&
+      err.response.data &&
+      typeof err.response.data === "object" &&
+      "message" in err.response.data
+    ) {
+      error.value = String(err.response.data.message);
+    } else {
+      // Для остальных ошибок показываем общее сообщение
+      error.value = t("validation.invalidLogin");
+    }
   } finally {
     loading.value = false;
   }

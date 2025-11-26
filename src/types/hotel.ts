@@ -28,6 +28,8 @@ export interface PublicAdminUser {
   isBlocked: boolean;
   checkInHour: number | null; // політики готелю на рівні admin
   checkOutHour: number | null;
+  defaultWifiName: string | null; // Wi-Fi налаштування за замовчуванням
+  defaultWifiPassword: string | null;
   createdAt: string; // ISO datetime
   updatedAt: string; // ISO datetime
   editorsCount: number; // кількість редакторів
@@ -36,7 +38,9 @@ export interface PublicAdminUser {
     username: string;
     role: Role; // завжди "editor"
     full_name: string | null;
-    phone: string | null;
+    phoneCountryCode: string | null;
+    phoneNumber: string | null;
+    phone: string | null; // Для обратной совместимости
     email: string | null;
     isBlocked: boolean;
     createdAt: string;

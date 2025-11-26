@@ -71,14 +71,7 @@
             <b>{{ t("editorProfileInfo.fields.address") }}:</b>
             {{ formatHotelAddress(profile.hotel) }}
           </li>
-          <li>
-            <b>{{ t("editorProfileInfo.fields.checkInTime") }}:</b>
-            {{ profile.hotel.checkInHour ?? "—" }}
-          </li>
-          <li>
-            <b>{{ t("editorProfileInfo.fields.checkOutTime") }}:</b>
-            {{ profile.hotel.checkOutHour ?? "—" }}
-          </li>
+           
         </ul>
       </div>
     </div>
@@ -102,30 +95,5 @@ interface Props {
 defineProps<Props>();
 
 const { t } = useI18n();
-
-// Функция для форматирования адреса отеля
-function formatHotelAddress(hotel: EditorProfile["hotel"]): string {
-  if (!hotel) return "—";
-  const parts: string[] = [];
-  if (hotel.street) {
-    parts.push(hotel.street);
-  }
-  if (hotel.buildingNumber) {
-    parts.push(hotel.buildingNumber);
-  }
-  if (hotel.apartmentNumber) {
-    parts.push(hotel.apartmentNumber);
-  }
-  if (hotel.province) {
-    parts.push(hotel.province);
-  }
-  if (hotel.postalCode) {
-    parts.push(hotel.postalCode);
-  }
-  if (hotel.country) {
-    parts.push(hotel.country);
-  }
-  return parts.length > 0 ? parts.join(", ") : "—";
-}
 </script>
 

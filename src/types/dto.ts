@@ -54,6 +54,32 @@ export interface CreateEditorResponse {
   token: string;
 }
 
+// Оновлення даних редактора (admin only, тільки своїх редакторів)
+export interface UpdateEditorRequest {
+  full_name?: string | null;
+  email?: string | null;
+  phoneCountryCode?: string | null;
+  phoneNumber?: string | null;
+  phone?: string | null; // Для обратной совместимости
+}
+
+export interface UpdateEditorResponse {
+  message: string;
+  editor: {
+    id: number;
+    username: string;
+    role: string;
+    full_name: string | null;
+    email: string | null;
+    phoneCountryCode: string | null;
+    phoneNumber: string | null;
+    phone: string | null; // Для обратной совместимости
+    isBlocked: boolean;
+    createdAt: string;
+    updatedAt: string;
+  };
+}
+
 // Оновлення даних готелю (супер-адмін)
 // Усі поля опційні — редагуємо тільки те, що передали
 export interface UpdateHotelAdminRequest {
@@ -102,8 +128,8 @@ export interface UpdateHotelAdminResponse {
     logo_url: string | null;
     checkInHour: number | null;
     checkOutHour: number | null;
-    wifiName: string | null;
-    wifiPassword: string | null;
+    defaultWifiName: string | null;
+    defaultWifiPassword: string | null;
     updatedAt: string;
   };
 }

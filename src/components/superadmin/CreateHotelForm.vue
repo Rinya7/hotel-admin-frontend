@@ -295,32 +295,116 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div>
           <label
-            class="block text-sm font-medium text-brand dark:text-white mb-1"
+            class="block text-sm font-medium text-brand dark:text-white mb-2"
             >{{ t("hotelForm.fields.checkInHour") }}</label
           >
-          <input
-            v-model.number="form.checkInHour"
-            type="number"
-            min="0"
-            max="23"
-            class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
-            :placeholder="t('hotelForm.placeholders.checkInDefault')"
-          />
+          <div class="flex items-center gap-2">
+            <button
+              type="button"
+              @click="decreaseCheckInHour"
+              class="flex items-center justify-center w-10 h-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M20 12H4"
+                />
+              </svg>
+            </button>
+            <input
+              v-model.number="form.checkInHour"
+              type="number"
+              min="0"
+              max="23"
+              class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand text-center"
+            />
+            <button
+              type="button"
+              @click="increaseCheckInHour"
+              class="flex items-center justify-center w-10 h-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+            </button>
+          </div>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            {{ t("dashboard.policyHoursModal.format24") }}
+          </p>
         </div>
 
         <div>
           <label
-            class="block text-sm font-medium text-brand dark:text-white mb-1"
+            class="block text-sm font-medium text-brand dark:text-white mb-2"
             >{{ t("hotelForm.fields.checkOutHour") }}</label
           >
-          <input
-            v-model.number="form.checkOutHour"
-            type="number"
-            min="0"
-            max="23"
-            class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
-            :placeholder="t('hotelForm.placeholders.checkOutDefault')"
-          />
+          <div class="flex items-center gap-2">
+            <button
+              type="button"
+              @click="decreaseCheckOutHour"
+              class="flex items-center justify-center w-10 h-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M20 12H4"
+                />
+              </svg>
+            </button>
+            <input
+              v-model.number="form.checkOutHour"
+              type="number"
+              min="0"
+              max="23"
+              class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand text-center"
+            />
+            <button
+              type="button"
+              @click="increaseCheckOutHour"
+              class="flex items-center justify-center w-10 h-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+            </button>
+          </div>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            {{ t("dashboard.policyHoursModal.format24") }}
+          </p>
         </div>
       </div>
     </div>
@@ -483,6 +567,28 @@ function handlePhoneInput(event: Event): void {
 // Допоміжна перевірка для годин
 function isHour(v: unknown): v is number {
   return Number.isInteger(v) && (v as number) >= 0 && (v as number) <= 23;
+}
+
+// Функции для управления временем check-in
+function increaseCheckInHour(): void {
+  const current = form.checkInHour ?? DEFAULT_CHECK_IN_HOUR;
+  form.checkInHour = Math.min(23, current + 1);
+}
+
+function decreaseCheckInHour(): void {
+  const current = form.checkInHour ?? DEFAULT_CHECK_IN_HOUR;
+  form.checkInHour = Math.max(0, current - 1);
+}
+
+// Функции для управления временем check-out
+function increaseCheckOutHour(): void {
+  const current = form.checkOutHour ?? DEFAULT_CHECK_OUT_HOUR;
+  form.checkOutHour = Math.min(23, current + 1);
+}
+
+function decreaseCheckOutHour(): void {
+  const current = form.checkOutHour ?? DEFAULT_CHECK_OUT_HOUR;
+  form.checkOutHour = Math.max(0, current - 1);
 }
 
 // Валідація паролів

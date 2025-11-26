@@ -217,14 +217,54 @@
                 class="block text-sm font-medium text-brand dark:text-white"
                 >{{ t("editHotelDialog.fields.checkInHour") }}</label
               >
-              <input
-                v-model.number="form.checkInHour"
-                type="number"
-                min="0"
-                max="23"
-                class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
-                placeholder="0-23"
-              />
+              <div class="flex items-center gap-2">
+                <button
+                  type="button"
+                  @click="decreaseCheckInHour"
+                  class="flex items-center justify-center w-10 h-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M20 12H4"
+                    ></path>
+                  </svg>
+                </button>
+                <input
+                  v-model.number="form.checkInHour"
+                  type="number"
+                  min="0"
+                  max="23"
+                  placeholder="14"
+                  class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand text-center"
+                />
+                <button
+                  type="button"
+                  @click="increaseCheckInHour"
+                  class="flex items-center justify-center w-10 h-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 4v16m8-8H4"
+                    ></path>
+                  </svg>
+                </button>
+              </div>
               <small class="text-gray-500 dark:text-gray-400 text-xs">{{
                 t("editHotelDialog.messages.defaultNote")
               }}</small>
@@ -236,13 +276,84 @@
                 class="block text-sm font-medium text-brand dark:text-white"
                 >{{ t("editHotelDialog.fields.checkOutHour") }}</label
               >
+              <div class="flex items-center gap-2">
+                <button
+                  type="button"
+                  @click="decreaseCheckOutHour"
+                  class="flex items-center justify-center w-10 h-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M20 12H4"
+                    ></path>
+                  </svg>
+                </button>
+                <input
+                  v-model.number="form.checkOutHour"
+                  type="number"
+                  min="0"
+                  max="23"
+                  placeholder="12"
+                  class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand text-center"
+                />
+                <button
+                  type="button"
+                  @click="increaseCheckOutHour"
+                  class="flex items-center justify-center w-10 h-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 4v16m8-8H4"
+                    ></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Wi-Fi Name -->
+            <div class="space-y-2">
+              <label
+                class="block text-sm font-medium text-brand dark:text-white"
+                >{{ t("editHotelDialog.fields.defaultWifiName") }}</label
+              >
               <input
-                v-model.number="form.checkOutHour"
-                type="number"
-                min="0"
-                max="23"
+                v-model.trim="form.defaultWifiName"
+                type="text"
+                maxlength="100"
                 class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
-                placeholder="0-23"
+                :placeholder="t('editHotelDialog.fields.defaultWifiName')"
+              />
+            </div>
+
+            <!-- Wi-Fi Password -->
+            <div class="space-y-2">
+              <label
+                class="block text-sm font-medium text-brand dark:text-white"
+                >{{ t("editHotelDialog.fields.defaultWifiPassword") }}</label
+              >
+              <input
+                v-model.trim="form.defaultWifiPassword"
+                type="password"
+                maxlength="100"
+                autocomplete="new-password"
+                class="w-full text-brand placeholder:text-brand bg-white dark:bg-gray-700 dark:text-white dark:placeholder-gray-300 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-base disabled:opacity-70 disabled:cursor-not-allowed focus:ring-2 focus:ring-brand focus:border-brand"
+                :placeholder="t('editHotelDialog.fields.defaultWifiPassword')"
               />
             </div>
           </div>
@@ -251,13 +362,11 @@
           <p v-if="error" class="text-red-600 dark:text-red-400 text-center">
             {{ error }}
           </p>
-        </form>
-      </div>
 
-      <!-- Action Buttons (fixed footer) -->
-      <div
-        class="flex-shrink-0 flex items-center justify-end gap-3 p-6 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
-      >
+          <!-- Action Buttons (inside form) -->
+          <div
+            class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700"
+          >
             <Button type="button" variant="outline" @click="onClose">
               {{ t("editHotelDialog.messages.cancel") }}
             </Button>
@@ -273,6 +382,8 @@
                   : t("editHotelDialog.messages.save")
               }}
             </Button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -328,6 +439,8 @@ const form = reactive<UpdateHotelAdminRequest>({
   logo_url: "",
   checkInHour: undefined,
   checkOutHour: undefined,
+  defaultWifiName: "",
+  defaultWifiPassword: "",
 });
 
 const submitting = ref(false);
@@ -353,6 +466,22 @@ watch(
       form.logo_url = props.initial.logo_url ?? "";
       form.checkInHour = props.initial.checkInHour ?? undefined;
       form.checkOutHour = props.initial.checkOutHour ?? undefined;
+      // Заполняем Wi-Fi поля из initial (могут быть null, поэтому используем ?? "")
+      form.defaultWifiName = props.initial.defaultWifiName ?? "";
+      form.defaultWifiPassword = props.initial.defaultWifiPassword ?? "";
+      error.value = null;
+      submitting.value = false; // Сбрасываем состояние загрузки при открытии
+      
+      // Отладочный вывод для проверки данных
+      if (import.meta.env.DEV) {
+        console.log("[EditHotelDialog] Initial data:", {
+          defaultWifiName: props.initial.defaultWifiName,
+          defaultWifiPassword: props.initial.defaultWifiPassword ? "***" : null,
+        });
+      }
+    } else {
+      // При закрытии модалки сбрасываем состояние загрузки
+      submitting.value = false;
       error.value = null;
     }
   },
@@ -386,41 +515,86 @@ function handlePhoneInput(event: Event): void {
   target.value = formatPhoneNumber(form.phoneNumber ?? "");
 }
 
+// Функції для зміни годин check-in/check-out
+function increaseCheckInHour(): void {
+  const current = form.checkInHour ?? 0;
+  form.checkInHour = Math.min(23, current + 1);
+}
+
+function decreaseCheckInHour(): void {
+  const current = form.checkInHour ?? 0;
+  form.checkInHour = Math.max(0, current - 1);
+}
+
+function increaseCheckOutHour(): void {
+  const current = form.checkOutHour ?? 0;
+  form.checkOutHour = Math.min(23, current + 1);
+}
+
+function decreaseCheckOutHour(): void {
+  const current = form.checkOutHour ?? 0;
+  form.checkOutHour = Math.max(0, current - 1);
+}
+
 async function onSubmit(): Promise<void> {
+  console.log("[EditHotelDialog] onSubmit called");
   error.value = null;
   submitting.value = true;
+  console.log("[EditHotelDialog] submitting set to true");
 
-  // Простий контроль годин
-  if (
-    typeof form.checkInHour !== "undefined" &&
-    !isHourOrNull(form.checkInHour)
-  ) {
-    error.value = t("editHotelDialog.messages.invalidHour");
+  try {
+    console.log("[EditHotelDialog] Form data:", {
+      checkInHour: form.checkInHour,
+      checkOutHour: form.checkOutHour,
+      defaultWifiName: form.defaultWifiName,
+      defaultWifiPassword: form.defaultWifiPassword ? "***" : null,
+      hotel_name: form.hotel_name,
+    });
+
+    // Простий контроль годин
+    if (
+      typeof form.checkInHour !== "undefined" &&
+      !isHourOrNull(form.checkInHour)
+    ) {
+      console.log("[EditHotelDialog] Invalid checkInHour:", form.checkInHour);
+      error.value = t("editHotelDialog.messages.invalidHour");
+      submitting.value = false;
+      return;
+    }
+    if (
+      typeof form.checkOutHour !== "undefined" &&
+      !isHourOrNull(form.checkOutHour)
+    ) {
+      console.log("[EditHotelDialog] Invalid checkOutHour:", form.checkOutHour);
+      error.value = t("editHotelDialog.messages.invalidHourOut");
+      submitting.value = false;
+      return;
+    }
+
+    // Нормализуем номер телефона перед отправкой (убираем форматирование)
+    // Если код страны не выбран и есть номер телефона, используем значение по умолчанию
+    const payload: UpdateHotelAdminRequest = {
+      ...form,
+      phoneCountryCode:
+        form.phoneCountryCode || (form.phoneNumber ? DEFAULT_PHONE_COUNTRY_CODE : undefined),
+      phoneNumber: form.phoneNumber ? normalizePhoneNumber(form.phoneNumber) : undefined,
+    };
+
+    console.log("[EditHotelDialog] Emitting save event with payload:", {
+      ...payload,
+      defaultWifiPassword: payload.defaultWifiPassword ? "***" : null,
+      phoneNumber: payload.phoneNumber ? "***" : null,
+    });
+
+    // Віддаємо «патч» нагору - родитель обработает сохранение
+    emit("save", payload);
+    console.log("[EditHotelDialog] Save event emitted");
+    // НЕ закрываем модалку здесь - пусть родитель закроет после успешного сохранения
+    // НЕ сбрасываем submitting здесь - родитель должен это сделать после завершения
+  } catch (e: unknown) {
+    console.error("[EditHotelDialog] Error in onSubmit:", e);
+    error.value = e instanceof Error ? e.message : "Unknown error occurred";
     submitting.value = false;
-    return;
   }
-  if (
-    typeof form.checkOutHour !== "undefined" &&
-    !isHourOrNull(form.checkOutHour)
-  ) {
-    error.value = t("editHotelDialog.messages.invalidHourOut");
-    submitting.value = false;
-    return;
-  }
-
-  // Нормализуем номер телефона перед отправкой (убираем форматирование)
-  // Если код страны не выбран и есть номер телефона, используем значение по умолчанию
-  const payload: UpdateHotelAdminRequest = {
-    ...form,
-    phoneCountryCode:
-      form.phoneCountryCode || (form.phoneNumber ? DEFAULT_PHONE_COUNTRY_CODE : undefined),
-    phoneNumber: form.phoneNumber ? normalizePhoneNumber(form.phoneNumber) : undefined,
-  };
-
-  // Віддаємо «патч» нагору
-  emit("save", payload);
-  // Закриємо модалку (батько вирішує, що робити після запиту)
-  onClose();
-  submitting.value = false;
 }
 </script>
