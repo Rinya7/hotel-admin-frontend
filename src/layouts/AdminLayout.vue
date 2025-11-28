@@ -2,7 +2,7 @@
 <template>
   <header class="border-b-2 border-emerald-700 pt-4">
     <div
-      class="container relative mx-auto flex items-center justify-between px-2 md:px-0 py-2"
+      class="container  mx-auto flex items-center justify-between px-2 md:px-0 py-2"
     >
       <!-- Навігація -->
       <nav class="flex gap-[20px]">
@@ -44,10 +44,7 @@
         </RouterLink>
       </nav>
 
-      <!-- Лого -->
-      <div class="absolute left-1/2 -translate-x-1/2 md:-top-1/3 lg:-top-1/2">
-        <img :src="logo" alt="Logo" class="h-[40px] md:h-[80px] lg:h-[120px]" />
-      </div>
+       
 
       <!-- Профіль -->
       <div v-if="auth.isLogged" class="flex items-center gap-[6px]">
@@ -60,10 +57,15 @@
     </div>
   </header>
 
-  <main class="container mx-auto py-[32px] px-0">
+  <main class="container mx-auto py-[32px] px-0 ">
+    <div class="relative">
+    <!-- Лого -->
+    <div class="absolute left-1/3 -translate-x-1/2 md:left-1/2 md:-top-1/3 lg:-top-1/2">
+        <img :src="logo" alt="Logo" class="h-[40px] md:h-[60px] lg:h-[100px]" />
+      </div>
     <div class="flex justify-end">
       <LanguageSwitcher />
-    </div>
+    </div></div>
     <RouterView />
   </main>
 </template>
