@@ -52,6 +52,31 @@ export async function getGuestAccessTokens(
   return data;
 }
 
+/**
+ * Відправити email з посиланням на бронювання
+ * @param stayId - ID проживання
+ * @param email - email адреса отримувача
+ * @param subject - тема листа (опціонально)
+ * @returns Результат відправки
+ */
+export interface SendEmailResponse {
+  message: string;
+  email: string;
+  url: string;
+}
+
+export async function sendGuestAccessLinkEmail(
+  stayId: number,
+  email: string,
+  subject?: string
+): Promise<SendEmailResponse> {
+  const { data } = await http.post<SendEmailResponse>(
+    `/guest/stays/${stayId}/send-email`,
+    { email, subject }
+  );
+  return data;
+}
+
 
 
 

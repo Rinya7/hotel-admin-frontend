@@ -16,7 +16,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
 import Notification from "./ui/Notification.vue";
 import { useNotifications } from "@/composables/useNotifications";
 

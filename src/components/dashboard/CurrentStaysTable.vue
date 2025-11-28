@@ -227,8 +227,6 @@ defineEmits<{
  * Отримати класи для статусу з підсвіткою для free кімнат з заїздом сьогодні
  */
 function getStatusClass(room: Room): string {
-  const today = new Date().toISOString().split("T")[0];
-  
   // Перевіряємо, чи є заїзд сьогодні для цієї кімнати
   const hasArrivalToday = props.todayArrivals.some(
     (stay) => stay.room.number === room.roomNumber

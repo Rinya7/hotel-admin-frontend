@@ -57,7 +57,7 @@
   interface Props {
     stays: Stay[];
   }
-  const props = defineProps<Props>();
+  defineProps<Props>();
   
   const { t } = useI18n();
   

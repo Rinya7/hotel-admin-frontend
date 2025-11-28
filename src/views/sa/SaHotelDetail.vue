@@ -259,7 +259,7 @@ const idParam = Number(route.params.id);
 
 const store = useSuperHotelsStore();
 const { t } = useLocale();
-const { raw, loading } = storeToRefs(store);
+const { loading } = storeToRefs(store);
 
 // Используем computed для автоматического обновления при изменении данных в store
 const hotel = computed(() => {

@@ -36,7 +36,7 @@ interface Props {
   stayTypeFilters: string[];
 }
 
-const props = defineProps<Props>();
+defineProps<Props>();
 
 const emit = defineEmits<{
   (e: "toggle-filter", type: "arrivals" | "departures"): void;

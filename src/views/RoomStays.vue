@@ -795,31 +795,6 @@ const modalDates = ref<{ checkIn: string; checkOut: string }>({
 });
 const isCheckInFlow = ref(false); // Флаг для определения, создаем букинг или переходим на чекин
 
-function hasActiveOverlap(newCheckIn: string, newCheckOut: string): boolean {
-  if (!newCheckIn || !newCheckOut) {
-    return false;
-  }
-  const start = new Date(`${newCheckIn}T00:00:00`);
-  const end = new Date(`${newCheckOut}T00:00:00`);
-  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
-    return false;
-  }
-  return stays.value.some((stay) => {
-    if (!stay.checkIn || !stay.checkOut) {
-      return false;
-    }
-    if (stay.status !== "booked" && stay.status !== "occupied") {
-      return false;
-    }
-    const stayStart = new Date(`${stay.checkIn}T00:00:00`);
-    const stayEnd = new Date(`${stay.checkOut}T00:00:00`);
-    if (Number.isNaN(stayStart.getTime()) || Number.isNaN(stayEnd.getTime())) {
-      return false;
-    }
-    return start < stayEnd && end > stayStart;
-  });
-}
-
 async function load() {
   try {
     const fetched = await listStaysByRoom(roomNumber);
@@ -1110,11 +1085,6 @@ function getFilterButtonClasses(status: Stay["status"]): string {
     "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:border-brand/60 hover:text-brand dark:hover:text-emerald-300";
 
   return `${base} ${isActive ? activeClasses[status] : inactiveClasses}`;
-}
-
-// getStatusSelectLabel використовується в StatusForm
-function getStatusSelectLabel(status: Stay["status"]): string {
-  return t(`roomStays.status.${status}`) as string;
 }
 
 async function loadSummaryCancellationComment(stayId: number): Promise<void> {

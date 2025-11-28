@@ -171,7 +171,6 @@
 // src/components/dashboard/AllStaysTable.vue
 // Компонент для відображення таблиці всіх бронювань
 
-import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { RouterLink } from "vue-router";
 import type { StayListItem, StayStatus } from "@/types/stays";

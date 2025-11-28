@@ -181,8 +181,9 @@
           <!-- Кнопка Send via Email -->
           <button
             type="button"
-            class="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg transition-all hover:shadow-sm"
-            @click="sendViaEmail"
+            class="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg transition-all hover:shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            @click="showEmailModal = true"
+            :disabled="isSendingEmail"
             :title="t('guestAccess.sendEmail')"
           >
             <svg
@@ -223,6 +224,52 @@
         <p class="text-xs text-gray-500 dark:text-gray-400 text-center">
           {{ t("guestAccess.whatsappComingSoon") }}
         </p>
+      </div>
+    </div>
+
+    <!-- Модальне вікно для введення email -->
+    <div
+      v-if="showEmailModal"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      @click.self="showEmailModal = false"
+    >
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 max-w-md w-full mx-4">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          {{ t("guestAccess.sendEmail") }}
+        </h3>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Email адреса отримувача
+            </label>
+            <input
+              v-model="emailInput"
+              type="email"
+              placeholder="example@email.com"
+              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand"
+              :disabled="isSendingEmail"
+            />
+          </div>
+          <div class="flex gap-3 justify-end">
+            <button
+              type="button"
+              @click="showEmailModal = false; emailInput = ''"
+              class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition"
+              :disabled="isSendingEmail"
+            >
+              Скасувати
+            </button>
+            <button
+              type="button"
+              @click="sendViaEmail"
+              class="px-4 py-2 text-sm font-medium text-white bg-brand hover:bg-brand-light dark:bg-emerald-600 dark:hover:bg-emerald-500 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+              :disabled="isSendingEmail || !emailInput.trim()"
+            >
+              <span v-if="isSendingEmail">Відправка...</span>
+              <span v-else>Відправити</span>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -319,7 +366,7 @@
 
 import { ref, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { generateGuestAccessLink, getGuestAccessTokens, type GenerateTokenResponse, type GuestAccessTokenInfo } from "@/api/guest";
+import { generateGuestAccessLink, getGuestAccessTokens, sendGuestAccessLinkEmail, type GenerateTokenResponse, type GuestAccessTokenInfo } from "@/api/guest";
 import { useNotifications } from "@/composables/useNotifications";
 
 const props = defineProps<{
@@ -334,6 +381,9 @@ const isGenerating = ref(false);
 const generatedLink = ref<GenerateTokenResponse | null>(null);
 const tokens = ref<GuestAccessTokenInfo[]>([]);
 const error = ref<string | null>(null);
+const showEmailModal = ref(false);
+const emailInput = ref("");
+const isSendingEmail = ref(false);
 
 // Базовий URL для гостьового додатку
 // Пріоритет: 1) VITE_GUEST_APP_URL з .env, 2) URL з бекенду (якщо є), 3) localhost за замовчуванням
@@ -423,21 +473,26 @@ function getTokenUrl(token: string): string {
 }
 
 /**
- * Відправити лінк на email
+ * Відправити лінк на email через бекенд
  */
-function sendViaEmail(): void {
-  if (!generatedLink.value) {
+async function sendViaEmail(): Promise<void> {
+  if (!generatedLink.value || !emailInput.value.trim()) {
     return;
   }
 
-  const subject = encodeURIComponent(t("guestAccess.emailSubject") as string);
-  const body = encodeURIComponent(
-    `${t("guestAccess.emailBody") as string}\n\n${generatedLink.value.url}`
-  );
-  const mailtoLink = `mailto:?subject=${subject}&body=${body}`;
-
-  window.location.href = mailtoLink;
-  showSuccess(t("guestAccess.emailOpened"));
+  isSendingEmail.value = true;
+  try {
+    const subject = t("guestAccess.emailSubject") as string;
+    await sendGuestAccessLinkEmail(props.stayId, emailInput.value.trim(), subject);
+    showSuccess(t("guestAccess.emailSent") || "Email відправлено успішно");
+    showEmailModal.value = false;
+    emailInput.value = "";
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : t("guestAccess.emailError") || "Помилка відправки email";
+    showError(errorMessage);
+  } finally {
+    isSendingEmail.value = false;
+  }
 }
 
 /**

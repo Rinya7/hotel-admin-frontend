@@ -53,7 +53,7 @@
   interface Props {
     logs: StayStatusLog[];
   }
-  const props = defineProps<Props>();
+  defineProps<Props>();
   
   function formatDate(date: string | Date): string {
     return new Intl.DateTimeFormat("uk-UA", {

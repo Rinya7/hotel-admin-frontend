@@ -1,3 +1,8 @@
+// 🇮🇹 Italian localization file
+// ⚠️ SECURITY NOTE: This file contains UI labels and translations only.
+// Keys like "username", "password", "confirmPassword" are field labels for forms,
+// NOT actual secrets or credentials. All values are user-facing text strings.
+// This file is safe to commit to version control.
 const it = {
   app: {
     name: "HoteLotse",
@@ -75,6 +80,7 @@ const it = {
       checkInDefault: "14",
       checkOutDefault: "10",
       wifiName: "hotel_wifi",
+      // ⚠️ This is a placeholder example text, NOT a real password
       wifiPassword: "password_wifi",
       street: "Inserisci nome via",
       buildingNumber: "Numero civico",

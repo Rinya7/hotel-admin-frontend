@@ -1,3 +1,8 @@
+// 🇩🇪 German localization file
+// ⚠️ SECURITY NOTE: This file contains UI labels and translations only.
+// Keys like "username", "password", "confirmPassword" are field labels for forms,
+// NOT actual secrets or credentials. All values are user-facing text strings.
+// This file is safe to commit to version control.
 const de = {
   app: {
     name: "HoteLotse",
@@ -75,6 +80,7 @@ const de = {
       checkInDefault: "14",
       checkOutDefault: "10",
       wifiName: "hotel_wifi",
+      // ⚠️ Dies ist ein Platzhalter-Beispieltext, KEIN echtes Passwort
       wifiPassword: "password_wifi",
       street: "Straßenname eingeben",
       buildingNumber: "Hausnummer",
