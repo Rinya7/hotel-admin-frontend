@@ -35,49 +35,79 @@
             </div>
           </div>
 
-          <div class="ml-auto flex items-center gap-2">
-            <span
-              :class="
-                editor.isBlocked
-                  ? 'bg-red-600 py-[2px] px-[10px] rounded-lg text-white'
-                  : 'bg-emerald-400 py-[2px] px-[10px] rounded-lg text-white'
-              "
-            >
-              {{
-                editor.isBlocked
-                  ? t("editorInfoModal.status.blocked")
-                  : t("editorInfoModal.status.active")
-              }}
-            </span>
+          <div class="ml-auto flex flex-col md:flex-row md:items-center gap-2">
+            <!-- Выпадающее меню управления -->
+            <div class="relative" ref="actionsDropdownRef">
+              <button
+                type="button"
+                class="flex items-center gap-1 px-4 py-2 text-sm font-semibold rounded-md transition-colors"
+                :class="
+                  editor.isBlocked
+                    ? 'bg-red-600 text-white hover:bg-red-700'
+                    : 'bg-emerald-400 text-white hover:bg-emerald-500'
+                "
+                @click="toggleActionsDropdown"
+              >
+                <span>{{
+                  editor.isBlocked
+                    ? t("editorInfoModal.status.blocked")
+                    : t("editorInfoModal.status.active")
+                }}</span>
+                <span class="text-xs" :class="{ 'rotate-180': isActionsDropdownOpen }">▼</span>
+              </button>
 
-            <button
-              class="btn btn-sm underline"
-              @click="handleEdit"
-            >
-              {{ t("editorInfoModal.actions.edit") }}
-            </button>
-
-            <button
-              v-if="!editor.isBlocked"
-              class="btn btn-sm btn-warning underline"
-              @click="handleBlock"
-            >
-              {{ t("editorInfoModal.actions.block") }}
-            </button>
-            <button
-              v-else
-              class="btn btn-sm btn-success underline"
-              @click="handleUnblock"
-            >
-              {{ t("editorInfoModal.actions.unblock") }}
-            </button>
-
-            <button
-              class="btn btn-sm btn-error underline"
-              @click="handleDelete"
-            >
-              {{ t("editorInfoModal.actions.delete") }}
-            </button>
+              <!-- Выпадающее меню -->
+              <Transition
+                enter-active-class="transition ease-out duration-100"
+                enter-from-class="opacity-0 scale-95"
+                enter-to-class="opacity-100 scale-100"
+                leave-active-class="transition ease-in duration-75"
+                leave-from-class="opacity-100 scale-100"
+                leave-to-class="opacity-0 scale-95"
+              >
+                <div
+                  v-if="isActionsDropdownOpen"
+                  class="absolute top-full right-0 mt-1 min-w-[150px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50 overflow-hidden"
+                  role="menu"
+                  aria-orientation="vertical"
+                >
+                  <button
+                    type="button"
+                    class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-brand hover:text-white dark:hover:bg-brand dark:hover:text-white transition-colors duration-150"
+                    role="menuitem"
+                    @click="handleEditClick"
+                  >
+                    {{ t("editorInfoModal.actions.edit") }}
+                  </button>
+                  <button
+                    v-if="!editor.isBlocked"
+                    type="button"
+                    class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-brand hover:text-white dark:hover:bg-brand dark:hover:text-white transition-colors duration-150 border-t border-gray-200 dark:border-gray-700"
+                    role="menuitem"
+                    @click="handleBlockClick"
+                  >
+                    {{ t("editorInfoModal.actions.block") }}
+                  </button>
+                  <button
+                    v-else
+                    type="button"
+                    class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-brand hover:text-white dark:hover:bg-brand dark:hover:text-white transition-colors duration-150 border-t border-gray-200 dark:border-gray-700"
+                    role="menuitem"
+                    @click="handleUnblockClick"
+                  >
+                    {{ t("editorInfoModal.actions.unblock") }}
+                  </button>
+                  <button
+                    type="button"
+                    class="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-150 border-t border-gray-200 dark:border-gray-700"
+                    role="menuitem"
+                    @click="handleDeleteClick"
+                  >
+                    {{ t("editorInfoModal.actions.delete") }}
+                  </button>
+                </div>
+              </Transition>
+            </div>
 
             <button
               class="btn btn-sm underline"
@@ -269,6 +299,12 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * EditorInfoModal with dropdown actions menu
+ * - Shows status (active/blocked) as base button
+ * - Dropdown menu with Edit, Block/Unblock, Delete actions
+ */
+import { ref, onMounted, onUnmounted } from "vue";
 import { useI18n } from "vue-i18n";
 import type { PublicAdminUser } from "@/types/hotel";
 import { formatHotelAddress } from "@/utils/formatAddress";
@@ -291,10 +327,54 @@ const emit = defineEmits<{
 
 const { t, locale } = useI18n();
 
+// Actions dropdown state
+const isActionsDropdownOpen = ref(false);
+const actionsDropdownRef = ref<HTMLElement | null>(null);
+
+// Toggle actions dropdown menu
+function toggleActionsDropdown(): void {
+  isActionsDropdownOpen.value = !isActionsDropdownOpen.value;
+}
+
+// Close actions dropdown
+function closeActionsDropdown(): void {
+  isActionsDropdownOpen.value = false;
+}
+
+// Handle actions with menu close
+function handleEditClick(): void {
+  closeActionsDropdown();
+  if (props.editor) {
+    emit("edit", props.editor);
+  }
+}
+
+function handleBlockClick(): void {
+  closeActionsDropdown();
+  if (props.editor) {
+    emit("block", props.editor.id);
+  }
+}
+
+function handleUnblockClick(): void {
+  closeActionsDropdown();
+  if (props.editor) {
+    emit("unblock", props.editor.id);
+  }
+}
+
+function handleDeleteClick(): void {
+  closeActionsDropdown();
+  if (props.editor) {
+    emit("delete", props.editor.username);
+  }
+}
+
 function close(): void {
   emit("close");
 }
 
+// Legacy handlers (kept for compatibility)
 function handleEdit(): void {
   if (props.editor) {
     emit("edit", props.editor);
@@ -318,6 +398,25 @@ function handleDelete(): void {
     emit("delete", props.editor.username);
   }
 }
+
+// Close dropdown when clicking outside
+function handleClickOutside(event: MouseEvent): void {
+  if (
+    actionsDropdownRef.value &&
+    !actionsDropdownRef.value.contains(event.target as Node)
+  ) {
+    isActionsDropdownOpen.value = false;
+  }
+}
+
+// Add/remove click outside listener
+onMounted(() => {
+  document.addEventListener("click", handleClickOutside);
+});
+
+onUnmounted(() => {
+  document.removeEventListener("click", handleClickOutside);
+});
 
 function formatDate(dateString: string): string {
   return new Date(dateString).toLocaleString(locale.value || undefined);

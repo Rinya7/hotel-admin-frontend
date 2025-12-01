@@ -2,18 +2,31 @@
 <!-- Сторінка для відображення та управління stays, які потребують дії -->
 <template>
   <section class="space-y-6">
-    <div class="flex items-center justify-between">
+    <header class=" ">
+        <div class="flex items-center justify-between my-4"> 
+         
+        <button
+          @click="refresh"
+          :disabled="needsActionStore.loading"
+          class="px-2 py-1 bg-brand text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {{ t("dashboard.refresh") }}
+        </button>
+        <RouterLink
+          to="/"
+          class=" text-brand hover:text-brand-light dark:text-emerald-400 dark:hover:text-emerald-300 transition-colors"
+        >
+          ← {{ t("dashboard.needsAction.view.back") }}
+        </RouterLink>
+    </div>
+         
       <h2 class="text-2xl font-semibold text-brand dark:text-white">
         {{ t("dashboard.needsAction.view.title") }}
       </h2>
-      <button
-        @click="refresh"
-        :disabled="needsActionStore.loading"
-        class="px-4 py-2 bg-brand text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {{ t("dashboard.refresh") }}
-      </button>
-    </div>
+      
+     
+       
+    </header>
 
     <div v-if="needsActionStore.loading" class="text-center py-8">
       <p class="text-gray-600 dark:text-gray-400">
@@ -30,8 +43,8 @@
       </p>
     </div>
 
-    <div v-else class="overflow-x-auto">
-      <table class="w-full border-collapse bg-white dark:bg-gray-800 rounded-lg shadow">
+    <div v-else class="overflow-x-auto -mx-4 px-4">
+      <table class="min-w-[800px] w-full border-collapse bg-white dark:bg-gray-800 rounded-lg shadow">
         <thead>
           <tr class="bg-gray-100 dark:bg-gray-700">
             <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">
@@ -40,10 +53,10 @@
             <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">
               {{ t("dashboard.needsAction.view.table.guest") }}
             </th>
-            <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">
+            <th class="hidden md:table-cell px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">
               {{ t("dashboard.needsAction.view.table.checkIn") }}
             </th>
-            <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">
+            <th class="hidden md:table-cell px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">
               {{ t("dashboard.needsAction.view.table.checkOut") }}
             </th>
             <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">
@@ -66,10 +79,10 @@
             <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
               {{ item.mainGuestName }}
             </td>
-            <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
+            <td class="hidden md:table-cell px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
               {{ formatDate(item.checkIn) }}
             </td>
-            <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
+            <td class="hidden md:table-cell px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
               {{ formatDate(item.checkOut) }}
             </td>
             <td class="px-4 py-3 text-sm">
@@ -171,6 +184,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
+import { RouterLink } from "vue-router";
 import { useNeedsActionStore } from "@/stores/needsAction";
 import { useLocale } from "@/composables/useLocale";
 import ConfirmNoShowModal from "@/components/needsAction/ConfirmNoShowModal.vue";

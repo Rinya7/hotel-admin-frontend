@@ -102,7 +102,7 @@
           variant="solid"
           size="sm"
           @click="toggleProfileDropdown"
-          class="flex items-center gap-1"
+          class="flex items-center gap-1  w-[100px]"
         >
           <span>{{ auth.role ?? "?" }}</span>
           <span class="text-xs" :class="{ 'rotate-180': isProfileDropdownOpen }">▼</span>
@@ -119,7 +119,7 @@
         >
           <div
             v-if="isProfileDropdownOpen"
-            class="absolute top-full right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50 overflow-hidden"
+            class="absolute top-full right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50 overflow-hidden md:w-[100px]"
             role="menu"
             aria-orientation="vertical"
           >
@@ -130,7 +130,7 @@
               <button
                 type="button"
                 :class="[
-                  'w-full text-left px-4 py-2 text-sm transition-colors duration-150',
+                  'w-full text-left px-4 py-2 text-sm transition-colors duration-150 flex items-center gap-2',
                   isActive
                     ? 'bg-brand text-white dark:bg-brand dark:text-white'
                     : 'text-gray-700 dark:text-gray-200 hover:bg-brand hover:text-white dark:hover:bg-brand dark:hover:text-white',
@@ -138,23 +138,77 @@
                 role="menuitem"
                 @click="closeProfileDropdown"
               >
-                🕓 Audit
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                Audit
               </button>
             </RouterLink>
             <button
               type="button"
-              class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-brand hover:text-white dark:hover:bg-brand dark:hover:text-white transition-colors duration-150 border-t border-gray-200 dark:border-gray-700"
+              class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-brand hover:text-white dark:hover:bg-brand dark:hover:text-white transition-colors duration-150 border-t border-gray-200 dark:border-gray-700 flex items-center gap-2"
               role="menuitem"
               @click="handleThemeToggle"
             >
-              {{ isDark ? "🌙" : "☀️" }} {{ isDark ? "Dark" : "Light" }} 
+              <svg
+                v-if="isDark"
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+                />
+              </svg>
+              <svg
+                v-else
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                />
+              </svg>
+              {{ isDark ? "Dark" : "Light" }} Mode
             </button>
             <button
               type="button"
-              class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-brand hover:text-white dark:hover:bg-brand dark:hover:text-white transition-colors duration-150 border-t border-gray-200 dark:border-gray-700"
+              class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-brand hover:text-white dark:hover:bg-brand dark:hover:text-white transition-colors duration-150 border-t border-gray-200 dark:border-gray-700 flex items-center gap-2"
               role="menuitem"
               @click="handleLogout"
             >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                />
+              </svg>
               Logout
             </button>
           </div>

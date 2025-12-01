@@ -569,6 +569,7 @@ const en = {
       count: "{count} stays require action",
       view: {
         title: "Stays Requiring Action",
+        back: "Back",
         table: {
           room: "Room",
           guest: "Guest",

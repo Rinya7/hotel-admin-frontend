@@ -11,19 +11,19 @@
     </summary>
     <div class="space-y-4">
       <!-- Вибір дат -->
-      <div class="flex gap-2">
+      <div class="flex flex-col sm:flex-row gap-2">
         <input
           v-model="checkIn"
           type="date"
           required
-          class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand"
+          class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand w-full sm:w-auto"
           @change="handleInput"
         />
         <input
           v-model="checkOut"
           type="date"
           required
-          class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand"
+          class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand focus:border-brand w-full sm:w-auto"
           @change="handleInput"
         />
       </div>
@@ -59,11 +59,11 @@
       </div>
 
       <!-- Дві кнопки дій -->
-      <div class="flex gap-3 justify-center py-4">
+      <div class="flex flex-col sm:flex-row gap-3 justify-center py-4">
         <button
           type="button"
           @click="handleCreateBooking"
-          class="px-6 py-2.5 bg-brand hover:bg-brand-light text-white rounded-lg transition-colors font-medium shadow-sm hover:shadow-md"
+          class="px-6 py-2.5 bg-brand hover:bg-brand-light text-white rounded-lg transition-colors font-medium shadow-sm hover:shadow-md w-full sm:w-auto"
         >
           {{ t("roomStays.createBooking.button") }}
         </button>
@@ -72,7 +72,7 @@
           @click="handleCheckIn"
           :disabled="!canCheckInToday"
           :title="!canCheckInToday ? (t('roomStays.checkIn.disabledHint') as string) : undefined"
-          class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors font-medium shadow-sm hover:shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
+          class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors font-medium shadow-sm hover:shadow-md disabled:opacity-60 disabled:cursor-not-allowed w-full sm:w-auto"
         >
           {{ t("roomStays.checkIn.button") }}
         </button>
