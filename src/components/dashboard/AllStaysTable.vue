@@ -25,7 +25,7 @@
         <RouterLink
           :to="{ name: 'needs-action' }"
           :class="[
-            'px-3 py-1 text-sm rounded-md transition-colors inline-flex items-center text-sm font-medium',
+            'px-3 py-1 text-sm rounded-md transition-colors inline-flex items-center font-medium',
             props.needsActionCount && props.needsActionCount > 0
               ? 'bg-red-100 hover:bg-red-200 dark:bg-red-700 dark:hover:bg-red-600 text-red-700 dark:text-red-300'
               : 'bg-green-100 hover:bg-green-200 dark:bg-green-700 dark:hover:bg-green-600 text-green-700 dark:text-green-300',
@@ -39,14 +39,6 @@
             {{ props.needsActionCount }}
           </span>
         </RouterLink>
-        <button
-          type="button"
-          class="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          :disabled="loading"
-          @click="$emit('refresh')"
-        >
-          {{ loading ? t("common.loading") : t("dashboard.refresh") }}
-        </button>
       </div>
     </div>
 
@@ -195,7 +187,6 @@ const { t, locale } = useI18n();
 const checking = defineModel<boolean>("checking", { default: false });
 
 defineEmits<{
-  (e: "refresh"): void;
   (e: "check-overdue"): void;
   (e: "toggle-status-filter", status: StayStatus): void;
   (e: "update:search-query", value: string): void;

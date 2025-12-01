@@ -47,7 +47,6 @@
         :stay-status-options="stayStatusOptions"
         :needs-action-count="needsActionStore.items.length"
         v-model:checking="checkingOverdue"
-        @refresh="loadBookingStays()"
         @check-overdue="handleCheckOverdue"
         @toggle-status-filter="toggleBookingStatusFilter"
         @update:search-query="bookingCodeSearch = $event"
