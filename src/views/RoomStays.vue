@@ -1514,6 +1514,18 @@ watch(availableStatusOptions, (options) => {
   }
 });
 
+watch(
+  () => route.path,
+  async (newPath, oldPath) => {
+    // Обновляем данные при возврате на страницу RoomStays (например, после чекина)
+    // Проверяем, что это именно страница RoomStays и путь изменился
+    const isRoomStaysPath = newPath === `/rooms/${roomNumber}/stays` || newPath.startsWith(`/rooms/${roomNumber}/stays`);
+    if (isRoomStaysPath && oldPath && oldPath !== newPath) {
+      await load();
+    }
+  }
+);
+
 onUnmounted(() => {
   document.body.style.overflow = "";
 });

@@ -595,10 +595,46 @@ async function submit(): Promise<void> {
 
   try {
     isSubmitting.value = true;
-    await checkInStay(stay.value.id, {
+    const response = await checkInStay(stay.value.id, {
       comment: comment.value.trim() ? comment.value.trim() : undefined,
       guests,
     });
+
+    // Обновляем stay и room из ответа API
+    if (response.stay) {
+      stay.value = {
+        ...response.stay,
+        checkIn: toDateOnly(response.stay.checkIn),
+        checkOut: toDateOnly(response.stay.checkOut),
+        extraGuestNames: response.stay.extraGuestNames ?? [],
+        guests: response.stay.guests ?? [],
+        // Обновляем room из response.stay.room, если есть, иначе из response.room
+        room: response.stay.room
+          ? {
+              id: response.stay.room.id,
+              roomNumber: response.stay.room.roomNumber,
+              status: response.stay.room.status,
+              capacity: response.stay.room.capacity,
+            }
+          : response.room
+            ? {
+                id: response.room.id,
+                roomNumber: response.room.roomNumber,
+                status: response.room.status,
+                capacity: response.room.capacity,
+              }
+            : stay.value.room, // Fallback к текущему значению
+      };
+    } else if (response.room && stay.value) {
+      // Если response.stay отсутствует, но есть response.room, обновляем только room
+      stay.value.room = {
+        id: response.room.id,
+        roomNumber: response.room.roomNumber,
+        status: response.room.status,
+        capacity: response.room.capacity,
+      };
+    }
+
     showSuccess(
       t("stayCheckIn.messages.successTitle"),
       t("stayCheckIn.messages.success") as string

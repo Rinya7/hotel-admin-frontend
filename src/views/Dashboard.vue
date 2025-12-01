@@ -348,12 +348,17 @@ async function load() {
 }
 
 async function loadBookingStays(
-  statuses: StayStatus[] = stayStatusOptions
+  statuses?: StayStatus[]
 ): Promise<void> {
   if (bookingStaysLoading.value) {
     return;
   }
-  const uniqueStatuses = Array.from(new Set(statuses));
+  // Если статусы не указаны, используем активные фильтры или только "booked" по умолчанию
+  const statusesToLoad = statuses ?? 
+    (bookingStatusFilters.value.length > 0 
+      ? bookingStatusFilters.value 
+      : ["booked"]);
+  const uniqueStatuses = Array.from(new Set(statusesToLoad));
   bookingStaysLoading.value = true;
   bookingStaysError.value = null;
 
@@ -401,6 +406,7 @@ watch(
   currentStays,
   (list) => {
     if (!bookingLoaded.value && list.length > 0) {
+      // Загружаем только активные фильтры (по умолчанию только "booked")
       void loadBookingStays();
     }
   },
@@ -429,6 +435,8 @@ function toggleBookingStatusFilter(status: StayStatus): void {
   }
 
   bookingStatusFilters.value = current;
+  // Загружаем данные для новых фильтров
+  void loadBookingStays(current.length > 0 ? current : ["booked"]);
 }
 
 const filteredBookingStays = computed(() => {
