@@ -943,8 +943,8 @@ async function handleCreateStay(modalData: {
     if (isCheckInFlow.value) {
       // Переходим на страницу чекина с данными для заполнения
       await router.push({
-        name: "StayCheckIn",
-        params: { stayId: created.id },
+        name: "stay-checkin",
+        params: { roomNumber, id: created.id.toString() },
         query: {
           // Передаем данные для предзаполнения формы
           firstName: modalData.firstName,
