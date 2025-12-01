@@ -374,31 +374,6 @@ function close(): void {
   emit("close");
 }
 
-// Legacy handlers (kept for compatibility)
-function handleEdit(): void {
-  if (props.editor) {
-    emit("edit", props.editor);
-  }
-}
-
-function handleBlock(): void {
-  if (props.editor) {
-    emit("block", props.editor.id);
-  }
-}
-
-function handleUnblock(): void {
-  if (props.editor) {
-    emit("unblock", props.editor.id);
-  }
-}
-
-function handleDelete(): void {
-  if (props.editor) {
-    emit("delete", props.editor.username);
-  }
-}
-
 // Close dropdown when clicking outside
 function handleClickOutside(event: MouseEvent): void {
   if (
