@@ -12,22 +12,24 @@
     </div>
     <div v-else class="p-6 space-y-6">
       <!-- Заголовок + кнопки действий -->
-      <div class="flex items-center gap-4">
-        <img
-          :src="hotel.logo_url ?? undefined"
-          class="h-16 w-16 rounded object-cover"
-          alt="logo"
-        />
-        <div>
-          <h1 class="text-2xl font-semibold text-brand dark:text-white">
-            {{ hotel.hotel_name ?? "—" }}
-          </h1>
-          <div class="text-gray-500 dark:text-gray-400">
-            {{ formatHotelAddress(hotel) }}
+      <div class="flex flex-col md:flex-row md:items-center gap-4">
+        <div class="flex items-center gap-4">
+          <img
+            :src="hotel.logo_url ?? undefined"
+            class="h-16 w-16 rounded object-cover"
+            alt="logo"
+          />
+          <div>
+            <h1 class="text-2xl font-semibold text-brand dark:text-white">
+              {{ hotel.hotel_name ?? "—" }}
+            </h1>
+            <div class="text-gray-500 dark:text-gray-400">
+              {{ formatHotelAddress(hotel) }}
+            </div>
           </div>
         </div>
 
-        <div class="ml-auto flex items-center gap-2">
+        <div class="flex flex-col md:flex-row md:ml-auto md:items-center gap-2">
           <span
             :class="
               hotel.isBlocked
@@ -181,7 +183,9 @@
         <h2 class="font-medium mb-3 text-brand dark:text-white">
           {{ t("saHotelDetail.sections.editors") }}
         </h2>
-        <table class="min-w-full text-sm">
+        <!-- Контейнер с горизонтальным скроллом для таблицы редакторов -->
+        <div class="overflow-x-auto -mx-4 px-4">
+          <table class="min-w-[600px] text-sm w-full">
           <thead
             class="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
           >
@@ -228,6 +232,7 @@
             </tr>
           </tbody>
         </table>
+        </div>
       </section>
     </div>
 

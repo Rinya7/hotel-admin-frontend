@@ -65,9 +65,11 @@
     </div>
 
     <div
-      class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
+      class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
     >
-      <table class="min-w-full text-sm">
+      <!-- Контейнер с горизонтальным скроллом для таблицы -->
+      <div class="overflow-x-auto -mx-4 px-4">
+        <table class="min-w-[800px] text-sm w-full">
         <thead
           class="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
         >
@@ -187,6 +189,7 @@
           </tr>
         </tbody>
       </table>
+      </div>
     </div>
   </section>
 </template>

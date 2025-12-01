@@ -15,29 +15,31 @@
     </section>
 
     <section
-      class="overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
+      class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
     >
-      <table class="w-full text-sm table-fixed">
+      <!-- Контейнер с горизонтальным скроллом для таблицы -->
+      <div class="overflow-x-auto -mx-4 px-4">
+        <table class="min-w-[1000px] text-sm w-full">
         <thead
           class="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
         >
           <tr>
             <th
-              class="lg:w-1/7 xl:w-auto px-4 py-3 text-left cursor-pointer"
+              class="lg:w-[20%] xl:w-auto px-4 py-3 text-left cursor-pointer"
               @click="setSort('hotel_name')"
             >
               {{ t("saHotelsList.table.hotelName") }}
               <SortIcon :active="sortKey === 'hotel_name'" :dir="sortDir" />
             </th>
             <th
-              class="lg:w-1/6 xl:w-[10%] px-4 py-3 text-left cursor-pointer"
+              class="lg:w-[20%] xl:w-auto px-4 py-3 text-left cursor-pointer"
               @click="setSort('street')"
             >
               {{ t("saHotelsList.table.address") }}
               <SortIcon :active="sortKey === 'street'" :dir="sortDir" />
             </th>
             <th
-              class="hidden lg:table-cell lg:w-1/8 xl:w-1/7 px-4 py-3 text-center cursor-pointer"
+              class="hidden lg:table-cell xl:w-auto   px-4 py-3 text-center cursor-pointer"
               @click="setSort('username')"
             >
               {{ t("saHotelsList.table.login") }}
@@ -51,20 +53,20 @@
               <SortIcon :active="sortKey === 'editorsCount'" :dir="sortDir" />
             </th>
             <th
-              class="hidden xl:table-cell xl:w-1/7 px-4 py-3 text-center cursor-pointer"
+              class="hidden 2xl:table-cell xl:w-auto px-4 py-3 text-center cursor-pointer"
               @click="setSort('createdAt')"
             >
               {{ t("saHotelsList.table.created") }}
               <SortIcon :active="sortKey === 'createdAt'" :dir="sortDir" />
             </th>
             <th
-              class="xl:w-1/6 px-4 py-3 text-center cursor-pointer"
+              class="xl:w-auto px-4 py-3 text-center cursor-pointer"
               @click="setSort('isBlocked')"
             >
               {{ t("saHotelsList.table.status") }}
               <SortIcon :active="sortKey === 'isBlocked'" :dir="sortDir" />
             </th>
-            <th class="xl:w-1/3 px-4 py-3 text-center">
+            <th class="xl:w-auto px-4 py-3 text-center">
               {{ t("saHotelsList.table.action") }}
             </th>
           </tr>
@@ -174,7 +176,7 @@
                 {{ h.editorsCount }}
               </td>
               <td
-                class="hidden xl:table-cell xl:w-max text-center px-4 py-3 text-gray-700 dark:text-gray-300"
+                class="hidden 2xl:table-cell 2xl:w-max text-center px-4 py-3 text-gray-700 dark:text-gray-300"
               >
                 {{ new Date(h.createdAt).toLocaleDateString() }}
               </td>
@@ -245,6 +247,7 @@
           </template>
         </tbody>
       </table>
+      </div>
     </section>
   </div>
   <!-- Модалка редагування: шукаємо поточний item за username -->

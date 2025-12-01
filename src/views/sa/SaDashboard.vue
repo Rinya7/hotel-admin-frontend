@@ -75,7 +75,9 @@
         >
       </div>
 
-      <table class="min-w-full text-sm">
+      <!-- Контейнер с горизонтальным скроллом для таблицы -->
+      <div class="overflow-x-auto -mx-4 px-4">
+        <table class="min-w-[800px] text-sm w-full">
         <thead
           class="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
         >
@@ -89,7 +91,7 @@
             <th class="px-3 py-2 text-left">
               {{ t("saDashboard.latestHotels.table.login") }}
             </th>
-            <th class="px-3 py-2 text-left">
+            <th class="hidden 2xl:table-cell px-3 py-2 text-left">
               {{ t("saDashboard.latestHotels.table.created") }}
             </th>
             <th class="px-3 py-2 text-left">
@@ -126,7 +128,7 @@
               <td class="px-3 py-2 text-gray-700 dark:text-gray-300">
                 {{ h.username }}
               </td>
-              <td class="px-3 py-2 text-gray-700 dark:text-gray-300">
+              <td class="hidden 2xl:table-cell px-3 py-2 text-gray-700 dark:text-gray-300">
                 {{ new Date(h.createdAt).toLocaleString() }}
               </td>
               <td class="px-3 py-2">
@@ -156,6 +158,7 @@
           </template>
         </tbody>
       </table>
+      </div>
     </section>
   </div>
 </template>
