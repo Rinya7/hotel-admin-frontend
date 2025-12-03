@@ -191,7 +191,7 @@
               <div class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">
                 {{ t("common.language") }}
               </div>
-              <div class="flex flex-wrap gap-1">
+              <div class="grid grid-cols-2 gap-1">
                 <button
                   v-for="locale in supportedLocales"
                   :key="locale"
