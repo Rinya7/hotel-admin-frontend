@@ -111,8 +111,10 @@
                   >
                     {{ t("dashboard.needsAction.view.actions.noShow") }}
                   </button>
+                  <!-- Показываем кнопку "Заселить сейчас" только если дата заезда соответствует сегодня -->
                   <button
-                    @click="openCheckInNowModal(item)"
+                    v-if="isCheckInToday(item.checkIn)"
+                    @click="handleCheckInNow(item)"
                     class="px-3 py-1 text-xs bg-green-200 dark:bg-green-900/30 text-green-800 dark:text-green-400 rounded hover:bg-green-300 dark:hover:bg-green-900/50 transition-colors"
                   >
                     {{ t("dashboard.needsAction.view.actions.checkInNow") }}
@@ -184,7 +186,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { RouterLink } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
 import { useNeedsActionStore } from "@/stores/needsAction";
 import { useLocale } from "@/composables/useLocale";
 import ConfirmNoShowModal from "@/components/needsAction/ConfirmNoShowModal.vue";
@@ -196,6 +198,7 @@ import type { StayNeedsAction } from "@/types/stays";
 
 const { t } = useLocale();
 const needsActionStore = useNeedsActionStore();
+const router = useRouter();
 
 // Modal states
 const showNoShowModal = ref(false);
@@ -232,6 +235,35 @@ async function refresh(): Promise<void> {
 function openNoShowModal(item: StayNeedsAction): void {
   selectedStay.value = item;
   showNoShowModal.value = true;
+}
+
+/**
+ * Проверяет, соответствует ли дата заезда сегодня
+ */
+function isCheckInToday(checkIn: string): boolean {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const checkInDate = new Date(checkIn);
+  checkInDate.setHours(0, 0, 0, 0);
+  return checkInDate.getTime() === today.getTime();
+}
+
+/**
+ * Обрабатывает нажатие на кнопку "Заселить сейчас"
+ * Если дата заезда соответствует сегодня - перекидывает на форму чекина
+ * Иначе открывает модальное окно
+ */
+function handleCheckInNow(item: StayNeedsAction): void {
+  if (isCheckInToday(item.checkIn)) {
+    // Если дата заезда сегодня - перекидываем на форму чекина
+    router.push({
+      name: "stay-checkin",
+      params: { roomNumber: item.roomNumber, id: item.id.toString() },
+    });
+  } else {
+    // Иначе открываем модальное окно
+    openCheckInNowModal(item);
+  }
 }
 
 /**
