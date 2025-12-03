@@ -177,7 +177,7 @@ const en = {
     },
   },
   saDashboard: {
-    title: "Superadmin Dashboard",
+    title: "Dashboard",
     stats: {
       totalHotels: "Total Hotels",
       activeHotels: "Active",

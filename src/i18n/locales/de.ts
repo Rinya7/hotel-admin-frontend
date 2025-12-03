@@ -148,7 +148,7 @@ const de = {
     },
   },
   saDashboard: {
-    title: "Superadmin Dashboard",
+    title: "Dashboard",
     stats: {
       totalHotels: "Hotels gesamt",
       activeHotels: "Aktiv",

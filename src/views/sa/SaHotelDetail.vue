@@ -13,18 +13,18 @@
     <div v-else class="p-6 space-y-6">
       <!-- Заголовок + кнопки действий -->
       <div class="flex flex-col md:flex-row md:items-center gap-4">
-        <div class="flex items-center gap-4">
-          <img
-            :src="hotel.logo_url ?? undefined"
-            class="h-16 w-16 rounded object-cover"
-            alt="logo"
-          />
-          <div>
-            <h1 class="text-2xl font-semibold text-brand dark:text-white">
-              {{ hotel.hotel_name ?? "—" }}
-            </h1>
-            <div class="text-gray-500 dark:text-gray-400">
-              {{ formatHotelAddress(hotel) }}
+      <div class="flex items-center gap-4">
+        <img
+          :src="hotel.logo_url ?? undefined"
+          class="h-16 w-16 rounded object-cover"
+          alt="logo"
+        />
+        <div>
+          <h1 class="text-2xl font-semibold text-brand dark:text-white">
+            {{ hotel.hotel_name ?? "—" }}
+          </h1>
+          <div class="text-gray-500 dark:text-gray-400">
+            {{ formatHotelAddress(hotel) }}
             </div>
           </div>
         </div>

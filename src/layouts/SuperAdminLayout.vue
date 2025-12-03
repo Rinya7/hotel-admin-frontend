@@ -94,9 +94,9 @@
       </nav>
 
       <!-- Лого -->
-      <div class="absolute left-1/2 -translate-x-1/2 md:-top-1/3 lg:-top-1/2">
-        <img :src="logo" alt="Logo" class="h-[40px] md:h-[80px] lg:h-[120px]" />
-      </div>
+      
+        <img :src="logo" alt="Logo" class="h-[40px] md:h-[60px] " />
+       
 
       <!-- Профіль з випадаючим меню -->
       <div v-if="auth.isLogged" class="flex items-center relative" ref="profileDropdownRef">
@@ -106,9 +106,9 @@
           variant="solid"
           size="sm"
           @click="toggleProfileDropdown"
-          class="flex items-center gap-1 w-auto md:w-[160px]"
+          class="  w-auto md:w-[160px]"
         >
-          <span>{{ auth.role ?? "?" }}</span>
+          <span class="md:mr-2">{{ auth.role ?? "?" }}</span>
           <span class="text-xs" :class="{ 'rotate-180': isProfileDropdownOpen }">▼</span>
         </Button>
 
@@ -123,13 +123,13 @@
         >
           <div
             v-if="isProfileDropdownOpen"
-            class="absolute top-full right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50 overflow-hidden md:w-[160px]"
+            class="absolute w-[112px] md:w-[160px] top-full right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50 overflow-hidden "
             role="menu"
             aria-orientation="vertical"
           >
             <button
               type="button"
-              class=" text-left px-2 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-brand hover:text-white dark:hover:bg-brand dark:hover:text-white transition-colors duration-150 flex items-center gap-2"
+              class="w-full text-left px-2 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-brand hover:text-white dark:hover:bg-brand dark:hover:text-white transition-colors duration-150 flex items-center gap-2"
               role="menuitem"
               @click="handleThemeToggle"
             >
@@ -165,10 +165,10 @@
             </button>
             <!-- Language selection list -->
             <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-2">
-              <div class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">
+              <div class="text-xs font-medium text-center text-gray-500 dark:text-gray-400 mb-2">
                 {{ t("common.language") }}
               </div>
-              <div class="grid grid-cols-2 gap-1">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-1">
                 <button
                   v-for="locale in supportedLocales"
                   :key="locale"
@@ -187,7 +187,7 @@
             </div>
             <button
               type="button"
-              class=" text-left px-2 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-brand hover:text-white dark:hover:bg-brand dark:hover:text-white transition-colors duration-150 border-t border-gray-200 dark:border-gray-700 flex items-center gap-2"
+              class="w-full text-left px-2 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-brand hover:text-white dark:hover:bg-brand dark:hover:text-white transition-colors duration-150 border-t border-gray-200 dark:border-gray-700 flex items-center gap-2"
               role="menuitem"
               @click="handleLogout"
             >

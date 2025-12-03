@@ -181,7 +181,7 @@ const uk = {
     },
   },
   saDashboard: {
-    title: "Superadmin Dashboard",
+    title: "Dashboard",
     stats: {
       totalHotels: "Всього готелів",
       activeHotels: "Активних",

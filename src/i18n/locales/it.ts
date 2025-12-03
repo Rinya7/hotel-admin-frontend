@@ -149,7 +149,7 @@ const it = {
     },
   },
   saDashboard: {
-    title: "Dashboard Superadmin",
+    title: "Dashboard",
     stats: {
       totalHotels: "Hotel totali",
       activeHotels: "Attivi",
