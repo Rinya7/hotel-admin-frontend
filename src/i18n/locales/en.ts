@@ -514,6 +514,8 @@ const en = {
         guest: "Guest",
         dates: "Dates",
         status: "Status",
+        createdAt: "Created",
+        statusChangedAt: "Changed",
         actions: "Actions",
       },
     },

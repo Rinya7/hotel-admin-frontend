@@ -504,6 +504,8 @@ const uk = {
         guest: "Гість",
         dates: "Дати",
         status: "Статус",
+        createdAt: "Створено",
+        statusChangedAt: "Змінено",
         actions: "Дії",
       },
     },

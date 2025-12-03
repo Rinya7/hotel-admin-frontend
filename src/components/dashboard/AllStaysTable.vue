@@ -87,6 +87,12 @@
               {{ t("dashboard.allStays.table.status") }}
             </th>
             <th class="px-4 py-3 text-left">
+              {{ t("dashboard.allStays.table.createdAt") }}
+            </th>
+            <th class="px-4 py-3 text-left">
+              {{ t("dashboard.allStays.table.statusChangedAt") }}
+            </th>
+            <th class="px-4 py-3 text-left">
               {{ t("dashboard.allStays.table.actions") }}
             </th>
           </tr>
@@ -94,7 +100,7 @@
         <tbody>
           <tr v-if="loading">
             <td
-              colspan="6"
+              colspan="8"
               class="px-4 py-6 text-center text-gray-500 dark:text-gray-400"
             >
               {{ t("dashboard.loading") }}
@@ -102,7 +108,7 @@
           </tr>
           <tr v-else-if="error">
             <td
-              colspan="6"
+              colspan="8"
               class="px-4 py-6 text-center text-red-500 dark:text-red-300"
             >
               {{ error }}
@@ -110,7 +116,7 @@
           </tr>
           <tr v-else-if="filteredStays.length === 0">
             <td
-              colspan="6"
+              colspan="8"
               class="px-4 py-6 text-center text-gray-500 dark:text-gray-400"
             >
               {{ t("dashboard.allStays.empty") }}
@@ -142,6 +148,12 @@
               >
                 {{ getStayStatusLabel(stay.status) }}
               </span>
+            </td>
+            <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
+              {{ formatStatusChangedAt(stay.createdAt) }}
+            </td>
+            <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
+              {{ formatStatusChangedAt(stay.statusChangedAt) }}
             </td>
             <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
               <RouterLink
@@ -285,6 +297,22 @@ function formatStayPeriod(stay: { checkIn: string; checkOut: string }): string {
   const start = formatDate(stay.checkIn);
   const end = formatDate(stay.checkOut);
   return `${start} → ${end}`;
+}
+
+/**
+ * Форматувати дату последнего изменения статуса
+ */
+function formatStatusChangedAt(value?: string | null): string {
+  if (!value) {
+    return "—";
+  }
+  return new Intl.DateTimeFormat(locale.value ?? undefined, {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(value));
 }
 </script>
 

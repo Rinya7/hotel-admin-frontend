@@ -220,7 +220,8 @@ const stayStatusOptions: StayStatus[] = [
   "completed",
   "cancelled",
 ];
-const bookingStatusFilters = ref<StayStatus[]>(["booked"]);
+// По умолчанию фильтры пустые - показываем все проживания из истории
+const bookingStatusFilters = ref<StayStatus[]>([]);
 const bookingCodeSearch = ref("");
 const bookingLoaded = ref(false);
 const bookingStays = ref<StayListItem[]>([]);
@@ -353,11 +354,12 @@ async function loadBookingStays(
   if (bookingStaysLoading.value) {
     return;
   }
-  // Если статусы не указаны, используем активные фильтры или только "booked" по умолчанию
+  // Если статусы не указаны, используем активные фильтры
+  // Если фильтры пустые - загружаем все статусы (вся история)
   const statusesToLoad = statuses ?? 
     (bookingStatusFilters.value.length > 0 
       ? bookingStatusFilters.value 
-      : ["booked"]);
+      : stayStatusOptions);
   const uniqueStatuses = Array.from(new Set(statusesToLoad));
   bookingStaysLoading.value = true;
   bookingStaysError.value = null;
@@ -406,11 +408,20 @@ watch(
   currentStays,
   (list) => {
     if (!bookingLoaded.value && list.length > 0) {
-      // Загружаем только активные фильтры (по умолчанию только "booked")
+      // Загружаем данные согласно активным фильтрам
+      // Если фильтры пустые - загружаем все статусы (вся история)
       void loadBookingStays();
     }
   },
   { immediate: true }
+);
+
+// Автоматически перезагружаем данные при изменении фильтров
+watch(
+  bookingStatusFilters,
+  () => {
+    void loadBookingStays();
+  }
 );
 
 
@@ -436,7 +447,8 @@ function toggleBookingStatusFilter(status: StayStatus): void {
 
   bookingStatusFilters.value = current;
   // Загружаем данные для новых фильтров
-  void loadBookingStays(current.length > 0 ? current : ["booked"]);
+  // Если фильтры пустые - загружаем все статусы (вся история)
+  void loadBookingStays(current.length > 0 ? current : stayStatusOptions);
 }
 
 const filteredBookingStays = computed(() => {

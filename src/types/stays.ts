@@ -115,6 +115,8 @@ export interface StayListItem {
   checkIn: string;
   checkOut: string;
   balance: string | number;
+  createdAt?: string | null; // Дата создания (ISO string)
+  statusChangedAt?: string | null; // Дата последнего изменения статуса (ISO string)
 }
 
 export interface StayStatusLog {

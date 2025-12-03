@@ -475,6 +475,8 @@ const it = {
         guest: "Ospite",
         dates: "Date",
         status: "Stato",
+        createdAt: "Creato",
+        statusChangedAt: "Modificato",
         actions: "Azioni",
       },
     },

@@ -471,6 +471,8 @@ const de = {
         guest: "Gast",
         dates: "Zeitraum",
         status: "Status",
+        createdAt: "Erstellt",
+        statusChangedAt: "Geändert",
         actions: "Aktionen",
       },
     },
