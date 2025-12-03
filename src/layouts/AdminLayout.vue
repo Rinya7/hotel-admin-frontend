@@ -152,7 +152,7 @@
           >
             <button
               type="button"
-              class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-brand hover:text-white dark:hover:bg-brand dark:hover:text-white transition-colors duration-150 border-t border-gray-200 dark:border-gray-700 flex items-center gap-2"
+              class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-brand hover:text-white dark:hover:bg-brand dark:hover:text-white transition-colors duration-150 flex items-center gap-2"
               role="menuitem"
               @click="handleThemeToggle"
             >
@@ -186,6 +186,28 @@
               </svg>
               {{ isDark ? "Dark" : "Light" }}
             </button>
+            <!-- Language selection list -->
+            <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-2">
+              <div class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">
+                {{ t("common.language") }}
+              </div>
+              <div class="flex flex-wrap gap-1">
+                <button
+                  v-for="locale in supportedLocales"
+                  :key="locale"
+                  type="button"
+                  :class="[
+                    'px-2 py-1 text-xs rounded transition-colors',
+                    currentLocale === locale
+                      ? 'bg-brand text-white dark:bg-brand dark:text-white'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-brand hover:text-white dark:hover:bg-brand dark:hover:text-white',
+                  ]"
+                  @click="handleLanguageChange(locale)"
+                >
+                  {{ locale.toUpperCase() }}
+                </button>
+              </div>
+            </div>
             <button
               type="button"
               class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-brand hover:text-white dark:hover:bg-brand dark:hover:text-white transition-colors duration-150 border-t border-gray-200 dark:border-gray-700 flex items-center gap-2"
@@ -219,9 +241,7 @@
     <div class="absolute left-1/3 -translate-x-1/2 md:left-1/2 md:-top-1/3 lg:-top-1/2">
         <img :src="logo" alt="Logo" class="h-[40px] md:h-[60px] lg:h-[100px]" />
       </div>
-    <div class="flex justify-end">
-      <LanguageSwitcher />
-    </div></div>
+    </div>
     <RouterView />
   </main>
 </template>
@@ -238,14 +258,13 @@ import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "vue-router";
 import { useTheme } from "@/composables/useTheme";
 import { useLocale } from "@/composables/useLocale";
-import LanguageSwitcher from "@/components/LanguageSwitcher.vue";
 import logo from "@/assets/logo.png";
 import Button from "@/components/ui/Button.vue";
 
 const auth = useAuthStore();
 const router = useRouter();
 const { isDark, toggleTheme } = useTheme();
-const { t } = useLocale();
+const { t, current: currentLocale, supportedLocales, change: changeLocale } = useLocale();
 
 // Profile dropdown state
 const isProfileDropdownOpen = ref(false);
@@ -285,6 +304,12 @@ function handleThemeToggle(): void {
 function handleLogout(): void {
   closeProfileDropdown();
   onLogout();
+}
+
+// Handle language change
+function handleLanguageChange(locale: string): void {
+  changeLocale(locale as typeof currentLocale.value);
+  // Не закрываем меню при смене языка
 }
 
 function onLogout(): void {
