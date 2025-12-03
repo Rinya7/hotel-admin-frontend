@@ -124,10 +124,23 @@ export const useNeedsActionStore = defineStore("needsAction", () => {
       // Видаляємо stay зі списку після успішного резолву
       items.value = items.value.filter((item) => item.id !== stayId);
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Failed to edit dates";
+      // Извлекаем детальное сообщение из response
+      let message = "Failed to edit dates";
+      if (err && typeof err === "object" && "response" in err) {
+        const axiosError = err as {
+          response?: { data?: { message?: string } };
+        };
+        message = axiosError.response?.data?.message || message;
+      } else if (err instanceof Error) {
+        message = err.message;
+      }
       error.value = message;
-      throw err;
+      // Создаем новую ошибку с детальным сообщением для компонента
+      const enhancedError = new Error(message);
+      if (err && typeof err === "object" && "response" in err) {
+        (enhancedError as any).response = (err as any).response;
+      }
+      throw enhancedError;
     }
   }
 

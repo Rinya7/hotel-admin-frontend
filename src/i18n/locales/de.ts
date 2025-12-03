@@ -11,6 +11,7 @@ const de = {
     login: "Anmeldung",
     rooms: "Zimmer",
     dashboard: "Dashboard",
+    audit: "Audit",
   },
   login: {
     title: "Anmeldung",

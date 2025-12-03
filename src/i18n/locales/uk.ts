@@ -12,6 +12,7 @@ const uk = {
     login: "Вхід",
     rooms: "Кімнати",
     dashboard: "Панель",
+    audit: "Аудит",
   },
   login: {
     title: "Вхід до системи",

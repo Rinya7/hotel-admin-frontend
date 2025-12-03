@@ -11,6 +11,7 @@ const en = {
     login: "Login",
     rooms: "Rooms",
     dashboard: "Dashboard",
+    audit: "Audit",
   },
   login: {
     title: "Sign in",

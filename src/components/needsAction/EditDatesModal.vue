@@ -255,8 +255,47 @@ async function handleSubmit(): Promise<void> {
     emit("update:modelValue", false);
     emit("confirmed");
   } catch (err) {
-    const message =
-      err instanceof Error ? err.message : "Не вдалося оновити дати";
+    // Извлекаем детальное сообщение об ошибке из response
+    let message = "Не вдалося оновити дати";
+    
+    if (err && typeof err === "object" && "response" in err) {
+      const axiosError = err as {
+        response?: { 
+          status?: number; 
+          data?: { 
+            message?: string;
+            conflicts?: Array<{
+              id: number;
+              guest: string;
+              checkIn: string;
+              checkOut: string;
+              status: string;
+            }>;
+          };
+        };
+      };
+      
+      if (axiosError.response?.data?.message) {
+        message = axiosError.response.data.message;
+        
+        // Если есть конфликты, добавляем информацию о них
+        if (axiosError.response.data.conflicts && axiosError.response.data.conflicts.length > 0) {
+          const conflictsText = axiosError.response.data.conflicts
+            .map((c) => `${c.guest} (${c.checkIn} - ${c.checkOut})`)
+            .join(", ");
+          message += ` Конфлікти: ${conflictsText}`;
+        }
+      } else if (axiosError.response?.status === 500) {
+        message = "Помилка сервера. Спробуйте пізніше або зверніться до адміністратора.";
+      } else if (axiosError.response?.status === 400) {
+        message = "Невірні дані. Перевірте введені дати.";
+      } else if (axiosError.response?.status === 404) {
+        message = "Проживання не знайдено.";
+      }
+    } else if (err instanceof Error) {
+      message = err.message;
+    }
+    
     error.value = message;
     showError(message);
   } finally {

@@ -11,6 +11,7 @@ const it = {
     login: "Accesso",
     rooms: "Camere",
     dashboard: "Pannello",
+    audit: "Audit",
   },
   login: {
     title: "Accedi al sistema",
