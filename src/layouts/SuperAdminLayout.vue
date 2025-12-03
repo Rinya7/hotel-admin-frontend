@@ -161,8 +161,30 @@
                   d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
                 />
               </svg>
-              {{ isDark ? "Dark" : "Light" }} Mode
+              {{ isDark ? "Dark" : "Light" }}
             </button>
+            <!-- Language selection list -->
+            <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-2">
+              <div class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">
+                {{ t("common.language") }}
+              </div>
+              <div class="flex flex-wrap gap-1">
+                <button
+                  v-for="locale in supportedLocales"
+                  :key="locale"
+                  type="button"
+                  :class="[
+                    'px-2 py-1 text-xs rounded transition-colors',
+                    currentLocale === locale
+                      ? 'bg-brand text-white dark:bg-brand dark:text-white'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-brand hover:text-white dark:hover:bg-brand dark:hover:text-white',
+                  ]"
+                  @click="handleLanguageChange(locale)"
+                >
+                  {{ locale.toUpperCase() }}
+                </button>
+              </div>
+            </div>
             <button
               type="button"
               class=" text-left px-2 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-brand hover:text-white dark:hover:bg-brand dark:hover:text-white transition-colors duration-150 border-t border-gray-200 dark:border-gray-700 flex items-center gap-2"
@@ -191,9 +213,6 @@
   </header>
 
   <main class="container mx-auto py-[32px] px-0">
-    <div class="flex justify-end">
-      <LanguageSwitcher />
-    </div>
     <RouterView />
   </main>
 </template>
@@ -208,14 +227,13 @@ import { ref, onMounted, onUnmounted } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import { useRouter } from "vue-router";
 import { useTheme } from "@/composables/useTheme";
-import LanguageSwitcher from "@/components/LanguageSwitcher.vue";
 import logo from "@/assets/logo.png";
 import Button from "@/components/ui/Button.vue";
 import { useLocale } from "@/composables/useLocale";
 
 const auth = useAuthStore();
 const router = useRouter();
-const { t } = useLocale();
+const { t, current: currentLocale, supportedLocales, change: changeLocale } = useLocale();
 const { isDark, toggleTheme } = useTheme();
 
 // Profile dropdown state
@@ -256,6 +274,12 @@ function handleThemeToggle(): void {
 function handleLogout(): void {
   closeProfileDropdown();
   onLogout();
+}
+
+// Handle language change
+function handleLanguageChange(locale: string): void {
+  changeLocale(locale as typeof currentLocale.value);
+  // Не закрываем меню при смене языка
 }
 
 /**
