@@ -28,3 +28,8 @@ dist-ssr
 .env.local
 .env.production
 .env.*.local
+
+# Docker files (локально)
+Dockerfile
+docker-compose.yml
+nginx.conf
