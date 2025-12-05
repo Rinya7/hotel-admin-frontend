@@ -73,7 +73,7 @@ admin-frontend/
 
 Додаток інтегрується з `hotel-backend` через REST API.
 
-**Base URL:** налаштовується через змінну середовища `VITE_API_URL` (за замовчуванням: `http://localhost:3000`, production: `https://hotel-lotse.app`)
+**Base URL:** налаштовується через змінну середовища `VITE_API_URL` (за замовчуванням: `http://localhost:3000`, production: `https://api.hotel-lotse.app`)
 
 ## 🛠️ Технології
 
@@ -116,7 +116,7 @@ VITE_API_URL=http://localhost:3000
 VITE_GUEST_APP_URL=http://localhost:5174
 
 # Production (в .env.production)
-VITE_API_URL=https://hotel-lotse.app
+VITE_API_URL=https://api.hotel-lotse.app
 VITE_GUEST_APP_URL=https://hotel-lotse.app
 ```
 

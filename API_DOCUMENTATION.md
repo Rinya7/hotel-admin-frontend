@@ -4,7 +4,7 @@
 
 Данная документация описывает все API endpoints, используемые в admin-frontend для взаимодействия с hotel-backend.
 
-**Base URL:** `http://localhost:3000` (development) / `https://hotel-lotse.app` (production) - настраивается через `VITE_API_URL`
+**Base URL:** `http://localhost:3000` (development) / `https://api.hotel-lotse.app` (production) - настраивается через `VITE_API_URL`
 
 ## Аутентификация
 
@@ -730,7 +730,7 @@ try {
 
 **Environment Variables:**
 
-- `VITE_API_URL` - URL бэкенда (по умолчанию: http://localhost:3000, production: https://hotel-lotse.app)
+- `VITE_API_URL` - URL бэкенда (по умолчанию: http://localhost:3000, production: https://api.hotel-lotse.app)
 
 **HTTP Client Configuration:**
 
